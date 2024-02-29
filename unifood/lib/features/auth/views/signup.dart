@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/widgets/custom_button.dart';
-import 'package:unifood/widgets/custom_textformfield.dart';
 import 'package:unifood/widgets/custom_circled_button.dart';
+import 'package:unifood/widgets/custom_textformfield.dart';
 
-class Login extends StatelessWidget {
+class Signup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +62,7 @@ class Login extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Login',
+                  'Create Account',
                   style: TextStyle(
                     fontSize: 31.0,
                     color: Colors.black,
@@ -71,7 +71,7 @@ class Login extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Please sign in to continue',
+                  'Be part of this community!',
                   style: TextStyle(
                     fontSize: 15.0,
                     color: Colors.grey,
@@ -83,26 +83,40 @@ class Login extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 40),
+                SizedBox(height: 10),
+                CustomTextFormField(
+                  labelText: 'Full name',
+                  hintText: 'Type your email here',
+                  icon: Icon(Icons.person),
+                  obscureText: false,
+                ),
+                SizedBox(height: 7),
                 CustomTextFormField(
                   labelText: 'Email',
                   hintText: 'Type your email here',
                   icon: Icon(Icons.email),
                   obscureText: false,
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 7),
                 CustomTextFormField(
                   labelText: 'Password',
                   hintText: 'Type your password here',
                   icon: Icon(Icons.lock),
                   obscureText: true,
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 7),
+                CustomTextFormField(
+                  labelText: 'Confirm password',
+                  hintText: 'Confirm your password here',
+                  icon: Icon(Icons.lock),
+                  obscureText: true,
+                ),
+                SizedBox(height: 7),
                 CustomButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/homepage');
                   },
-                  text: 'Login',
+                  text: 'Sign Up',
                   width: 151,
                   height: 41,
                   fontSize: 18,
@@ -112,32 +126,8 @@ class Login extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomCircledButton(
-                      onPressed: () {},
-                      diameter: 36,
-                      icon: Icon(
-                        Icons.person,
-                        color: Colors.black,
-                      ),
-                      buttonColor: Color(0xFFE2D2B4),
-                    ),
-                    CustomCircledButton(
-                      onPressed: () {},
-                      diameter: 36,
-                      icon: Icon(
-                        Icons.person,
-                        color: Colors.black,
-                      ),
-                      buttonColor: Color(0xFFE2D2B4),
-                    )
-                  ],
-                ),
-                SizedBox(height: 60),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
                     Text(
-                      'Not a member yet?',
+                      'Already a member?',
                       style: TextStyle(
                         fontSize: 17.0,
                         color: Colors.black,
@@ -147,10 +137,10 @@ class Login extends StatelessWidget {
                     SizedBox(width: 6),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/signup');
+                        Navigator.pushNamed(context, '/login');
                       },
                       child: Text(
-                        'Sign Up',
+                        'Login',
                         style: TextStyle(
                           fontSize: 17.0,
                           color: Color(0xFF965E4E),
