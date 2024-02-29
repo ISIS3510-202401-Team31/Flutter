@@ -59,14 +59,28 @@ class MyHomePage extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            CustomCircledButton(
-              onPressed: () {},
-              diameter: 36,
-              icon: Icon(
-                Icons.person,
-                color: Colors.black,
-              ),
-              buttonColor: Color(0xFF965E4E),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomCircledButton(
+                  onPressed: () {},
+                  diameter: 36,
+                  icon: Icon(
+                    Icons.person,
+                    color: Colors.black,
+                  ),
+                  buttonColor: Color(0xFF965E4E),
+                ),
+                CustomCircledButton(
+                  onPressed: () {},
+                  diameter: 36,
+                  icon: Icon(
+                    Icons.chevron_left,
+                    color: Colors.black,
+                  ),
+                  buttonColor: Colors.white,
+                )
+              ],
             ),
             SizedBox(height: 20),
             CustomTextFormField(
