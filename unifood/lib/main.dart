@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/routes.dart';
 import 'package:unifood/widgets/custom_button.dart';
 import 'package:unifood/widgets/custom_circled_button.dart';
 import 'package:unifood/widgets/custom_restaurant.dart';
@@ -30,7 +31,11 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+      initialRoute: '/',
+      onGenerateRoute: Routes.generateRoute,
+    );
+    /*return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(title),
@@ -95,6 +100,6 @@ class MyHomePage extends StatelessWidget {
           ],
         ),
       ),
-    );
+    );*/
   }
 }
