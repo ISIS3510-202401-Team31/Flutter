@@ -8,7 +8,7 @@ class Landing extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('../assets/background_landing.png'),
+            image: AssetImage('assets/background_landing.png'),
             fit: BoxFit.cover,
           ),
         ),
