@@ -21,7 +21,7 @@ class Landing extends StatelessWidget {
               ),
               CustomButton(
                 onPressed: () {
-                  // Lógica para el botón de Login
+                  Navigator.pushNamed(context, '/login');
                 },
                 text: 'Login',
                 width: 165,
@@ -32,7 +32,7 @@ class Landing extends StatelessWidget {
               SizedBox(height: 20),
               CustomButton(
                 onPressed: () {
-                  // Lógica para el botón de Sign Up
+                  Navigator.pushNamed(context, '/signup');
                 },
                 text: 'Sign Up',
                 width: 165,
