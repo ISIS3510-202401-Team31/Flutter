@@ -6,8 +6,8 @@ class CustomCircledButton extends StatelessWidget {
   final Icon icon;
   final Color buttonColor;
 
-  CustomCircledButton(
-      {required this.onPressed,
+  const CustomCircledButton(
+      {super.key, required this.onPressed,
       required this.diameter,
       required this.icon,
       required this.buttonColor});
@@ -18,7 +18,7 @@ class CustomCircledButton extends StatelessWidget {
       onPressed: onPressed,
       style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
-          shape: MaterialStateProperty.all<CircleBorder>(CircleBorder()),
+          shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
           minimumSize:
               MaterialStateProperty.all<Size>(Size(diameter, diameter))),
       child: icon,

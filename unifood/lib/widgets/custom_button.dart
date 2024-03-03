@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -9,8 +8,8 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color textColor;
 
-  CustomButton(
-      {required this.text,
+  const CustomButton(
+      {super.key, required this.text,
       required this.onPressed,
       required this.height,
       required this.width,
@@ -19,7 +18,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color buttonColor = Color(0xFFE2D2B4);
+    Color buttonColor = const Color(0xFFE2D2B4);
 
     return ElevatedButton(
       onPressed: onPressed,

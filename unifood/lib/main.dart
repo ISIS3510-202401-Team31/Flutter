@@ -1,12 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/routes.dart';
-import 'package:unifood/widgets/custom_button.dart';
-import 'package:unifood/widgets/custom_circled_button.dart';
-import 'package:unifood/widgets/custom_restaurant.dart';
-import 'package:unifood/widgets/custom_textformfield.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +33,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       initialRoute: '/',
       onGenerateRoute: Routes.generateRoute,
     );

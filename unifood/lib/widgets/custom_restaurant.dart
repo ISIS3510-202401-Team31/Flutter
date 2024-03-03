@@ -9,8 +9,8 @@ class CustomRestaurant extends StatelessWidget {
   final double rating;
   final double avgPrice;
 
-  CustomRestaurant(
-      {required this.imageUrl,
+  const CustomRestaurant(
+      {super.key, required this.imageUrl,
       required this.logoUrl,
       required this.name,
       required this.isOpen,
@@ -25,7 +25,7 @@ class CustomRestaurant extends StatelessWidget {
         //Lógica para cuando se presione
         print('Card presionado!');
       },
-      child: Container(
+      child: SizedBox(
         width: 335,
         height: 155,
         child: Card(
@@ -50,7 +50,7 @@ class CustomRestaurant extends StatelessWidget {
                 ],
               ),
               Container(
-                color: Color(0xFFE2D2B4),
+                color: const Color(0xFFE2D2B4),
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Row(
@@ -62,13 +62,13 @@ class CustomRestaurant extends StatelessWidget {
                             radius: 15,
                             backgroundImage: NetworkImage(logoUrl),
                           ),
-                          SizedBox(width: 7),
+                          const SizedBox(width: 7),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12.0,
                                   color: Colors.black,
                                   fontFamily: 'Gudea',
@@ -77,7 +77,7 @@ class CustomRestaurant extends StatelessWidget {
                               ),
                               Text(
                                 isOpen ? 'Open' : 'Closed',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 10.0,
                                   fontFamily: 'Gudea',
                                   color: Colors.black,
@@ -92,7 +92,7 @@ class CustomRestaurant extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.wallet,
                                 color: Colors.black,
                                 size: 8.0,
@@ -108,7 +108,7 @@ class CustomRestaurant extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.location_on,
                                 color: Colors.black,
                                 size: 8.0,
@@ -124,7 +124,7 @@ class CustomRestaurant extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.star,
                                 color: Colors.black,
                                 size: 8.0,
