@@ -4,6 +4,8 @@ import 'package:unifood/widgets/custom_circled_button.dart';
 import 'package:unifood/widgets/custom_textformfield.dart';
 
 class Signup extends StatelessWidget {
+  const Signup({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,16 +15,16 @@ class Signup extends StatelessWidget {
         elevation: 0,
         actions: [
           Container(
-            margin: EdgeInsets.only(right: 0),
+            margin: const EdgeInsets.only(right: 0),
             child: Container(
-              padding: EdgeInsets.only(left: 8),
+              padding: const EdgeInsets.only(left: 8),
               height: 45,
               width: 138,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Color(0xFF965E4E),
+                color: const Color(0xFF965E4E),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(Icons.food_bank, color: Colors.black),
@@ -38,13 +40,13 @@ class Signup extends StatelessWidget {
         ],
         flexibleSpace: Container(
           alignment: Alignment.centerLeft,
-          margin: EdgeInsets.only(left: 16, top: 50),
+          margin: const EdgeInsets.only(left: 16, top: 50),
           child: CustomCircledButton(
             onPressed: () {
               Navigator.pushNamed(context, '/landing');
             },
             diameter: 28,
-            icon: Icon(
+            icon: const Icon(
               Icons.chevron_left_sharp,
               color: Colors.black,
             ),
@@ -53,12 +55,12 @@ class Signup extends StatelessWidget {
         ),
       ),
       body: Container(
-        margin: EdgeInsets.only(top: 30),
-        padding: EdgeInsets.symmetric(horizontal: 40),
+        margin: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -83,35 +85,35 @@ class Signup extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 10),
-                CustomTextFormField(
+                const SizedBox(height: 10),
+                const CustomTextFormField(
                   labelText: 'Full name',
                   hintText: 'Type your email here',
                   icon: Icon(Icons.person),
                   obscureText: false,
                 ),
-                SizedBox(height: 7),
-                CustomTextFormField(
+                const SizedBox(height: 7),
+                const CustomTextFormField(
                   labelText: 'Email',
                   hintText: 'Type your email here',
                   icon: Icon(Icons.email),
                   obscureText: false,
                 ),
-                SizedBox(height: 7),
-                CustomTextFormField(
+                const SizedBox(height: 7),
+                const CustomTextFormField(
                   labelText: 'Password',
                   hintText: 'Type your password here',
                   icon: Icon(Icons.lock),
                   obscureText: true,
                 ),
-                SizedBox(height: 7),
-                CustomTextFormField(
+                const SizedBox(height: 7),
+                const CustomTextFormField(
                   labelText: 'Confirm password',
                   hintText: 'Confirm your password here',
                   icon: Icon(Icons.lock),
                   obscureText: true,
                 ),
-                SizedBox(height: 7),
+                const SizedBox(height: 7),
                 CustomButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/homepage');
@@ -122,11 +124,11 @@ class Signup extends StatelessWidget {
                   fontSize: 18,
                   textColor: Colors.black,
                 ),
-                SizedBox(height: 35),
+                const SizedBox(height: 35),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Already a member?',
                       style: TextStyle(
                         fontSize: 17.0,
@@ -134,12 +136,12 @@ class Signup extends StatelessWidget {
                         fontFamily: 'Gudea',
                       ),
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/login');
                       },
-                      child: Text(
+                      child: const Text(
                         'Login',
                         style: TextStyle(
                           fontSize: 17.0,

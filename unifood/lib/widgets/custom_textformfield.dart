@@ -6,8 +6,8 @@ class CustomTextFormField extends StatelessWidget {
   final Icon icon;
   final bool obscureText;
 
-  CustomTextFormField(
-      {required this.labelText,
+  const CustomTextFormField(
+      {super.key, required this.labelText,
       required this.hintText,
       required this.icon,
       required this.obscureText});
@@ -15,7 +15,7 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: PhysicalModel(
           color: Colors.transparent,
           elevation: 3, // Altura del relieve
