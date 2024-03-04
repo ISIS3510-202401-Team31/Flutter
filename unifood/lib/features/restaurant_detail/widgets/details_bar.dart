@@ -28,14 +28,14 @@ class DetailsBar extends StatelessWidget {
           Container(
             height: 40,
             width: 1,
-            color: Color.fromARGB(255, 203, 201, 201),
+            color: const Color.fromARGB(255, 203, 201, 201),
           ),
           // Columna 2
           _buildColumnWithDivider('FoodType', Icons.restaurant_menu, 'Mexican'),
           Container(
             height: 40,
             width: 1,
-            color: Color.fromARGB(255, 203, 201, 201),
+            color: const Color.fromARGB(255, 203, 201, 201),
           ),
           // Columna 3
           _buildColumnWithDivider(
