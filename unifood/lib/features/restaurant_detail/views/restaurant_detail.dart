@@ -7,7 +7,7 @@ import 'package:unifood/features/restaurant_detail/widgets/review_list.dart';
 import 'package:unifood/widgets/custom_circled_button.dart';
 
 class RestaurantDetail extends StatelessWidget {
-  const RestaurantDetail({Key? key});
+  const RestaurantDetail({super.key});
 
   @override
   Widget build(BuildContext context) {

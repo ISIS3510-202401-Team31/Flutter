@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:unifood/widgets/custom_circled_button.dart';
 
 class MenuGrid extends StatelessWidget {
@@ -46,7 +44,7 @@ class MenuGrid extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               CustomCircledButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/landing');
