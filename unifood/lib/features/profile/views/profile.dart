@@ -127,7 +127,7 @@ class Profile extends StatelessWidget {
                       CustomSettingOption(
                         icon: Icons.settings, 
                         text: 'Preferences', 
-                        onPressed: () {},
+                        onPressed: () {Navigator.pushNamed(context, '/preferences');},
                       ),
                       CustomSettingOption(
                         icon: Icons.point_of_sale_rounded, 
