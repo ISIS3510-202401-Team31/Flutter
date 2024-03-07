@@ -23,7 +23,7 @@ class Landing extends StatelessWidget {
               ),
               CustomButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/login');
+                  Navigator.pushNamed(context, '/profile');
                 },
                 text: 'Login',
                 width: 165,
