@@ -10,7 +10,7 @@ class Landing extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/background_landing.png'),
+            image: AssetImage('assets/images/background.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -20,6 +20,19 @@ class Landing extends StatelessWidget {
             children: <Widget>[
               const SizedBox(
                 height: 100,
+              ),
+              Text(
+                'UNIFOOD',
+                style: TextStyle(
+                    fontFamily: 'KeaniaOne', fontSize: 50, color: Colors.white),
+              ),
+              Text(
+                'It´s all here',
+                style: TextStyle(
+                    fontFamily: 'Katibeh', fontSize: 40, color: Colors.white),
+              ),
+              const SizedBox(
+                height: 40,
               ),
               CustomButton(
                 onPressed: () {

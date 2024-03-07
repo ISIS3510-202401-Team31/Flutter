@@ -67,18 +67,18 @@ PreferredSizeWidget _buildCustomAppBar(BuildContext context) {
             children: <Widget>[
               sectionHeader(context, 'Dietary Restrictions', 'Modify Restrictions'),
               CustomSettingOptionWithIcons(
-                imagePath1: 'assets/vegan.png',
-                imagePath2: 'assets/GlutenFree.png',
-                imagePath3: 'assets/NutFree.png',
-                imagePath4: 'assets/SugarFree.png',
+                imagePath1: 'assets/images/vegan.png',
+                imagePath2: 'assets/images/GlutenFree.png',
+                imagePath3: 'assets/images/NutFree.png',
+                imagePath4: 'assets/images/SugarFree.png',
                 onPressed: () {},
               ),
               sectionHeader(context, 'Tastes', 'Modify Tastes'),
               CustomSettingOptionWithIcons(
-                imagePath1: 'assets/Burgers.png',
-                imagePath2: 'assets/Tacos.png',
-                imagePath3: 'assets/Pasta.png',
-                imagePath4: 'assets/Nuggets.png',
+                imagePath1: 'assets/images/Burgers.png',
+                imagePath2: 'assets/images/Tacos.png',
+                imagePath3: 'assets/images/Pasta.png',
+                imagePath4: 'assets/images/Nuggets.png',
                 onPressed: () {},
               ),
               Padding(

@@ -31,7 +31,10 @@ class Signup extends StatelessWidget {
                   SizedBox(width: 8),
                   Text(
                     'UNIFOOD',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'KeaniaOne',
+                        fontSize: 15),
                   ),
                 ],
               ),
@@ -54,107 +57,111 @@ class Signup extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(
-        margin: const EdgeInsets.only(top: 30),
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Create Account',
-                  style: TextStyle(
-                    fontSize: 31.0,
-                    color: Colors.black,
-                    fontFamily: 'Gudea',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Be part of this community!',
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.grey,
-                    fontFamily: 'Gudea',
-                  ),
-                )
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 10),
-                const CustomTextFormField(
-                  labelText: 'Full name',
-                  hintText: 'Type your email here',
-                  icon: Icon(Icons.person),
-                  obscureText: false,
-                ),
-                const SizedBox(height: 7),
-                const CustomTextFormField(
-                  labelText: 'Email',
-                  hintText: 'Type your email here',
-                  icon: Icon(Icons.email),
-                  obscureText: false,
-                ),
-                const SizedBox(height: 7),
-                const CustomTextFormField(
-                  labelText: 'Password',
-                  hintText: 'Type your password here',
-                  icon: Icon(Icons.lock),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 7),
-                const CustomTextFormField(
-                  labelText: 'Confirm password',
-                  hintText: 'Confirm your password here',
-                  icon: Icon(Icons.lock),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 7),
-                CustomButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/homepage');
-                  },
-                  text: 'Sign Up',
-                  width: 151,
-                  height: 41,
-                  fontSize: 18,
-                  textColor: Colors.black,
-                ),
-                const SizedBox(height: 35),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Already a member?',
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        color: Colors.black,
-                        fontFamily: 'Gudea',
-                      ),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.only(top: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Create Account',
+                    style: TextStyle(
+                      fontSize: 31.0,
+                      color: Colors.black,
+                      fontFamily: 'Inika',
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(width: 6),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      child: const Text(
-                        'Login',
+                  ),
+                  Text(
+                    'Be part of this community!',
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      color: Colors.grey,
+                      fontFamily: 'Inika',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
+                  const CustomTextFormField(
+                    labelText: 'Full name',
+                    hintText: 'Type your email here',
+                    icon: Icon(Icons.person),
+                    obscureText: false,
+                  ),
+                  const SizedBox(height: 7),
+                  const CustomTextFormField(
+                    labelText: 'Email',
+                    hintText: 'Type your email here',
+                    icon: Icon(Icons.email),
+                    obscureText: false,
+                  ),
+                  const SizedBox(height: 7),
+                  const CustomTextFormField(
+                    labelText: 'Password',
+                    hintText: 'Type your password here',
+                    icon: Icon(Icons.lock),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 7),
+                  const CustomTextFormField(
+                    labelText: 'Confirm password',
+                    hintText: 'Confirm your password here',
+                    icon: Icon(Icons.lock),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 7),
+                  CustomButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/homepage');
+                    },
+                    text: 'Sign Up',
+                    width: 151,
+                    height: 41,
+                    fontSize: 18,
+                    textColor: Colors.black,
+                  ),
+                  const SizedBox(height: 35),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Already a member?',
                         style: TextStyle(
                           fontSize: 17.0,
-                          color: Color(0xFF965E4E),
+                          color: Colors.black,
                           fontFamily: 'Gudea',
                         ),
                       ),
-                    )
-                  ],
-                )
-              ],
-            )
-          ],
+                      const SizedBox(width: 6),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            color: Color(0xFF965E4E),
+                            fontFamily: 'Gudea',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
