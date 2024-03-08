@@ -23,7 +23,7 @@ class CustomTextFormField extends StatelessWidget {
           labelText: labelText,
           hintText: hintText,
           prefixIcon: icon,
-          border: UnderlineInputBorder(), // Usa UnderlineInputBorder aquí
+          border: const UnderlineInputBorder(), // Usa UnderlineInputBorder aquí
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor),
           ),

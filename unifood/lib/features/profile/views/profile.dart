@@ -20,7 +20,7 @@ class Profile extends StatelessWidget {
             children: <Widget>[
               CustomCircledButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/landing');
+                  Navigator.pushNamed(context, '/restaurants');
                 },
                 diameter: 28,
                 icon: const Icon(
@@ -44,13 +44,15 @@ class Profile extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView( // Wrap the body with SingleChildScrollView
+      body: SingleChildScrollView(
+        // Wrap the body with SingleChildScrollView
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             // Upper Part of the Screen (User Details)
             const Padding(
-              padding: EdgeInsets.only(top: 40.0, left: 20.0, right: 20, bottom: 20),
+              padding:
+                  EdgeInsets.only(top: 40.0, left: 20.0, right: 20, bottom: 20),
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -80,7 +82,8 @@ class Profile extends StatelessWidget {
                   ),
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/images/profile_image.jpg'),
+                    backgroundImage:
+                        AssetImage('assets/images/profile_image.jpg'),
                   ),
                 ],
               ),
@@ -120,31 +123,32 @@ class Profile extends StatelessWidget {
                   Column(
                     children: <Widget>[
                       CustomSettingOption(
-                        icon: Icons.star, 
-                        text: 'Favorites', 
+                        icon: Icons.star,
+                        text: 'Favorites',
                         onPressed: () {},
                       ),
                       CustomSettingOption(
-                        icon: Icons.settings, 
-                        text: 'Preferences', 
-                        onPressed: () {Navigator.pushNamed(context, '/preferences');},
+                        icon: Icons.settings,
+                        text: 'Preferences',
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/preferences');
+                        },
                       ),
                       CustomSettingOption(
-                        icon: Icons.point_of_sale_rounded, 
-                        text: 'Points', 
+                        icon: Icons.point_of_sale_rounded,
+                        text: 'Points',
                         onPressed: () {},
                       ),
                       CustomSettingOption(
-                        icon: Icons.help, 
-                        text: 'Help', 
+                        icon: Icons.help,
+                        text: 'Help',
                         onPressed: () {},
                       ),
                       CustomSettingOption(
-                        icon: Icons.logout, 
-                        text: 'Log Out', 
+                        icon: Icons.logout,
+                        text: 'Log Out',
                         onPressed: () {},
                       ),
-                      
                     ],
                   ),
                 ],

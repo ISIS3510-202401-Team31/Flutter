@@ -7,7 +7,8 @@ class CustomCircledButton extends StatelessWidget {
   final Color buttonColor;
 
   const CustomCircledButton(
-      {super.key, required this.onPressed,
+      {super.key,
+      required this.onPressed,
       required this.diameter,
       required this.icon,
       required this.buttonColor});

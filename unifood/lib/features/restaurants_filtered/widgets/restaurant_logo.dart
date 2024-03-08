@@ -24,7 +24,7 @@ class RestaurantLogo extends StatelessWidget {
           ),
           child: const CircleAvatar(
             radius: 30,
-            backgroundImage: AssetImage('assets/elcarnal_logo.jpeg'),
+            backgroundImage: AssetImage('assets/images/elcarnal_logo.jpeg'),
           ),
         );
   }

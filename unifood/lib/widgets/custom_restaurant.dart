@@ -9,25 +9,31 @@ class CustomRestaurant extends StatelessWidget {
   final double rating;
   final double avgPrice;
 
-  const CustomRestaurant(
-      {super.key, required this.imageUrl,
-      required this.logoUrl,
-      required this.name,
-      required this.isOpen,
-      required this.distance,
-      required this.rating,
-      required this.avgPrice});
+  const CustomRestaurant({
+    super.key,
+    required this.imageUrl,
+    required this.logoUrl,
+    required this.name,
+    required this.isOpen,
+    required this.distance,
+    required this.rating,
+    required this.avgPrice,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Obtenemos el ancho de la pantalla con MediaQuery
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return InkWell(
       onTap: () {
-        //Lógica para cuando se presione
+        Navigator.pushNamed(context, '/restaurant_detail');
         print('Card presionado!');
       },
       child: SizedBox(
-        width: 335,
-        height: 155,
+        width: screenWidth * 0.9,
+        height: screenHeight * 0.17,
         child: Card(
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
@@ -44,9 +50,6 @@ class CustomRestaurant extends StatelessWidget {
                     height: 100.0,
                     fit: BoxFit.cover,
                   ),
-                  Container(
-                    height: 100,
-                  ),
                 ],
               ),
               Container(
@@ -60,7 +63,7 @@ class CustomRestaurant extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 15,
-                            backgroundImage: NetworkImage(logoUrl),
+                            backgroundImage: AssetImage(logoUrl),
                           ),
                           const SizedBox(width: 7),
                           Column(
@@ -140,21 +143,6 @@ class CustomRestaurant extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              // Agrega un Container para la sombra en la parte inferior
-              Container(
-                height: 4, // Altura de la sombra
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.2),
-                      Colors.black.withOpacity(0.1),
-                      Colors.black.withOpacity(0.05),
                     ],
                   ),
                 ),
