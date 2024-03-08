@@ -36,7 +36,7 @@ class _SearchViewState extends State<SearchView> {
         searchController: _searchController,
         onSearchChanged: _performSearch,
         onBackButtonPressed: () {
-          Navigator.pushNamed(context, '/landing');
+          Navigator.pushNamed(context, '/restaurants');
         },
       ),
       body: Padding(
@@ -86,7 +86,7 @@ class _SearchViewState extends State<SearchView> {
       itemBuilder: (context, index) {
         return RestaurantCard(
           name: restaurantsToShow[index],
-          logo: 'assets/images/restaurant_logo1.jpg',
+          logo: 'assets/images/.jpg',
           state: 'Abierto',
         );
       },

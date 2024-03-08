@@ -21,12 +21,12 @@ class Landing extends StatelessWidget {
               const SizedBox(
                 height: 100,
               ),
-              Text(
+              const Text(
                 'UNIFOOD',
                 style: TextStyle(
                     fontFamily: 'KeaniaOne', fontSize: 50, color: Colors.white),
               ),
-              Text(
+              const Text(
                 'It´s all here',
                 style: TextStyle(
                     fontFamily: 'Katibeh', fontSize: 40, color: Colors.white),

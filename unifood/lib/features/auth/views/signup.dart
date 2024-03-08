@@ -43,7 +43,7 @@ class Signup extends StatelessWidget {
         ],
         flexibleSpace: Container(
           alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(left: 16, top: 50),
+          margin: const EdgeInsets.only(left: 16, top: 55),
           child: CustomCircledButton(
             onPressed: () {
               Navigator.pushNamed(context, '/landing');

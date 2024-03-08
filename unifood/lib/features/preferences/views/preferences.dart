@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/widgets/custom_circled_button.dart';
-import 'package:unifood/widgets/custom_settings_button.dart';
-import 'package:unifood/widgets/custom_settings_options.dart';
 import 'package:unifood/widgets/custom_settings_options_preferences.dart';
 
 class Preferences extends StatefulWidget {
@@ -22,7 +20,7 @@ class _PreferencesState extends State<Preferences> {
     "Enable Location while not using the app",
   ];
 
-  List<bool> _isChecked = List<bool>.filled(5, false);
+  final List<bool> _isChecked = List<bool>.filled(5, false);
 
 PreferredSizeWidget _buildCustomAppBar(BuildContext context) {
   return AppBar(
@@ -36,7 +34,7 @@ PreferredSizeWidget _buildCustomAppBar(BuildContext context) {
           Navigator.pushNamed(context, '/profile');
         },
         diameter: 28, 
-        icon: Icon(
+        icon: const Icon(
           Icons.chevron_left_sharp,
           color: Colors.black,
           size: 24, // Reducir el tamaño del icono si es necesario
@@ -100,7 +98,7 @@ PreferredSizeWidget _buildCustomAppBar(BuildContext context) {
                         // ...resto de tus widgets...
                       ],
                     ),
-                    Divider(),
+                    const Divider(),
                     Text(
                       'COP ${_currentRangeValues.start.round()} - COP ${_currentRangeValues.end.round()}',
                       textAlign: TextAlign.center,
@@ -131,7 +129,7 @@ PreferredSizeWidget _buildCustomAppBar(BuildContext context) {
                         },
                       ),
                     ),
-                    Divider(),
+                    const Divider(),
                   ],
                 ),
               ),

@@ -8,13 +8,13 @@ class MenuGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> menuItems = [
       {
-        'name': 'Combo Familiar',
-        'description': 'Descripción del Plato 1',
+        'name': 'Familiar Combo',
+        'description': 'Description',
         'price': 5.99
       },
       {
-        'name': 'Combo Familiar',
-        'description': 'Descripción del Plato 1 aaaaaaaaaaaaaaaaaaaaa',
+        'name': 'Familiar Combo',
+        'description': 'Description',
         'price': 5.99
       },
       // Agrega más elementos según sea necesario
@@ -28,7 +28,7 @@ class MenuGrid extends StatelessWidget {
           Row(
             children: [
               const Text(
-                'Menú',
+                'Menu',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

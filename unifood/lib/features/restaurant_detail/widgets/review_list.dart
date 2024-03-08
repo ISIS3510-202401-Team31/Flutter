@@ -8,16 +8,15 @@ class ReviewList extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> reviews = [
       {
-        'userName': 'Usuario1',
+        'userName': 'User 1',
         'rating': '4.5',
-        'comment': '¡Muy sabroso! Definitivamente volveré.',
+        'comment': '¡Great restaurant, delicious !',
       },
       {
-        'userName': 'Usuario2',
-        'rating': '5.0',
-        'comment': 'Excelente servicio y calidad de comida.',
+        'userName': 'User 2',
+        'rating': '3.5',
+        'comment': '¡Great restaurant, delicious !',
       },
-      // Agrega más elementos según sea necesario
     ];
 
     return Padding(

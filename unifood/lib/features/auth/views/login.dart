@@ -43,7 +43,7 @@ class Login extends StatelessWidget {
         ],
         flexibleSpace: Container(
           alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(left: 16, top: 50),
+          margin: const EdgeInsets.only(left: 16, top: 55),
           child: CustomCircledButton(
             onPressed: () {
               Navigator.pushNamed(context, '/landing');
@@ -107,7 +107,7 @@ class Login extends StatelessWidget {
                   const SizedBox(height: 40),
                   CustomButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/homepage');
+                      Navigator.pushNamed(context, '/restaurants');
                     },
                     text: 'Login',
                     width: 151,
