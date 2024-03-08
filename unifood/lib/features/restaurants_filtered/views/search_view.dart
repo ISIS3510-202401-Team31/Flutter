@@ -20,9 +20,9 @@ class _SearchViewState extends State<SearchView> {
   ];
 
   final List<String> _restaurantLogos = [
-    'assets/elcarnal_logo.jpeg',
-    'assets/elcarnal_logo.jpeg',
-    'assets/elcarnal_logo.jpeg',
+    'assets/images/elcarnal_logo.jpeg',
+    'assets/images/elcarnal_logo.jpeg',
+    'assets/images/elcarnal_logo.jpeg',
   ];
 
   List<String> _searchResults = [];
@@ -86,7 +86,7 @@ class _SearchViewState extends State<SearchView> {
       itemBuilder: (context, index) {
         return RestaurantCard(
           name: restaurantsToShow[index],
-          logo: 'assets/restaurant_logo1.jpg',
+          logo: 'assets/images/restaurant_logo1.jpg',
           state: 'Abierto',
         );
       },
@@ -108,4 +108,3 @@ class _SearchViewState extends State<SearchView> {
     });
   }
 }
-

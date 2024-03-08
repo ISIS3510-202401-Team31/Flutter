@@ -11,7 +11,7 @@ class RestaurantInfo extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 40, left: 30, right: 30),
                   child: Image.asset(
-                    'assets/elcarnal_image.jpg', // Reemplaza con la ubicación de tu imagen banner
+                    'assets/images/elcarnal_image.jpg', // Reemplaza con la ubicación de tu imagen banner
                     height: 150, // Ajusta la altura según tus preferencias
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -25,7 +25,7 @@ class RestaurantInfo extends StatelessWidget {
                       // Imagen del logo
                       CircleAvatar(
                         radius: 30,
-                        backgroundImage: AssetImage('assets/elcarnal_logo.jpeg'),
+                        backgroundImage: AssetImage('assets/images/elcarnal_logo.jpeg'),
                       ),
                       // Espaciado entre el logo y el nombre/teléfono
                       SizedBox(width: 20),

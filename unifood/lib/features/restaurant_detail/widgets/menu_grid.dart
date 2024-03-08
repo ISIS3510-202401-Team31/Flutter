@@ -17,16 +17,6 @@ class MenuGrid extends StatelessWidget {
         'description': 'Descripción del Plato 1 aaaaaaaaaaaaaaaaaaaaa',
         'price': 5.99
       },
-      {
-        'name': 'Combo Familiar',
-        'description': 'Descripción del Plato 1',
-        'price': 5.99
-      },
-      {
-        'name': 'Combo Familiar',
-        'description': 'Descripción del Plato 1',
-        'price': 5.99
-      },
       // Agrega más elementos según sea necesario
     ];
 
@@ -78,7 +68,7 @@ class MenuGrid extends StatelessWidget {
                     AspectRatio(
                       aspectRatio: 1.5, // Adjust as needed
                       child: Image.asset(
-                        'assets/elcarnal_image.jpg',
+                        'assets/images/elcarnal_image.jpg',
                         fit: BoxFit.cover,
                       ),
                     ),

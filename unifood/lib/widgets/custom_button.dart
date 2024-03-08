@@ -9,7 +9,8 @@ class CustomButton extends StatelessWidget {
   final Color textColor;
 
   const CustomButton(
-      {super.key, required this.text,
+      {super.key,
+      required this.text,
       required this.onPressed,
       required this.height,
       required this.width,
@@ -34,9 +35,9 @@ class CustomButton extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          fontSize: fontSize, // Tamaño de la fuente
-          fontFamily: 'Gudea', // Tipo de fuente
-        ),
+            fontSize: fontSize, // Tamaño de la fuente
+            fontFamily: 'Gudea',
+            fontWeight: FontWeight.bold),
       ),
     );
   }
