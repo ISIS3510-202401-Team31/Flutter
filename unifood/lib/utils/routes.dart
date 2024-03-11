@@ -7,7 +7,7 @@ import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
 import 'package:unifood/view/restaurant/dashboard/views/restaurants.dart';
 import 'package:unifood/view/restaurant/search/views/search_view.dart';
 import 'package:unifood/view/profile/preferences/views/preferences.dart';
-
+import 'package:unifood/view/profile/points/views/points.dart';
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -27,6 +27,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const Preferences());
       case '/restaurants': // Define la ruta para los restaurantes
         return MaterialPageRoute(builder: (_) => const Restaurants());
+      case '/points': // Define la ruta para los puntos
+        return MaterialPageRoute(builder: (_) => const Points());
       default:
         return MaterialPageRoute(builder: (_) => const Landing());
     }
