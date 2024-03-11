@@ -137,12 +137,15 @@ class Profile extends StatelessWidget {
                       CustomSettingOption(
                         icon: Icons.point_of_sale_rounded,
                         text: 'Points',
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/points');
+                        },
                       ),
                       CustomSettingOption(
                         icon: Icons.help,
                         text: 'Help',
-                        onPressed: () {},
+                        onPressed: () { 
+                        },
                       ),
                       CustomSettingOption(
                         icon: Icons.logout,
