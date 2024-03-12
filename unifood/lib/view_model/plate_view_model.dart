@@ -21,7 +21,7 @@ class PlateViewModel {
           .toList();
     } catch (error) {
       print('Error fetching menu items in view model: $error');
-      throw error;
+      rethrow;
     }
   }
 }

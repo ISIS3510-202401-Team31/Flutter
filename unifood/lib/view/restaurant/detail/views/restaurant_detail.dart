@@ -1,16 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:unifood/view/restaurant/detail/widgets/details_bar.dart';
-import 'package:unifood/view/restaurant/detail/widgets/location_details.dart';
-import 'package:unifood/view/restaurant/detail/widgets/menu_grid.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.dart';
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
-import 'package:unifood/view/restaurant/detail/widgets/review_list.dart';
+import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
+import 'package:unifood/view_model/plate_view_model.dart';
+import 'package:unifood/view_model/restaurant_view_model.dart';
+import 'package:unifood/view_model/review_view_model.dart';
 
-class RestaurantDetail extends StatelessWidget {
-  const RestaurantDetail({super.key});
+class RestaurantDetail extends StatefulWidget {
+  const RestaurantDetail({Key? key}) : super(key: key);
+
+  @override
+  _RestaurantDetailState createState() => _RestaurantDetailState();
+}
+
+class _RestaurantDetailState extends State<RestaurantDetail> {
+  late Future<List<dynamic>> dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    dataFuture = fetchData();
+  }
+
+  Future<List<dynamic>> fetchData() async {
+    final restaurantInfoData = await RestaurantViewModel().getRestaurantByName("El Carnal");
+    final menuItemsData = await PlateViewModel().getMenuItems();
+    final reviewsData = await ReviewViewModel().getReviews();
+
+    return [restaurantInfoData, menuItemsData, reviewsData];
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -32,25 +59,56 @@ class RestaurantDetail extends StatelessWidget {
           ),
         ),
       ),
-      body: const SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            
-            RestaurantInfo(),
+      body: FutureBuilder<List<dynamic>>(
+        future: dataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: SpinKitThreeBounce(
+                color: Colors.black,
+                size: 30.0,
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Column(
+              children: [
+                Text('Error: ${snapshot.error}'),
+                ElevatedButton(
+                  onPressed: () {
+                    // Retry fetching data
+                    PlateViewModel().getMenuItems();
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            );
+          } else if (snapshot.hasData) {
+            final data = snapshot.data!;
+            final restaurantInfo = RestaurantInfo(restaurant: data[0]);
+            final menuGrid = MenuGrid(menuItems: data[1]);
+            final reviewList = ReviewList(reviews: data[2]);
 
-            DetailsBar(),
-            
-            LocationDetails(),
-
-            MenuGrid(),
-
-            ReviewList(),
-
-          ],
-        ),
+            return Container(
+              height: screenHeight,
+              width: screenWidth,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    restaurantInfo,
+                    menuGrid,
+                    reviewList,
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: Text('No data available.'),
+            );
+          }
+        },
       ),
     );
-  } 
+  }
 }
-

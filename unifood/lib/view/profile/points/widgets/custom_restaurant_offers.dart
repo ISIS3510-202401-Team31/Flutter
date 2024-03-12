@@ -105,7 +105,7 @@ class CustomRestaurantOffers extends StatelessWidget {
                     Navigator.pushNamed(context, '/offers');
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.grey[300], // Button color
                       borderRadius: BorderRadius.circular(15),
@@ -114,11 +114,11 @@ class CustomRestaurantOffers extends StatelessWidget {
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 1,
                           blurRadius: 2,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                    child: Text(
+                    child: const Text(
                       'See Offers',
                       style: TextStyle(
                         color: Colors.black, // Text color

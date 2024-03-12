@@ -36,8 +36,8 @@ class TotalPointsWidget extends StatelessWidget {
                     height: 36,
                   ),
                   const SizedBox(width: 20), // Space between the image and the text
-                  Expanded(
-                    child: const Text(
+                  const Expanded(
+                    child: Text(
                       'Total points available',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),

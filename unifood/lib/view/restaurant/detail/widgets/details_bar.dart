@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 
 class DetailsBar extends StatelessWidget {
-  const DetailsBar({super.key});
+  final String foodType;
+  final double avgPrice;
+  final String workingHours;
+
+  const DetailsBar({
+    Key? key,
+    required this.foodType,
+    required this.avgPrice,
+    required this.workingHours,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Container(
+
       margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      width: screenWidth * 0.9,
+      height: screenHeight * 0.085,
+
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -23,23 +38,21 @@ class DetailsBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Columna 1
-          _buildColumnWithDivider('Price', Icons.attach_money, '\$10.99'),
+          _buildColumnWithDivider(' Avg Price', Icons.attach_money,
+              '${avgPrice.toStringAsFixed(1)} k'),
           Container(
             height: 40,
             width: 1,
             color: const Color.fromARGB(255, 203, 201, 201),
           ),
-          // Columna 2
-          _buildColumnWithDivider('FoodType', Icons.restaurant_menu, 'Mexican'),
+          _buildColumnWithDivider('FoodType', Icons.restaurant_menu, foodType),
           Container(
             height: 40,
             width: 1,
             color: const Color.fromARGB(255, 203, 201, 201),
           ),
-          // Columna 3
           _buildColumnWithDivider(
-              'Working hours', Icons.access_time, '8:00 AM - 10:00 PM'),
+              'Working hours', Icons.access_time, workingHours),
         ],
       ),
     );

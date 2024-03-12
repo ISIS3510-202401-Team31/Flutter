@@ -1,84 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/view/restaurant/detail/widgets/details_bar.dart';
+import 'package:unifood/view/restaurant/detail/widgets/location_details.dart';
 import 'package:unifood/view/restaurant/detail/widgets/rating_stars.dart';
 
 class RestaurantInfo extends StatelessWidget {
-  const RestaurantInfo({super.key});
+  final Restaurant restaurant;
+
+  const RestaurantInfo({Key? key, required this.restaurant}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      width: screenWidth * 0.9,
+      height: screenHeight * 0.62,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 40, left: 30, right: 30),
+            child: Image.asset(
+              restaurant.imageUrl,
+              height: screenHeight * 0.2,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: screenHeight * 0.02, left: screenWidth * 0.08, right: screenWidth * 0.08),
+            child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, left: 30, right: 30),
-                  child: Image.asset(
-                    'assets/images/elcarnal_image.jpg', // Reemplaza con la ubicación de tu imagen banner
-                    height: 150, // Ajusta la altura según tus preferencias
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                CircleAvatar(
+                  radius: screenHeight * 0.035,
+                  backgroundImage: AssetImage(restaurant.logoUrl),
                 ),
-                // Fila con el logo, nombre y teléfono
-                const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 30, right: 30),
-                  child: Row(
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Imagen del logo
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('assets/images/elcarnal_logo.jpeg'),
-                      ),
-                      // Espaciado entre el logo y el nombre/teléfono
-                      SizedBox(width: 20),
-                      // Columna con nombre y teléfono
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'El Carnal',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '+123 456 789', // Reemplaza con el número de teléfono real
-                              style: TextStyle(
-                                  fontSize: 14), // Ajusta el tamaño del texto
-                            ),
-                          ],
+                      Text(
+                        restaurant.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      // Columna con likes y estrellas
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                '3',
-                                style: TextStyle(
-                                    fontSize: 14), // Ajusta el tamaño del texto
-                              ),
-                              SizedBox(width: 5),
-                              Icon(
-                                Icons.favorite,
-                                color: Colors.red,
-                                size: 16, // Ajusta el tamaño del icono
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 5), // Ajusta según tus preferencias
-                          // Utilizando el widget RatingBar
-                          RatingStars(
-                              rating: 4.5,
-                              iconSize: 16), // Ajusta el tamaño del icono
-                        ],
+                      Text(
+                        restaurant.phoneNumber,
+                        style: const TextStyle(fontSize: 14),
                       ),
                     ],
                   ),
                 ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          restaurant.likes.toString(),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(width: 5),
+                        const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    RatingStars(
+                      rating: restaurant.rating,
+                      iconSize: 16,
+                    ),
+                  ],
+                ),
               ],
-            );
+            ),
+          ),
+          DetailsBar(
+            foodType: restaurant.foodType,
+            avgPrice: restaurant.avgPrice,
+            workingHours: restaurant.workingHours,
+          ),
+          LocationDetails(
+            address: restaurant.address,
+            addressDetail: restaurant.addressDetail,
+            distance: restaurant.distance,
+          ),
+        ],
+      ),
+    );
   }
 }
