@@ -102,7 +102,7 @@ class CustomRestaurantOffers extends StatelessWidget {
                 bottom: 5, // Adjusted to position above the card's bottom edge
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, '/offers');
+                  Navigator.pushNamed(context, '/offers');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
