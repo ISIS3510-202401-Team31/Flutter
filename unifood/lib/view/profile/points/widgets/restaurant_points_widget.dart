@@ -130,8 +130,7 @@ class RestaurantPointsWidget extends StatelessWidget {
                     // Action for "see more" button
                   },
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 3.0), // Reduced padding for a tighter fit
-                    primary: Colors.black, // Text color
+                    foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 3.0), // Text color
                   ),
                   child: const Text('See more', style: TextStyle(fontSize: 14)),
                 ),
