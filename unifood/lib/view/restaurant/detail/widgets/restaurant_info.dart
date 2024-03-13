@@ -27,7 +27,7 @@ class RestaurantInfo extends StatelessWidget {
                   padding: EdgeInsets.only(top: screenHeight * 0.04, left: screenWidth * 0.08, right: screenWidth * 0.08),
                   child: Image.asset(
                     restaurant.imageUrl,
-                    height: screenHeight * 0.115,
+                    height: screenHeight * 0.12,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),

@@ -34,25 +34,31 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(left: 16, top: 50),
-          child: CustomCircledButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/landing');
-            },
-            diameter: 28,
-            icon: const Icon(
-              Icons.chevron_left_sharp,
-              color: Colors.black,
+      appBar:  PreferredSize(
+        preferredSize: Size.fromHeight(screenHeight * 0.025),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          flexibleSpace: Container(
+            alignment: Alignment.centerLeft,
+            margin:  EdgeInsets.only(left: screenWidth*0.015 , top: screenHeight*0.03),
+            child: CustomCircledButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/landing');
+              },
+              diameter: 28,
+              icon: const Icon(
+                Icons.chevron_left_sharp,
+                color: Colors.black,
+              ),
+              buttonColor: Colors.white,
             ),
-            buttonColor: Colors.white,
           ),
         ),
       ),
