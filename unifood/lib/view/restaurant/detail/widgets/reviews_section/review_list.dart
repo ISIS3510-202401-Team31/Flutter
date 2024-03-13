@@ -33,7 +33,7 @@ class _ReviewListState extends State<ReviewList> {
                 Text(
                   'Reviews',
                   style: TextStyle(
-                    fontSize: screenWidth * 0.045,
+                    fontSize: screenHeight * 0.02,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -49,6 +49,7 @@ class _ReviewListState extends State<ReviewList> {
                         ? Icons.keyboard_arrow_down
                         : Icons.keyboard_arrow_up,
                     color: Colors.black,
+                    size: screenHeight * 0.03,
                   ),
                   buttonColor: Colors.white,
                 ),

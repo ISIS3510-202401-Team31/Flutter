@@ -45,11 +45,11 @@ class LocationDetails extends StatelessWidget {
                       children: [
                         Text(
                           address,
-                          style:  TextStyle(fontSize: screenHeight * 0.015),
+                          style:  TextStyle(fontSize: screenHeight * 0.017),
                         ),
                         Text(
                           addressDetail,
-                          style:  TextStyle(fontSize: screenHeight * 0.015),
+                          style:  TextStyle(fontSize: screenHeight * 0.017),
                         ),
                       ],
                     ),
@@ -61,7 +61,7 @@ class LocationDetails extends StatelessWidget {
                         children: [
                           Text(
                             '${distance.toString()} km away',
-                            style:  TextStyle(fontSize: screenHeight * 0.015),
+                            style:  TextStyle(fontSize: screenHeight * 0.017),
                           ),
                           SizedBox(width: screenWidth * 0.01),
                            Icon(
@@ -78,8 +78,8 @@ class LocationDetails extends StatelessWidget {
                             // Add the desired functionality for the button
                           },
                           height: screenHeight * 0.025,
-                          width: screenWidth * 0.2,
-                          fontSize: screenHeight * 0.0115,
+                          width: screenWidth * 0.015,
+                          fontSize: screenWidth * 0.025,
                           textColor: Colors.black,
                         ),
                       ),

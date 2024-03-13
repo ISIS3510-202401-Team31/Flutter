@@ -33,7 +33,7 @@ class _MenuGridState extends State<MenuGrid> {
                  Text(
                   'Menu',
                   style: TextStyle(
-                    fontSize:  screenWidth * 0.045,
+                    fontSize:  screenHeight * 0.02,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -43,12 +43,13 @@ class _MenuGridState extends State<MenuGrid> {
                       isGridVisible = !isGridVisible;
                     });
                   },
-                  diameter: screenHeight * 0.005,
+                  diameter: screenHeight * 0.0025,
                   icon: Icon(
                     isGridVisible
                         ? Icons.keyboard_arrow_down
                         : Icons.keyboard_arrow_up,
                     color: Colors.black,
+                    size: screenHeight * 0.03,
                   ),
                   buttonColor: Colors.white,
                 ),
