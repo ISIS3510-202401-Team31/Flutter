@@ -17,56 +17,62 @@ class _ReviewListState extends State<ReviewList> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Reviews',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              CustomCircledButton(
-                onPressed: () {
-                  setState(() {
-                    areReviewsVisible = !areReviewsVisible;
-                  });
-                },
-                diameter: 28,
-                icon: Icon(
-                  areReviewsVisible
-                      ? Icons.keyboard_arrow_down
-                      : Icons.keyboard_arrow_up,
-                  color: Colors.black,
-                ),
-                buttonColor: Colors.white,
-              ),
-            ],
-          ),
-          Visibility(
-            visible: areReviewsVisible,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: widget.reviews.map((review) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: ReviewCard(
-                    userImage: review.userImage,
-                    name: review.name,
-                    rating: review.rating,
-                    comment: review.comment,
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      width: screenWidth * 0.9,
+      child: Padding(
+        padding: EdgeInsets.symmetric( horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Reviews',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              }).toList(),
+                ),
+                CustomCircledButton(
+                  onPressed: () {
+                    setState(() {
+                      areReviewsVisible = !areReviewsVisible;
+                    });
+                  },
+                  diameter: screenHeight * 0.005,
+                  icon: Icon(
+                    areReviewsVisible
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    color: Colors.black,
+                  ),
+                  buttonColor: Colors.white,
+                ),
+              ],
             ),
-          ),
-        ],
+            Visibility(
+              visible: areReviewsVisible,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: widget.reviews.map((review) {
+                  return Padding(
+                    padding:  EdgeInsets.symmetric(vertical: screenHeight * 0.005),
+                    child: ReviewCard(
+                      userImage: review.userImage,
+                      name: review.name,
+                      rating: review.rating,
+                      comment: review.comment,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -34,7 +34,7 @@ class ReviewCard extends StatelessWidget {
                     radius: screenHeight * 0.035,
                     backgroundImage: AssetImage(userImage),
                   ),
-                  const SizedBox(width: 20),
+                  SizedBox(width: screenWidth * 0.05),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,8 +43,8 @@ class ReviewCard extends StatelessWidget {
                           children: [
                             Text(
                               name,
-                              style: const TextStyle(
-                                fontSize: 16,
+                              style:  TextStyle(
+                                fontSize: screenWidth * 0.035,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -53,24 +53,25 @@ class ReviewCard extends StatelessWidget {
                               children: [
                                 Text(
                                   rating.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 14,
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.035,
                                   ),
                                 ),
-                                const SizedBox(width: 5),
-                                const Icon(
+                                 SizedBox(width: screenWidth * 0.01),
+                                 Icon(
                                   Icons.star,
                                   color: Colors.yellow,
-                                  size: 16,
+                                  size: screenWidth * 0.035,
                                 ),
                               ],
                             ),
                           ],
                         ),
+                        SizedBox(height: screenHeight * 0.01),
                         Text(
                           comment,
-                          style: const TextStyle(
-                            fontSize: 12,
+                          style:  TextStyle(
+                            fontSize: screenWidth * 0.03,
                           ),
                         ),
                       ],

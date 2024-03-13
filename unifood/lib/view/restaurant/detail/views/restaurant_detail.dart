@@ -35,9 +35,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   @override
   Widget build(BuildContext context) {
 
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -89,8 +86,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             final reviewList = ReviewList(reviews: data[2]);
 
             return Container(
-              height: screenHeight,
-              width: screenWidth,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

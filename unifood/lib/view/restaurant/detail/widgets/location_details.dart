@@ -18,75 +18,78 @@ class LocationDetails extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 20, left: 30, right: 30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Location',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+    return Container(
+      width: screenWidth * 0.9,
+      height: screenHeight * 0.1,
+      child: Padding(
+        padding:  EdgeInsets.only(top: screenWidth*0.03, left:  screenWidth*0.03, right:  screenWidth*0.03),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+             Text(
+              'Location',
+              style: TextStyle(
+                fontSize: screenHeight * 0.02,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 5),
-          SizedBox(
-            width: screenWidth * 0.9,
-            height: screenHeight * 0.06, // Adjusted height
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        address,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        addressDetail,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
+            SizedBox(height: screenHeight * 0.005),
+            Container(
+              height: screenHeight * 0.05,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${distance.toString()} km away',
-                          style: const TextStyle(fontSize: 14),
+                          address,
+                          style:  TextStyle(fontSize: screenHeight * 0.015),
                         ),
-                        const SizedBox(width: 2),
-                        const Icon(
-                          Icons.location_on,
-                          color: Color.fromARGB(255, 129, 128, 128),
-                          size: 14,
+                        Text(
+                          addressDetail,
+                          style:  TextStyle(fontSize: screenHeight * 0.015),
                         ),
                       ],
                     ),
-                    Flexible(
-                      child: CustomButton(
-                        text: 'Open in Google Maps',
-                        onPressed: () {
-                          // Add the desired functionality for the button
-                        },
-                        height: screenHeight * 0.025, // Adjusted height
-                        width: screenWidth * 0.2,
-                        fontSize: 10,
-                        textColor: Colors.black,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '${distance.toString()} km away',
+                            style:  TextStyle(fontSize: screenHeight * 0.015),
+                          ),
+                          SizedBox(width: screenWidth * 0.01),
+                           Icon(
+                            Icons.location_on,
+                            color: Color.fromARGB(255, 129, 128, 128),
+                            size: screenHeight * 0.02,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Flexible(
+                        child: CustomButton(
+                          text: 'Open in Google Maps',
+                          onPressed: () {
+                            // Add the desired functionality for the button
+                          },
+                          height: screenHeight * 0.025,
+                          width: screenWidth * 0.2,
+                          fontSize: screenHeight * 0.0115,
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

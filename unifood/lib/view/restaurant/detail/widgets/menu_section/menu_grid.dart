@@ -17,20 +17,23 @@ class _MenuGridState extends State<MenuGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
-      width: MediaQuery.of(context).size.width * 0.9,
+      width: screenWidth * 0.9,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+        padding: EdgeInsets.symmetric( horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                 Text(
                   'Menu',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize:  screenWidth * 0.045,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -40,7 +43,7 @@ class _MenuGridState extends State<MenuGrid> {
                       isGridVisible = !isGridVisible;
                     });
                   },
-                  diameter: 28,
+                  diameter: screenHeight * 0.005,
                   icon: Icon(
                     isGridVisible
                         ? Icons.keyboard_arrow_down

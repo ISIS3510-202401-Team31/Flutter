@@ -16,8 +16,8 @@ class PlateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return InkWell(
       onTap: () {
@@ -32,7 +32,7 @@ class PlateCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(4.0)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(screenWidth * 0.02)),
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
@@ -43,8 +43,8 @@ class PlateCard extends StatelessWidget {
                 padding: const EdgeInsets.all(4.0),
                 child: Text(
                   name,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.03,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
@@ -59,8 +59,8 @@ class PlateCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         description,
-                        style: const TextStyle(
-                          fontSize: 10,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.025,
                           color: Colors.black,
                         ),
                         maxLines: 2,
@@ -70,8 +70,8 @@ class PlateCard extends StatelessWidget {
                     const SizedBox(width: 8.0),
                     Text(
                       '\$${price.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 10,
+                      style:  TextStyle(
+                        fontSize: screenWidth * 0.025,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),

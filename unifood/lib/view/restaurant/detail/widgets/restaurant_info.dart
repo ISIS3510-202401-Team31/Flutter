@@ -16,68 +16,74 @@ class RestaurantInfo extends StatelessWidget {
 
     return Container(
       width: screenWidth * 0.9,
-      height: screenHeight * 0.62,
+      height: screenHeight * 0.5,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 40, left: 30, right: 30),
-            child: Image.asset(
-              restaurant.imageUrl,
-              height: screenHeight * 0.2,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.02, left: screenWidth * 0.08, right: screenWidth * 0.08),
-            child: Row(
+          Container(
+            height: screenHeight * 0.25,
+            child: Column(
               children: [
-                CircleAvatar(
-                  radius: screenHeight * 0.035,
-                  backgroundImage: AssetImage(restaurant.logoUrl),
+                Padding(
+                  padding: EdgeInsets.only(top: screenHeight * 0.04, left: screenWidth * 0.08, right: screenWidth * 0.08),
+                  child: Image.asset(
+                    restaurant.imageUrl,
+                    height: screenHeight * 0.115,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                Padding(
+                  padding: EdgeInsets.only(top: screenHeight * 0.02, left: screenWidth * 0.08, right: screenWidth * 0.08),
+                  child: Row(
                     children: [
-                      Text(
-                        restaurant.name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      CircleAvatar(
+                        radius: screenHeight * 0.028,
+                        backgroundImage: AssetImage(restaurant.logoUrl),
+                      ),
+                      SizedBox(width: screenWidth * 0.04),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              restaurant.name,
+                              style:  TextStyle(
+                                fontSize: screenWidth * 0.045,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              restaurant.phoneNumber,
+                              style:  TextStyle(fontSize: screenWidth * 0.03),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        restaurant.phoneNumber,
-                        style: const TextStyle(fontSize: 14),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                restaurant.likes.toString(),
+                                style:  TextStyle(fontSize: screenWidth * 0.035),
+                              ),
+                              SizedBox(width: screenWidth * 0.01),
+                               Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                                size: screenWidth * 0.04,
+                              ),
+                            ],
+                          ),
+                          RatingStars(
+                            rating: restaurant.rating,
+                            iconSize: screenWidth * 0.04,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          restaurant.likes.toString(),
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(width: 5),
-                        const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    RatingStars(
-                      rating: restaurant.rating,
-                      iconSize: 16,
-                    ),
-                  ],
                 ),
               ],
             ),
