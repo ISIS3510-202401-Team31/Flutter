@@ -40,19 +40,19 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
     return Scaffold(
       appBar:  PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight * 0.025),
+        preferredSize: Size.fromHeight(screenHeight * 0.05),
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
           flexibleSpace: Container(
             alignment: Alignment.centerLeft,
-            margin:  EdgeInsets.only(left: screenWidth*0.015 , top: screenHeight*0.04),
+            margin:  EdgeInsets.only(left: screenWidth*0.015 , top: screenHeight*0.045),
             child: CustomCircledButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/restaurants');
               },
-              diameter: 28,
+              diameter: screenHeight * 0.0335,
               icon: Icon(
                 Icons.chevron_left_sharp,
                 color: Colors.black,
