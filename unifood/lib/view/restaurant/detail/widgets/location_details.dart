@@ -1,59 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/view/widgets/custom_button.dart';
 
 class LocationDetails extends StatelessWidget {
-  const LocationDetails({super.key});
+  final String address;
+  final String addressDetail;
+  final double distance;
+
+  const LocationDetails({
+    Key? key,
+    required this.address,
+    required this.addressDetail,
+    required this.distance,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(top: 20, left: 30, right: 30),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Location',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'CityU, Local 213', // Reemplaza con el número de teléfono real
-                  style: TextStyle(fontSize: 14), // Ajusta el tamaño del texto
-                ),
-                Text(
-                  'Cra 13 #1-98', // Reemplaza con el número de teléfono real
-                  style: TextStyle(fontSize: 14), // Ajusta el tamaño del texto
-                ),
-              ],
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      width: screenWidth * 0.9,
+      height: screenHeight * 0.11,
+      child: Padding(
+        padding:  EdgeInsets.only(top: screenWidth*0.03, left:  screenWidth*0.03, right:  screenWidth*0.03),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+             Text(
+              'Location',
+              style: TextStyle(
+                fontSize: screenHeight * 0.0225,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          // Columna con likes y estrellas
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
+            SizedBox(height: screenHeight * 0.005),
+            Container(
+              height: screenHeight * 0.05,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '3km away',
-                    style:
-                        TextStyle(fontSize: 14), // Ajusta el tamaño del texto
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          address,
+                          style:  TextStyle(fontSize: screenHeight * 0.017),
+                        ),
+                        Text(
+                          addressDetail,
+                          style:  TextStyle(fontSize: screenHeight * 0.017),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(width: 5),
-                  Icon(
-                    Icons.location_on,
-                    color: Color.fromARGB(255, 129, 128, 128),
-                    size: 16, // Ajusta el tamaño del icono
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '${distance.toString()} km away',
+                            style:  TextStyle(fontSize: screenHeight * 0.017),
+                          ),
+                          SizedBox(width: screenWidth * 0.01),
+                           Icon(
+                            Icons.location_on,
+                            color: Color.fromARGB(255, 129, 128, 128),
+                            size: screenHeight * 0.02,
+                          ),
+                        ],
+                      ),
+                      Flexible(
+                        child: CustomButton(
+                          text: 'Open in Map',
+                          onPressed: () {
+                            // Add the desired functionality for the button
+                          },
+                          height: screenHeight * 0.025,
+                          width: screenWidth * 0.015,
+                          fontSize: screenWidth * 0.025,
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(height: 5),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

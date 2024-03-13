@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 
 class DetailsBar extends StatelessWidget {
-  const DetailsBar({super.key});
+  final String foodType;
+  final double avgPrice;
+  final String workingHours;
+
+  const DetailsBar({
+    Key? key,
+    required this.foodType,
+    required this.avgPrice,
+    required this.workingHours,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin:  EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
+      padding:  EdgeInsets.only(top: screenHeight * 0.015, left: screenWidth * 0.05, right: screenWidth * 0.05),
+      width: screenWidth * 0.9,
+      height: screenHeight * 0.085,
+      
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -23,45 +37,44 @@ class DetailsBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Columna 1
-          _buildColumnWithDivider('Price', Icons.attach_money, '\$10.99'),
+          _buildColumnWithDivider(' Avg Price', Icons.attach_money,
+              '${avgPrice.toStringAsFixed(1)} k', screenHeight, screenWidth),
           Container(
-            height: 40,
+            height: screenHeight * 0.05,
             width: 1,
             color: const Color.fromARGB(255, 203, 201, 201),
           ),
-          // Columna 2
-          _buildColumnWithDivider('FoodType', Icons.restaurant_menu, 'Mexican'),
+          _buildColumnWithDivider('FoodType', Icons.restaurant_menu, foodType, screenHeight, screenWidth),
           Container(
-            height: 40,
+            height: screenHeight * 0.05,
             width: 1,
             color: const Color.fromARGB(255, 203, 201, 201),
           ),
-          // Columna 3
           _buildColumnWithDivider(
-              'Working hours', Icons.access_time, '8:00 AM - 10:00 PM'),
+              'Working hours', Icons.access_time, workingHours, screenHeight, screenWidth),
         ],
       ),
     );
   }
 
-  Widget _buildColumnWithDivider(String title, IconData icon, String content) {
+  Widget _buildColumnWithDivider(String title, IconData icon, String content, double height, double width) {
     return Column(
       children: [
         Row(
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 12),
+              style:  TextStyle(fontSize: height * 0.0125),
             ),
-            Icon(icon, size: 12),
+            SizedBox(width: width * 0.01),
+            Icon(icon, size: height * 0.0125),
           ],
         ),
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 5),
+          margin:  EdgeInsets.symmetric(vertical: height*0.0075),
           child: Text(
             content,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            style:  TextStyle(fontWeight: FontWeight.bold, fontSize: height * 0.015),
           ),
         ),
       ],
