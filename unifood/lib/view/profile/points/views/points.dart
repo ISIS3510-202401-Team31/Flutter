@@ -15,10 +15,10 @@ class Points extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            TotalPointsWidget(totalPoints: 300), // Use the previously defined widget
+            const TotalPointsWidget(totalPoints: 300), // Use the previously defined widget
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 8.0), // Small horizontal margin
-              child: Divider(color: Colors.grey, thickness: 1), // The horizontal line
+              child: const Divider(color: Colors.grey, thickness: 1), // The horizontal line
             ),
             RestaurantPointsWidget(
               restaurantPointsList: [
@@ -29,7 +29,7 @@ class Points extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 8.0), // Small horizontal margin
-              child: Divider(color: Colors.grey, thickness: 1), // The horizontal line
+              child: const Divider(color: Colors.grey, thickness: 1), // The horizontal line
             ),
             // Use the CustomRestaurant widget twice for example
             const Padding(
@@ -46,7 +46,7 @@ class Points extends StatelessWidget {
                 ),
               ),
             ),
-            CustomRestaurantOffers(
+            const CustomRestaurantOffers(
               imageUrl: 'assets/images/elcarnal_image.jpg',
               logoUrl: 'assets/images/elcarnal_logo.jpeg',
               name: 'El Carnal',
@@ -55,7 +55,7 @@ class Points extends StatelessWidget {
               rating: 4.5,
               avgPrice: 12,
             ),
-            CustomRestaurantOffers(
+            const CustomRestaurantOffers(
               imageUrl: 'assets/images/elcarnal_image.jpg',
               logoUrl: 'assets/images/elcarnal_logo.jpeg',
               name: 'El Carnal',

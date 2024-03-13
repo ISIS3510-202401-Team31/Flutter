@@ -17,7 +17,7 @@ class RestaurantPoints {
 class RestaurantPointsWidget extends StatelessWidget {
   final List<RestaurantPoints> restaurantPointsList;
 
-  RestaurantPointsWidget({Key? key, required this.restaurantPointsList})
+  const RestaurantPointsWidget({Key? key, required this.restaurantPointsList})
       : super(key: key);
 
   Widget _buildHeader(String text) {
