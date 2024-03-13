@@ -64,48 +64,49 @@ class Profile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                   Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.05, left: screenWidth *0.05, right: screenWidth *0.05),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Pedro Perez',
-                                  style: TextStyle(
-                                    fontSize: screenHeight * 0.0275,
-                                    fontWeight: FontWeight.bold,
+                   Container(
+                     child: Padding(
+                      padding: EdgeInsets.only(top: screenHeight * 0.05, left: screenWidth *0.05, right: screenWidth *0.05),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'Pedro Perez',
+                                    style: TextStyle(
+                                      fontSize: screenHeight * 0.0275,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: screenHeight * 0.0025),
-                                Text(
-                                  'pedroperez@uniandes.edu.co',
-                                  style: TextStyle(
-                                    fontSize: screenHeight * 0.02,
-                                    color: Colors.grey,
+                                  SizedBox(height: screenHeight * 0.0025),
+                                  Text(
+                                    'pedroperez@uniandes.edu.co',
+                                    style: TextStyle(
+                                      fontSize: screenHeight * 0.02,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        CircleAvatar(
-                          radius: screenHeight * 0.05,
-                          backgroundImage:
-                              AssetImage('assets/images/profile_image.jpg'),
-                        ),
-                      ],
-                    ),
-                  ),
+                          CircleAvatar(
+                            radius: screenHeight * 0.05,
+                            backgroundImage:
+                                AssetImage('assets/images/profile_image.jpg'),
+                          ),
+                        ],
+                      ),
+                                       ),
+                   ),
                   // Rest of the Page (Settings Buttons)
                   Container(
-                    color: Colors.blue,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.075),
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.075, vertical: screenHeight *0.015),
                       child: Column(
                         children: <Widget>[
                           Row(
