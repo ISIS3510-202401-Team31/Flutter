@@ -21,11 +21,12 @@ class ReviewCard extends StatelessWidget {
 
     return Card(
       elevation: 3,
+      color: Colors.white,
       child: SizedBox(
         width: screenWidth * 0.9,
         height: screenHeight * 0.10,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               Row(
@@ -34,7 +35,7 @@ class ReviewCard extends StatelessWidget {
                     radius: screenHeight * 0.035,
                     backgroundImage: AssetImage(userImage),
                   ),
-                  SizedBox(width: screenWidth * 0.05),
+                  SizedBox(width: screenWidth * 0.025),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +68,7 @@ class ReviewCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: screenHeight * 0.01),
+                        SizedBox(height: screenHeight * 0.005),
                         Text(
                           comment,
                           style:  TextStyle(

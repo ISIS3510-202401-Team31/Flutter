@@ -20,7 +20,7 @@ class LocationDetails extends StatelessWidget {
 
     return Container(
       width: screenWidth * 0.9,
-      height: screenHeight * 0.1,
+      height: screenHeight * 0.11,
       child: Padding(
         padding:  EdgeInsets.only(top: screenWidth*0.03, left:  screenWidth*0.03, right:  screenWidth*0.03),
         child: Column(
@@ -29,7 +29,7 @@ class LocationDetails extends StatelessWidget {
              Text(
               'Location',
               style: TextStyle(
-                fontSize: screenHeight * 0.02,
+                fontSize: screenHeight * 0.0225,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -73,7 +73,7 @@ class LocationDetails extends StatelessWidget {
                       ),
                       Flexible(
                         child: CustomButton(
-                          text: 'Open in Google Maps',
+                          text: 'Open in Map',
                           onPressed: () {
                             // Add the desired functionality for the button
                           },

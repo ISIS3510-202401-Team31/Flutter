@@ -48,7 +48,7 @@ class RestaurantInfo extends StatelessWidget {
                             Text(
                               restaurant.name,
                               style:  TextStyle(
-                                fontSize: screenWidth * 0.045,
+                                fontSize: screenHeight * 0.0225,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

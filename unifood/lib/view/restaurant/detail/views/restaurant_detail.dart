@@ -47,15 +47,16 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           elevation: 0,
           flexibleSpace: Container(
             alignment: Alignment.centerLeft,
-            margin:  EdgeInsets.only(left: screenWidth*0.015 , top: screenHeight*0.03),
+            margin:  EdgeInsets.only(left: screenWidth*0.015 , top: screenHeight*0.04),
             child: CustomCircledButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/landing');
+                Navigator.pushNamed(context, '/restaurants');
               },
               diameter: 28,
-              icon: const Icon(
+              icon: Icon(
                 Icons.chevron_left_sharp,
                 color: Colors.black,
+                size: screenHeight * 0.0335
               ),
               buttonColor: Colors.white,
             ),

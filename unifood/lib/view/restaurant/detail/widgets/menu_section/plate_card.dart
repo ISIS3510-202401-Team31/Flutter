@@ -25,6 +25,7 @@ class PlateCard extends StatelessWidget {
       },
       child: Card(
         elevation: 2,
+        color: Colors.white,
         child: SizedBox(
           width: screenWidth * 0.9,
           height: screenHeight * 0.25,
