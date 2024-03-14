@@ -9,7 +9,7 @@ import 'package:unifood/view/restaurant/search/views/search_view.dart';
 import 'package:unifood/view/profile/preferences/views/preferences.dart';
 import 'package:unifood/view/profile/points/views/points.dart';
 import 'package:unifood/view/restaurant/offers/views/offers.dart';
-
+import 'package:unifood/view/restaurant/filtermenu/views/filter_menu.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -34,7 +34,9 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const Points());
       case '/offers': // Define la ruta para las ofertas
         return MaterialPageRoute(builder: (_) => const OffersPage());
-
+      case '/filtermenu': // Define la ruta para filtrar el menu
+        return MaterialPageRoute(builder: (_) => const FilterMenu());
+      
       default:
         return MaterialPageRoute(builder: (_) => const Landing());
     }
