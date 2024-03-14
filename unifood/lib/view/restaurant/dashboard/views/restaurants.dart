@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
@@ -15,58 +16,27 @@ class Restaurants extends StatelessWidget {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight * 0.05),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: [
-            Container(
-              margin: const EdgeInsets.only(right: 0),
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only( left: screenWidth * 0.015),
-                    height: screenHeight,
-                    width: screenWidth * 0.5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color(0xFF965E4E),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(Icons.food_bank, color: Colors.black),
-                        SizedBox(width: 8),
-                        Text(
-                          'UNIFOOD',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'KeaniaOne',
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
+        preferredSize: Size.fromHeight(screenHeight * 0.06),
+        child: CustomAppBar(
+          screenHeight: screenHeight,
+          screenWidth: screenWidth,
+          showBackButton: false,
+          rightWidget: Row(
+            children: [
+              Container(
+                child: CustomCircledButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/profile');
+                  },
+                  diameter: 36,
+                  icon: const Icon(
+                    Icons.person,
+                    color: Colors.black,
                   ),
-                ],
+                  buttonColor: const Color(0xFF965E4E),
+                ),
               ),
-            ),
-          ],
-          flexibleSpace: Container(
-            alignment: Alignment.centerLeft,
-            margin: const EdgeInsets.only(left: 16, top: 55),
-            child: CustomCircledButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/profile');
-              },
-              diameter: 36,
-              icon: const Icon(
-                Icons.person,
-                color: Colors.black,
-              ),
-              buttonColor: const Color(0xFF965E4E),
-            ),
+            ],
           ),
         ),
       ),
