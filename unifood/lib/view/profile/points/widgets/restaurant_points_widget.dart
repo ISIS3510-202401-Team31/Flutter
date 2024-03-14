@@ -14,78 +14,51 @@ class RestaurantPoints {
   });
 }
 
-class RestaurantPointsWidget extends StatelessWidget {
+class RestaurantPointsWidget extends StatefulWidget {
   final List<RestaurantPoints> restaurantPointsList;
 
-  const RestaurantPointsWidget({Key? key, required this.restaurantPointsList})
-      : super(key: key);
+  const RestaurantPointsWidget({Key? key, required this.restaurantPointsList}) : super(key: key);
 
-  Widget _buildHeader(String text) {
-    return Expanded(
-      flex: 2,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2), // Add space between each box
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: const Offset(0, 2),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        alignment: Alignment.center,
-        child: Text(text, style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
-      ),
-    );
-  }
+  @override
+  _RestaurantPointsWidgetState createState() => _RestaurantPointsWidgetState();
+}
 
-  Widget _buildPoints(int points) {
-    return Expanded(
-      flex: 2,
-      child: Text(
-        '$points',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-      ),
-    );
-  }
+class _RestaurantPointsWidgetState extends State<RestaurantPointsWidget> {
+  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
+    // Usar MediaQuery para ajustar dinámicamente el tamaño y el espacio
+    final screenWidth = MediaQuery.of(context).size.width;
+    final imageSize = screenWidth * 0.1; // Ajusta el tamaño de la imagen basado en el ancho de pantalla
+    final fontSize = screenWidth * 0.04; // Ajusta el tamaño del texto basado en el ancho de pantalla
+    final iconSize = screenWidth * 0.08; // Ajusta el tamaño del ícono basado en el ancho de pantalla
+
+    final pointsToShow = _isExpanded ? widget.restaurantPointsList : widget.restaurantPointsList.take(3).toList();
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const SizedBox(height: 20),
-          const Text(
-            'Restaurant Points',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(width: 50), // Adjust for larger image space
-              _buildHeader('Earned'),
-              _buildHeader('Redeemed'),
-              _buildHeader('Available'),
+              SizedBox(width: imageSize), // Usa imageSize para ajustar el espacio para la imagen
+              _buildHeader('Earned', fontSize),
+              _buildHeader('Redeemed', fontSize),
+              _buildHeader('Available', fontSize),
             ],
           ),
-          const SizedBox(height: 12),
-          ...restaurantPointsList.map((point) => Padding(
-            padding: const EdgeInsets.only(bottom: 20.0), // More space between rows
+          SizedBox(height: screenWidth * 0.03), // Ajusta el espacio vertical basado en el ancho de pantalla
+          ...pointsToShow.map((point) => Padding(
+            padding: EdgeInsets.only(bottom: screenWidth * 0.05), // Ajusta el espacio entre filas basado en el ancho de pantalla
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  width: 50, // Larger image size
-                  height: 50,
+                  width: imageSize, // Usa imageSize para el tamaño de la imagen
+                  height: imageSize, // Usa imageSize para el tamaño de la imagen
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     boxShadow: [
@@ -102,42 +75,57 @@ class RestaurantPointsWidget extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                   ),
                 ),
-                _buildPoints(point.earnedPoints),
-                _buildPoints(point.redeemedPoints),
-                _buildPoints(point.availablePoints),
+                _buildPoints(point.earnedPoints, fontSize),
+                _buildPoints(point.redeemedPoints, fontSize),
+                _buildPoints(point.availablePoints, fontSize),
               ],
             ),
           )).toList(),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    // Action for "see more" button
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 3.0), // Text color
-                  ),
-                  child: const Text('See more', style: TextStyle(fontSize: 14)),
-                ),
-              ),
+          if (widget.restaurantPointsList.length > 3) // Solo muestra el botón si hay más de 3 puntos
+            IconButton(
+              icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more, size: iconSize, color: Colors.grey),
+              onPressed: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
             ),
-          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(String text, double fontSize) {
+    return Expanded(
+      flex: 2,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: const Offset(0, 2),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        alignment: Alignment.center,
+        child: Text(text, style: TextStyle(fontWeight: FontWeight.normal, fontSize: fontSize)),
+      ),
+    );
+  }
+
+  Widget _buildPoints(int points, double fontSize) {
+    return Expanded(
+      flex: 2,
+      child: Text(
+        '$points',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
       ),
     );
   }

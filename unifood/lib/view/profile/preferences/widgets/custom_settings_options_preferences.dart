@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
 
 class CustomSettingOptionWithIcons extends StatelessWidget {
-  final String imagePath1, imagePath2, imagePath3, imagePath4;
+  final List<String> imagePaths;
+  final List<String> texts;
   final VoidCallback onPressed;
-  final double imageSize; // Nuevo parámetro para el tamaño de las imágenes
+  final double imageSize;
 
   const CustomSettingOptionWithIcons({
-    required this.imagePath1,
-    required this.imagePath2,
-    required this.imagePath3,
-    required this.imagePath4,
+    required this.imagePaths,
+    required this.texts,
     required this.onPressed,
-    this.imageSize = 80, // Valor por defecto de 80, ajusta según necesidad
+    this.imageSize = 70, // Valor por defecto, ajusta según necesidad
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double itemWidth = imageSize + 20; // Espacio adicional para padding y separación
+    double fontSize = screenWidth * 0.035;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), // Añadir margen
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -34,14 +36,24 @@ class CustomSettingOptionWithIcons extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround, // Distribuir espacio uniformemente
-          children: <Widget>[
-            Image.asset(imagePath1, width: imageSize),
-            Image.asset(imagePath2, width: imageSize),
-            Image.asset(imagePath3, width: imageSize),
-            Image.asset(imagePath4, width: imageSize),
-          ],
+        height: imageSize + fontSize * 3, // Ajustar basado en el tamaño de imagen y texto
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: imagePaths.length,
+          itemBuilder: (context, index) {
+            return Container(
+              width: itemWidth,
+              padding: EdgeInsets.symmetric(horizontal: 10), // Añade un poco de espacio entre los elementos
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(imagePaths[index], width: imageSize, height: imageSize),
+                  SizedBox(height: 4), // Espacio entre la imagen y el texto
+                  Text(texts[index], style: TextStyle(fontSize: fontSize * 0.9, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
