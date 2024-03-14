@@ -34,20 +34,27 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
   @override
   Widget build(BuildContext context) {
-    
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar:  PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(screenHeight * 0.05),
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search, size: screenWidth * 0.07),
+              onPressed: () {
+                Navigator.pushNamed(context, "/filtermenu");
+              },
+            ),
+          ],
           flexibleSpace: Container(
             alignment: Alignment.centerLeft,
-            margin:  EdgeInsets.only(left: screenWidth*0.015 , top: screenHeight*0.045),
+            margin: EdgeInsets.only(left: screenWidth * 0.015, top: screenHeight * 0.045),
             child: CustomCircledButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/restaurants');
@@ -56,7 +63,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               icon: Icon(
                 Icons.chevron_left_sharp,
                 color: Colors.black,
-                size: screenHeight * 0.0335
+                size: screenHeight * 0.0335,
               ),
               buttonColor: Colors.white,
             ),
@@ -79,8 +86,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 Text('Error: ${snapshot.error}'),
                 ElevatedButton(
                   onPressed: () {
-                    // Retry fetching data
-                    PlateViewModel().getMenuItems();
+                    setState(() {
+                      dataFuture = fetchData(); // Recargar los datos
+                    });
                   },
                   child: const Text('Retry'),
                 ),
