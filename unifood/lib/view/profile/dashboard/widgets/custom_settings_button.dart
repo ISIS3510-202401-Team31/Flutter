@@ -14,9 +14,11 @@ class CustomSettingsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.all(10),
+        margin: EdgeInsets.all(screenWidth * 0.025),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: backgroundColor,
@@ -26,6 +28,7 @@ class CustomSettingsButton extends StatelessWidget {
           icon: Icon(
             icon,
             color: Colors.white,
+            size: screenWidth * 0.06,
           ),
         ),
       ),

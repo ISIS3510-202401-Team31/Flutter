@@ -24,8 +24,11 @@ class RestaurantInfo extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: screenHeight * 0.04, left: screenWidth * 0.08, right: screenWidth * 0.08),
-                  child: Image.asset(
+                  padding: EdgeInsets.only(
+                      top: screenHeight * 0.04,
+                      left: screenWidth * 0.08,
+                      right: screenWidth * 0.08),
+                  child: Image.network(
                     restaurant.imageUrl,
                     height: screenHeight * 0.12,
                     width: double.infinity,
@@ -33,12 +36,15 @@ class RestaurantInfo extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: screenHeight * 0.02, left: screenWidth * 0.08, right: screenWidth * 0.08),
+                  padding: EdgeInsets.only(
+                      top: screenHeight * 0.02,
+                      left: screenWidth * 0.08,
+                      right: screenWidth * 0.08),
                   child: Row(
                     children: [
                       CircleAvatar(
                         radius: screenHeight * 0.028,
-                        backgroundImage: AssetImage(restaurant.logoUrl),
+                        backgroundImage: NetworkImage(restaurant.logoUrl),
                       ),
                       SizedBox(width: screenWidth * 0.04),
                       Expanded(
@@ -47,14 +53,14 @@ class RestaurantInfo extends StatelessWidget {
                           children: [
                             Text(
                               restaurant.name,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: screenHeight * 0.0225,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               restaurant.phoneNumber,
-                              style:  TextStyle(fontSize: screenWidth * 0.03),
+                              style: TextStyle(fontSize: screenWidth * 0.03),
                             ),
                           ],
                         ),
@@ -66,10 +72,10 @@ class RestaurantInfo extends StatelessWidget {
                             children: [
                               Text(
                                 restaurant.likes.toString(),
-                                style:  TextStyle(fontSize: screenWidth * 0.035),
+                                style: TextStyle(fontSize: screenWidth * 0.035),
                               ),
                               SizedBox(width: screenWidth * 0.01),
-                               Icon(
+                              Icon(
                                 Icons.favorite,
                                 color: Colors.red,
                                 size: screenWidth * 0.04,
