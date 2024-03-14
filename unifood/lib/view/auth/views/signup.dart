@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
@@ -8,13 +9,16 @@ class Signup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          Container(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(screenHeight * 0.06),
+        child: CustomAppBar(
+          screenHeight: screenHeight,
+          screenWidth: screenWidth,
+          showBackButton: true,
+          rightWidget: Container(
             margin: const EdgeInsets.only(right: 0),
             child: Container(
               padding: const EdgeInsets.only(left: 8),
@@ -39,21 +43,6 @@ class Signup extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
-        flexibleSpace: Container(
-          alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(left: 16, top: 55),
-          child: CustomCircledButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/landing');
-            },
-            diameter: 28,
-            icon: const Icon(
-              Icons.chevron_left_sharp,
-              color: Colors.black,
-            ),
-            buttonColor: Colors.white,
           ),
         ),
       ),

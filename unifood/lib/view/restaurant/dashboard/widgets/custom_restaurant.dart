@@ -26,7 +26,7 @@ class CustomRestaurant extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double basePadding = screenWidth * 0.01;
     double avatarRadius = screenWidth * 0.04;
-    double fontSize = screenWidth * 0.028;
+    double fontSize = screenWidth * 0.027;
 
     return InkWell(
       onTap: () {
@@ -64,7 +64,8 @@ class CustomRestaurant extends StatelessWidget {
                             SizedBox(width: screenWidth * 0.02),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center, // Alinea los textos verticalmente al centro
+                              mainAxisAlignment: MainAxisAlignment
+                                  .center, // Alinea los textos verticalmente al centro
                               children: [
                                 Text(
                                   name,
@@ -89,11 +90,12 @@ class CustomRestaurant extends StatelessWidget {
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center, // Alinea verticalmente al centro
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // Alinea verticalmente al centro
                           children: [
                             Row(
                               children: [
-                                 Icon(
+                                Icon(
                                   Icons.wallet,
                                   color: Colors.black,
                                   size: fontSize * 0.8,
@@ -110,7 +112,7 @@ class CustomRestaurant extends StatelessWidget {
                             ),
                             Row(
                               children: [
-                                 Icon(
+                                Icon(
                                   Icons.location_on,
                                   color: Colors.black,
                                   size: fontSize * 0.8,
@@ -127,7 +129,7 @@ class CustomRestaurant extends StatelessWidget {
                             ),
                             Row(
                               children: [
-                                 Icon(
+                                Icon(
                                   Icons.star,
                                   color: Colors.black,
                                   size: fontSize * 0.8,
