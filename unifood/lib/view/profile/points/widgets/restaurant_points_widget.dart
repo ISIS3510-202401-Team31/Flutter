@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/view/profile/points/widgets/build_header_points.dart';
 
 class RestaurantPoints {
   final String imagePath;
@@ -45,9 +46,9 @@ class _RestaurantPointsWidgetState extends State<RestaurantPointsWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(width: imageSize), // Usa imageSize para ajustar el espacio para la imagen
-              _buildHeader('Earned', fontSize),
-              _buildHeader('Redeemed', fontSize),
-              _buildHeader('Available', fontSize),
+              CustomHeaderWidget (text: 'Earned', fontSize: MediaQuery.of(context).size.width * 0.04,),
+              CustomHeaderWidget (text: 'Redeemed', fontSize: MediaQuery.of(context).size.width * 0.04,),
+              CustomHeaderWidget (text: 'Available', fontSize: MediaQuery.of(context).size.width * 0.04,),
             ],
           ),
           SizedBox(height: screenWidth * 0.03), // Ajusta el espacio vertical basado en el ancho de pantalla
@@ -95,29 +96,7 @@ class _RestaurantPointsWidgetState extends State<RestaurantPointsWidget> {
     );
   }
 
-  Widget _buildHeader(String text, double fontSize) {
-    return Expanded(
-      flex: 2,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: const Offset(0, 2),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        alignment: Alignment.center,
-        child: Text(text, style: TextStyle(fontWeight: FontWeight.normal, fontSize: fontSize)),
-      ),
-    );
-  }
+
 
   Widget _buildPoints(int points, double fontSize) {
     return Expanded(

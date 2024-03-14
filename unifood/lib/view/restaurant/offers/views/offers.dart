@@ -6,29 +6,39 @@ class OffersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy data for the offers
+    double screenWidth = MediaQuery.of(context).size.width;
+
+
+    double titleFontSize = screenWidth < 350 ? 16 : 18;
+    double subTitleFontSize = screenWidth < 350 ? 12 : 14;
+    double pointsFontSize = screenWidth < 350 ? 20 : 22;
+
+    EdgeInsets padding = screenWidth < 350
+        ? const EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 8.0)
+        : const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0);
+    EdgeInsets gridPadding = screenWidth < 350
+        ? const EdgeInsets.all(8)
+        : const EdgeInsets.all(10);
+
     final List<Map<String, dynamic>> offers = [
       {
-        'imagePath': 'assets/images/oferta1.png', 
+        'imagePath': 'assets/images/oferta1.png',
         'mainText': '50% off on Combo Familiar',
         'subText': 'Available until 21/02/2024',
         'points': 100,
       },
-
-            {
-        'imagePath': 'assets/images/oferta2.jpg', 
+      {
+        'imagePath': 'assets/images/oferta2.jpg',
         'mainText': '50% off on Combo Montañero',
         'subText': 'Available until 02/03/2024',
         'points': 10,
       },
-
       {
-        'imagePath': 'assets/images/oferta3.png', 
+        'imagePath': 'assets/images/oferta3.png',
         'mainText': '50% off on Combo Burrito para 2',
         'subText': 'Available until 12/01/2024',
         'points': 200,
       },
-      
     ];
 
     return Scaffold(
@@ -46,7 +56,7 @@ class OffersPage extends StatelessWidget {
           children: [
             const Divider(height: 1, thickness: 1, indent: 16, endIndent: 16),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
+              padding: padding,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -55,21 +65,21 @@ class OffersPage extends StatelessWidget {
                     radius: 36,
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "El Carnal",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: titleFontSize,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           "306-9855122",
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: subTitleFontSize,
                             color: Colors.black54,
                           ),
                         ),
@@ -77,7 +87,7 @@ class OffersPage extends StatelessWidget {
                     ),
                   ),
                   Column(
-                    children: [
+                    children:  [
                       const Row(
                         children: [
                           Text(
@@ -105,14 +115,14 @@ class OffersPage extends StatelessWidget {
             ),
             const Divider(height: 1, thickness: 1, indent: 16, endIndent: 16),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0), // Add more vertical padding
+              padding: padding,
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: pointsFontSize,
                     color: Colors.black,
                   ),
-                  children: <TextSpan>[
+                  children: const <TextSpan>[
                     TextSpan(text: "You have: ", style: TextStyle(fontWeight: FontWeight.bold)),
                     TextSpan(text: "40 points", style: TextStyle(color: Colors.grey)),
                   ],
@@ -120,29 +130,28 @@ class OffersPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 24.0), // Add more vertical padding
+              padding: padding,
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: pointsFontSize,
                     color: Colors.black,
                   ),
-                  children: <TextSpan>[
+                  children: const <TextSpan>[
                     TextSpan(text: "You have redeemed: ", style: TextStyle(fontWeight: FontWeight.bold)),
                     TextSpan(text: "1 offer", style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ),
             ),
-        
             const Divider(height: 1, thickness: 1, indent: 16, endIndent: 16),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.8, // Increased aspect ratio
+              padding: gridPadding,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: screenWidth < 600 ? 2 : 3, 
+                childAspectRatio: 0.75, 
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
@@ -154,13 +163,10 @@ class OffersPage extends StatelessWidget {
                   mainText: offer['mainText'],
                   subText: offer['subText'],
                   points: offer['points'],
-                  onRedeem: () {
-                    // TODO: Implement redeem action
-                  },
+                  onRedeem: () {},
                 );
               },
             ),
-            // You might need to add some padding at the bottom if content is still overflowing
             SizedBox(height: MediaQuery.of(context).size.height * 0.1),
           ],
         ),
