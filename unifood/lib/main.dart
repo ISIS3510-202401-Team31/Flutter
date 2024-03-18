@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:unifood/utils/routes.dart';
 
 void main() async {
-
   //Firebase connection
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -14,7 +13,7 @@ void main() async {
 
   //Device orientation
   SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp, 
+    DeviceOrientation.portraitUp,
   ]);
 
   runApp(const MyApp());
