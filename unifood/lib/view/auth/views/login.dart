@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/auth.dart';
 import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
@@ -9,8 +11,13 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(screenHeight * 0.06),
@@ -80,14 +87,16 @@ class Login extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                  const CustomTextFormField(
+                   CustomTextFormField(
+                    controller: emailController,
                     labelText: 'Email',
                     hintText: 'Type your email here',
                     icon: Icon(Icons.email),
                     obscureText: false,
                   ),
                   const SizedBox(height: 20),
-                  const CustomTextFormField(
+                   CustomTextFormField(
+                    controller: passwordController,
                     labelText: 'Password',
                     hintText: 'Type your password here',
                     icon: Icon(Icons.lock),
@@ -95,8 +104,31 @@ class Login extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
                   CustomButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/restaurants');
+                    onPressed: () async {
+                      Users? user = await Auth().signInWithEmailPassword(
+                          emailController.text, passwordController.text);
+                      if (user != null) {
+                        // El inicio de sesión fue exitoso, navega a la página de restaurantes
+                        Navigator.pushNamed(context, '/restaurants');
+                      } else {
+                        // El inicio de sesión falló, muestra un AlertDialog
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Error de inicio de sesión'),
+                            content: Text(
+                                'No se pudo iniciar sesión. Por favor, revisa tus credenciales.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Aceptar'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
                     text: 'Login',
                     width: 151,

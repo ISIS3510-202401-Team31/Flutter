@@ -5,6 +5,8 @@ class CustomTextFormField extends StatelessWidget {
   final String hintText;
   final Icon icon;
   final bool obscureText;
+  final TextEditingController controller;
+
 
   const CustomTextFormField({
     super.key,
@@ -12,6 +14,7 @@ class CustomTextFormField extends StatelessWidget {
     required this.hintText,
     required this.icon,
     required this.obscureText,
+    required this.controller,
   });
 
   @override
@@ -19,6 +22,7 @@ class CustomTextFormField extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
           labelText: labelText,
           hintText: hintText,
