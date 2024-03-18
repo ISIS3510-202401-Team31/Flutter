@@ -80,7 +80,7 @@ class RestaurantViewModel {
       for (var item in data) {
         final distance = await _calculateDistance(
             userLocation.latitude, userLocation.longitude, item['address']);
-        if (distance <= 2000) {
+        if (distance <= 1000000) {
           // Comparar después de esperar la finalización del cálculo de distancia
           nearbyRestaurants.add(
             Restaurant(
@@ -120,30 +120,36 @@ class RestaurantViewModel {
     }
   }
 
-  // Método privado para calcular la distancia entre la ubicación del usuario y la dirección del restaurante
   Future<double> _calculateDistance(
       double userLat, double userLong, String restaurantAddress) async {
     try {
-      // Llamada a la API de geocodificación de Google para obtener las coordenadas de la dirección del restaurante
       final Uri uri = Uri.parse(
-          'https://maps.googleapis.com/maps/api/geocode/json?address=$restaurantAddress&key=AIzaSyAHuj9dpFqM7DGHHE6uCbn4jlnQw86BY2g');
+          'https://maps.googleapis.com/maps/api/geocode/json?address=$restaurantAddress&key=AIzaSyBb4b5sqCf59Z7yyWQ73FtHN8vYzIpRvag');
       final response = await http.get(uri);
-
       if (response.statusCode == 200) {
         final decodedData = json.decode(response.body);
-        final location = decodedData['results'][0]['geometry']['location'];
-        final restaurantLat = location['lat'];
-        final restaurantLong = location['lng'];
 
-        // Calcula la distancia entre las coordenadas del usuario y las del restaurante
-        final distance = _calculateDistanceInMeters(
-            userLat, userLong, restaurantLat, restaurantLong);
-        return distance;
+        print('Respuesta de la API de geocodificación: $decodedData');
+
+        if (decodedData.containsKey('results') &&
+            decodedData['results'].isNotEmpty) {
+          final location = decodedData['results'][0]['geometry']['location'];
+          final restaurantLat = location['lat'];
+          final restaurantLong = location['lng'];
+
+          final distance = _calculateDistanceInMeters(
+              userLat, userLong, restaurantLat, restaurantLong);
+          return distance;
+        } else {
+          throw Exception(
+              'No se encontraron datos de ubicación válidos para la dirección del restaurante');
+        }
       } else {
-        throw Exception('Failed to get coordinates for restaurant address');
+        throw Exception(
+            'Error al obtener las coordenadas de la dirección del restaurante. Código de estado: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error calculating distance: $error');
+      print('Error al calcular la distancia: $error');
       rethrow;
     }
   }
