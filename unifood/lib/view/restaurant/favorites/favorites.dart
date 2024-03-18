@@ -5,47 +5,14 @@ import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
-import 'package:permission_handler/permission_handler.dart';
 
-class Restaurants extends StatefulWidget {
-  const Restaurants({Key? key}) : super(key: key);
-
-  @override
-  _RestaurantsState createState() => _RestaurantsState();
-}
-
-class _RestaurantsState extends State<Restaurants> {
-  bool _locationPermissionGranted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _requestLocationPermission();
-  }
-
-  Future<void> _requestLocationPermission() async {
-    final PermissionStatus status = await Permission.location.request();
-    if (status == PermissionStatus.granted) {
-      setState(() {
-        _locationPermissionGranted = true;
-      });
-    }
-  }
+class Favorites extends StatelessWidget {
+  const Favorites({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth * 0.027;
-
-    if (!_locationPermissionGranted) {
-      // Si el permiso de ubicación aún no se ha concedido, muestra un indicador de carga
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -53,21 +20,9 @@ class _RestaurantsState extends State<Restaurants> {
         child: CustomAppBar(
           screenHeight: screenHeight,
           screenWidth: screenWidth,
-          showBackButton: false,
+          showBackButton: true,
           rightWidget: Row(
             children: [
-              Container(
-                child: CustomCircledButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/favorites');
-                    },
-                    diameter: 36,
-                    icon: const Icon(
-                      Icons.favorite,
-                      color: Colors.black,
-                    ),
-                    buttonColor: const Color(0xFF965E4E)),
-              ),
               Container(
                 child: CustomCircledButton(
                   onPressed: () {
@@ -86,16 +41,15 @@ class _RestaurantsState extends State<Restaurants> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.01, left: 20, right: 20),
+        padding: const EdgeInsets.only(top: 10.0, left: 20, right: 20),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'All restaurants',
-                  style: TextStyle(
-                      fontFamily: 'KeaniaOne', fontSize: fontSize * 1.8),
+                const Text(
+                  'Favorite Restaurants',
+                  style: TextStyle(fontFamily: 'KeaniaOne', fontSize: 22),
                 ),
                 IconButton(
                   onPressed: () {
@@ -153,16 +107,15 @@ class _RestaurantsState extends State<Restaurants> {
                 }
               },
             ),
-            SizedBox(height: screenHeight * 0.015),
-            Row(
+            const SizedBox(height: 20),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 7),
+                  padding: EdgeInsets.only(bottom: 7),
                   child: Text(
-                    'Nearby',
-                    style: TextStyle(
-                        fontFamily: 'KeaniaOne', fontSize: fontSize * 1.8),
+                    'Favorite Plates',
+                    style: TextStyle(fontFamily: 'KeaniaOne', fontSize: 22),
                   ),
                 ),
               ],
@@ -172,9 +125,9 @@ class _RestaurantsState extends State<Restaurants> {
               height: 2,
               color: const Color(0xFF965E4E),
             ),
-            SizedBox(height: screenHeight * 0.01),
+            const SizedBox(height: 10),
             FutureBuilder<List<Restaurant>>(
-              future: RestaurantViewModel().getRestaurantsNearby(),
+              future: RestaurantViewModel().getRestaurants(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -212,7 +165,6 @@ class _RestaurantsState extends State<Restaurants> {
                 }
               },
             ),
-            SizedBox(height: screenHeight * 0.01),
           ],
         ),
       ),

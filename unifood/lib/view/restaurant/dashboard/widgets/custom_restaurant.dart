@@ -35,7 +35,7 @@ class CustomRestaurant extends StatelessWidget {
       child: Card(
         child: Container(
           width: screenWidth * 0.9,
-          height: screenHeight * 0.16,
+          height: screenHeight * 0.165,
           child: Column(
             children: [
               Expanded(
