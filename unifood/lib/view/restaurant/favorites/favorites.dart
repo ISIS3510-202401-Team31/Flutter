@@ -6,14 +6,13 @@ import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
 
-class Restaurants extends StatelessWidget {
-  const Restaurants({Key? key}) : super(key: key);
+class Favorites extends StatelessWidget {
+  const Favorites({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth * 0.027;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -21,21 +20,9 @@ class Restaurants extends StatelessWidget {
         child: CustomAppBar(
           screenHeight: screenHeight,
           screenWidth: screenWidth,
-          showBackButton: false,
+          showBackButton: true,
           rightWidget: Row(
             children: [
-              Container(
-                child: CustomCircledButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/favorites');
-                    },
-                    diameter: 36,
-                    icon: const Icon(
-                      Icons.favorite,
-                      color: Colors.black,
-                    ),
-                    buttonColor: const Color(0xFF965E4E)),
-              ),
               Container(
                 child: CustomCircledButton(
                   onPressed: () {
@@ -54,16 +41,15 @@ class Restaurants extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.01, left: 20, right: 20),
+        padding: const EdgeInsets.only(top: 10.0, left: 20, right: 20),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'All restaurants',
-                  style: TextStyle(
-                      fontFamily: 'KeaniaOne', fontSize: fontSize * 1.8),
+                const Text(
+                  'Favorite Restaurants',
+                  style: TextStyle(fontFamily: 'KeaniaOne', fontSize: 22),
                 ),
                 IconButton(
                   onPressed: () {
@@ -121,16 +107,15 @@ class Restaurants extends StatelessWidget {
                 }
               },
             ),
-            SizedBox(height: screenHeight * 0.015),
-            Row(
+            const SizedBox(height: 20),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 7),
+                  padding: EdgeInsets.only(bottom: 7),
                   child: Text(
-                    'Nearby',
-                    style: TextStyle(
-                        fontFamily: 'KeaniaOne', fontSize: fontSize * 1.8),
+                    'Favorite Plates',
+                    style: TextStyle(fontFamily: 'KeaniaOne', fontSize: 22),
                   ),
                 ),
               ],
@@ -140,7 +125,7 @@ class Restaurants extends StatelessWidget {
               height: 2,
               color: const Color(0xFF965E4E),
             ),
-            SizedBox(height: screenHeight * 0.01),
+            const SizedBox(height: 10),
             FutureBuilder<List<Restaurant>>(
               future: RestaurantViewModel().getRestaurants(),
               builder: (context, snapshot) {
@@ -180,7 +165,6 @@ class Restaurants extends StatelessWidget {
                 }
               },
             ),
-            SizedBox(height: screenHeight * 0.01),
           ],
         ),
       ),
