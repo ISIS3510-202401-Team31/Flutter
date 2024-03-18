@@ -5,15 +5,47 @@ import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class Restaurants extends StatelessWidget {
+class Restaurants extends StatefulWidget {
   const Restaurants({Key? key}) : super(key: key);
+
+  @override
+  _RestaurantsState createState() => _RestaurantsState();
+}
+
+class _RestaurantsState extends State<Restaurants> {
+  bool _locationPermissionGranted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _requestLocationPermission();
+  }
+
+  Future<void> _requestLocationPermission() async {
+    final PermissionStatus status = await Permission.location.request();
+    if (status == PermissionStatus.granted) {
+      setState(() {
+        _locationPermissionGranted = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth * 0.027;
+
+    if (!_locationPermissionGranted) {
+      // Si el permiso de ubicación aún no se ha concedido, muestra un indicador de carga
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -142,7 +174,7 @@ class Restaurants extends StatelessWidget {
             ),
             SizedBox(height: screenHeight * 0.01),
             FutureBuilder<List<Restaurant>>(
-              future: RestaurantViewModel().getRestaurants(),
+              future: RestaurantViewModel().getRestaurantsNearby(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
