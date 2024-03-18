@@ -1,9 +1,8 @@
-import 'package:unifood/model/restaurant_entity.dart';
-import 'package:unifood/repository/restaurant_repository.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:unifood/model/restaurant_entity.dart';
 import 'dart:math' as math;
+
+import 'package:unifood/repository/restaurant_repository.dart';
 
 class RestaurantViewModel {
   final RestaurantRepository _restaurantRepository = RestaurantRepository();
@@ -26,9 +25,11 @@ class RestaurantViewModel {
               foodType: item['foodType'] ?? '',
               phoneNumber: item['phoneNumber'] ?? '',
               workingHours: item['workingHours'] ?? '',
-              likes: item['likes'].toInt() ?? 0,
+              likes: item['likes']?.toInt() ?? 0, // Cambiado a ?.toInt()
               address: item['address'] ?? '',
               addressDetail: item['addressDetail'] ?? '',
+              latitude: item['latitud'] ?? '',
+              longitude: item['longitud'] ?? '',
             ),
           )
           .toList();
@@ -55,9 +56,11 @@ class RestaurantViewModel {
           foodType: data['foodType'] ?? '',
           phoneNumber: data['phoneNumber'] ?? '',
           workingHours: data['workingHours'] ?? '',
-          likes: data['likes'].toInt() ?? 0,
+          likes: data['likes']?.toInt() ?? 0, // Cambiado a ?.toInt()
           address: data['address'] ?? '',
           addressDetail: data['addressDetail'] ?? '',
+          latitude: data['latitud'] ?? '',
+          longitude: data['longitud'] ?? '',
         );
       } else {
         return null;
@@ -74,12 +77,19 @@ class RestaurantViewModel {
           await _getUserLocation(); // Obtener la ubicación del usuario
       final List<Map<String, dynamic>> data = await _restaurantRepository
           .getRestaurants(); // Obtener los datos de los restaurantes
-
       // Filtrar los restaurantes por distancia
       final List<Restaurant> nearbyRestaurants = [];
       for (var item in data) {
-        final distance = await _calculateDistance(
-            userLocation.latitude, userLocation.longitude, item['address']);
+
+        final restaurantLat = double.parse(item['latitud']);
+        final restaurantLong = double.parse(item['longitud']);
+        final distance = _calculateDistanceInMeters(
+            userLocation.latitude, userLocation.longitude, restaurantLat, restaurantLong);
+        print(userLocation.latitude);
+        print(userLocation.longitude);
+        print(restaurantLat);
+        print(restaurantLong);
+        print(distance);
         if (distance <= 1000000) {
           // Comparar después de esperar la finalización del cálculo de distancia
           nearbyRestaurants.add(
@@ -94,9 +104,11 @@ class RestaurantViewModel {
               foodType: item['foodType'] ?? '',
               phoneNumber: item['phoneNumber'] ?? '',
               workingHours: item['workingHours'] ?? '',
-              likes: item['likes'].toInt() ?? 0,
+              likes: item['likes']?.toInt() ?? 0, // Cambiado a ?.toInt()
               address: item['address'] ?? '',
               addressDetail: item['addressDetail'] ?? '',
+              latitude: item['latitud'] ?? '',
+              longitude: item['longitud'] ?? '',
             ),
           );
         }
@@ -120,39 +132,7 @@ class RestaurantViewModel {
     }
   }
 
-  Future<double> _calculateDistance(
-      double userLat, double userLong, String restaurantAddress) async {
-    try {
-      final Uri uri = Uri.parse(
-          'https://maps.googleapis.com/maps/api/geocode/json?address=$restaurantAddress&key=AIzaSyBb4b5sqCf59Z7yyWQ73FtHN8vYzIpRvag');
-      final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final decodedData = json.decode(response.body);
 
-        print('Respuesta de la API de geocodificación: $decodedData');
-
-        if (decodedData.containsKey('results') &&
-            decodedData['results'].isNotEmpty) {
-          final location = decodedData['results'][0]['geometry']['location'];
-          final restaurantLat = location['lat'];
-          final restaurantLong = location['lng'];
-
-          final distance = _calculateDistanceInMeters(
-              userLat, userLong, restaurantLat, restaurantLong);
-          return distance;
-        } else {
-          throw Exception(
-              'No se encontraron datos de ubicación válidos para la dirección del restaurante');
-        }
-      } else {
-        throw Exception(
-            'Error al obtener las coordenadas de la dirección del restaurante. Código de estado: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error al calcular la distancia: $error');
-      rethrow;
-    }
-  }
 
   // Método privado para calcular la distancia en metros entre dos pares de coordenadas
   double _calculateDistanceInMeters(double userLat, double userLong,
