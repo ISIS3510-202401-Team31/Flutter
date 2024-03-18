@@ -6,15 +6,33 @@ import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 
-class Login extends StatelessWidget {
-  const Login({super.key});
+class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
+
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -87,7 +105,7 @@ class Login extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                   CustomTextFormField(
+                  CustomTextFormField(
                     controller: emailController,
                     labelText: 'Email',
                     hintText: 'Type your email here',
@@ -95,7 +113,7 @@ class Login extends StatelessWidget {
                     obscureText: false,
                   ),
                   const SizedBox(height: 20),
-                   CustomTextFormField(
+                  CustomTextFormField(
                     controller: passwordController,
                     labelText: 'Password',
                     hintText: 'Type your password here',
@@ -121,6 +139,9 @@ class Login extends StatelessWidget {
                             actions: [
                               TextButton(
                                 onPressed: () {
+                                  // Limpiar los campos de texto
+                                  emailController.clear();
+                                  passwordController.clear();
                                   Navigator.of(context).pop();
                                 },
                                 child: Text('Aceptar'),
