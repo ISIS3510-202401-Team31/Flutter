@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/view/restaurant/favorites/widgets/custom_category_button.dart';
+import 'package:unifood/view/restaurant/favorites/widgets/custom_suggested_restaurant.dart';
 import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
@@ -8,6 +11,7 @@ import 'package:unifood/view_model/restaurant_view_model.dart';
 
 class Favorites extends StatelessWidget {
   const Favorites({Key? key}) : super(key: key);
+  // Nueva variable para la categoría seleccionada
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +119,7 @@ class Favorites extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(bottom: 7),
                   child: Text(
-                    'Favorite Plates',
+                    'Suggested for you',
                     style: TextStyle(fontFamily: 'KeaniaOne', fontSize: 22),
                   ),
                 ),
@@ -126,47 +130,52 @@ class Favorites extends StatelessWidget {
               height: 2,
               color: const Color(0xFF965E4E),
             ),
-            const SizedBox(height: 10),
-            FutureBuilder<List<Restaurant>>(
-              future: RestaurantViewModel().getRestaurants(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: SpinKitThreeBounce(
-                      color: Colors.black,
-                      size: 30.0,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (snapshot.hasData) {
-                  final List<Restaurant> nearbyRestaurants = snapshot.data!;
-
-                  return Container(
-                    height: screenHeight * 0.338,
-                    color: const Color(0xFF965E4E).withOpacity(0.15),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: nearbyRestaurants.map((restaurant) {
-                          return CustomRestaurant(
-                            id: restaurant.id,
-                            imageUrl: restaurant.imageUrl,
-                            logoUrl: restaurant.logoUrl,
-                            name: restaurant.name,
-                            isOpen: restaurant.isOpen,
-                            distance: restaurant.distance,
-                            rating: restaurant.rating,
-                            avgPrice: restaurant.avgPrice,
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  );
-                } else {
-                  return const Center(child: Text('No data available.'));
-                }
-              },
+            SizedBox(height: screenHeight * 0.02),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CustomCategoryButton(onPressed: () {}, text: 'Restrictions'),
+                  CustomCategoryButton(onPressed: () {}, text: 'Price'),
+                  CustomCategoryButton(onPressed: () {}, text: 'Food type')
+                ],
+              ),
             ),
+            SizedBox(height: screenHeight * 0.02),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  CustomSuggestedRestaurant(
+                      restaurantName: 'El corral',
+                      restaurantImage:
+                          'https://www.elcorral.com/img/about/v2/Banner%20Nosotros.jpg',
+                      filter: 'Price',
+                      onTap: () {}),
+                  SizedBox(width: screenWidth * 0.03),
+                  CustomSuggestedRestaurant(
+                      restaurantName: 'El corral',
+                      restaurantImage:
+                          'https://www.elcorral.com/img/about/v2/Banner%20Nosotros.jpg',
+                      filter: 'Price',
+                      onTap: () {}),
+                  SizedBox(width: screenWidth * 0.03),
+                  CustomSuggestedRestaurant(
+                      restaurantName: 'El corral',
+                      restaurantImage:
+                          'https://www.elcorral.com/img/about/v2/Banner%20Nosotros.jpg',
+                      filter: 'Price',
+                      onTap: () {}),
+                  SizedBox(width: screenWidth * 0.03),
+                  CustomSuggestedRestaurant(
+                      restaurantName: 'El corral',
+                      restaurantImage:
+                          'https://www.elcorral.com/img/about/v2/Banner%20Nosotros.jpg',
+                      filter: 'Price',
+                      onTap: () {}),
+                ],
+              ),
+            )
           ],
         ),
       ),
