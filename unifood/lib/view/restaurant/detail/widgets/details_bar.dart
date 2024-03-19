@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/utils/string_utils.dart';
 
 class DetailsBar extends StatelessWidget {
   final String foodType;
@@ -38,7 +39,7 @@ class DetailsBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildColumnWithDivider(' Avg Price', Icons.attach_money,
-              '${avgPrice.toStringAsFixed(1)} k', screenHeight, screenWidth),
+              formatNumberWithCommas(avgPrice), screenHeight, screenWidth),
           Container(
             height: screenHeight * 0.05,
             width: 1,

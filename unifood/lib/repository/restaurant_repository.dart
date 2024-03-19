@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
 class RestaurantRepository {
   FirebaseFirestore databaseInstance = FirebaseService().database;
@@ -39,6 +41,22 @@ class RestaurantRepository {
       }
     } catch (error) {
       print('Error fetching restaurant by id: $error');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchRecommendedRestaurants(String userId, String categoryFilter) async {
+    try {
+      final response = await http.get(Uri.parse('http://192.168.0.21:5000//recommend/$userId/$categoryFilter'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = json.decode(response.body);
+        return List<Map<String, dynamic>>.from(responseData);
+      } else {
+        throw Exception('Failed to load recommended restaurants');
+      }
+    } catch (error) {
+      print('Error fetching recommended restaurants: $error');
       rethrow;
     }
   }

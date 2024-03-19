@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/utils/string_utils.dart';
 
 class CustomSuggestedRestaurant extends StatelessWidget {
   final String restaurantName;
   final String restaurantImage;
-  final String filter;
+  final double restaurantPrice;
   final VoidCallback onTap;
 
   const CustomSuggestedRestaurant({
     Key? key,
     required this.restaurantName,
     required this.restaurantImage,
-    required this.filter,
+    required this.restaurantPrice,
     required this.onTap,
   }) : super(key: key);
 
@@ -52,7 +53,7 @@ class CustomSuggestedRestaurant extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      filter,
+                      formatNumberWithCommas(restaurantPrice),
                       style: TextStyle(
                         fontSize: screenHeight *
                             0.015, // Tamaño del texto de la ubicación del restaurante

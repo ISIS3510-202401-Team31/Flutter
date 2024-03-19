@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/utils/string_utils.dart';
 
 class PlateCard extends StatelessWidget {
   final String imagePath;
   final String name;
   final String description;
-  final int price;
+  final double price;
 
   const PlateCard({
     Key? key,
@@ -71,7 +72,7 @@ class PlateCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8.0),
                     Text(
-                      '\$${price.toStringAsFixed(2)}',
+                      formatNumberWithCommas(price),
                       style:  TextStyle(
                         fontSize: screenWidth * 0.025,
                         fontWeight: FontWeight.bold,
