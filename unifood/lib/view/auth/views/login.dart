@@ -120,6 +120,7 @@ class _LoginState extends State<Login> {
                     maxLength: 50,
                     errorMessage: emailError ? emailErrorMessage : null,
                     hasError: emailError,
+                    showCounter: false,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   CustomTextFormField(
@@ -131,6 +132,7 @@ class _LoginState extends State<Login> {
                     maxLength: 16,
                     errorMessage: passwordError ? passwordErrorMessage : null,
                     hasError: passwordError,
+                    showCounter: false,
                   ),
                   SizedBox(height: screenHeight * 0.04),
                   CustomButton(
@@ -193,7 +195,6 @@ class _LoginState extends State<Login> {
                     fontSize: screenWidth * 0.045,
                     textColor: Colors.black,
                   ),
-                  
                   SizedBox(height: screenHeight * 0.06),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
