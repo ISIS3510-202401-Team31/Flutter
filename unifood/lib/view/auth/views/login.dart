@@ -17,6 +17,11 @@ class _LoginState extends State<Login> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
 
+  bool emailError = false;
+  bool passwordError = false;
+  String? emailErrorMessage;
+  String? passwordErrorMessage;
+
   @override
   void initState() {
     super.initState();
@@ -33,8 +38,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -44,26 +49,27 @@ class _LoginState extends State<Login> {
           screenWidth: screenWidth,
           showBackButton: true,
           rightWidget: Container(
-            margin: const EdgeInsets.only(right: 0),
+            margin: EdgeInsets.only(right: 0),
             child: Container(
-              padding: const EdgeInsets.only(left: 8),
-              height: 45,
-              width: 138,
+              padding: EdgeInsets.only(left: screenWidth * 0.03),
+              height: screenHeight * 0.063,
+              width: screenWidth * 0.33,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(screenHeight * 0.01),
                 color: const Color(0xFF965E4E),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(Icons.food_bank, color: Colors.black),
-                  SizedBox(width: 8),
+                  SizedBox(width: screenWidth * 0.015),
                   Text(
                     'UNIFOOD',
                     style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'KeaniaOne',
-                        fontSize: 15),
+                      color: Colors.white,
+                      fontFamily: 'KeaniaOne',
+                      fontSize: screenHeight * 0.02,
+                    ),
                   ),
                 ],
               ),
@@ -73,18 +79,18 @@ class _LoginState extends State<Login> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.only(top: 30),
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+          margin: EdgeInsets.only(top: screenHeight * 0.04),
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Login',
                     style: TextStyle(
-                      fontSize: 31.0,
+                      fontSize: screenHeight * 0.033,
                       color: Colors.black,
                       fontFamily: 'Inika',
                       fontWeight: FontWeight.bold,
@@ -93,7 +99,7 @@ class _LoginState extends State<Login> {
                   Text(
                     'Please sign in to continue',
                     style: TextStyle(
-                      fontSize: 15.0,
+                      fontSize: screenHeight * 0.017,
                       color: Colors.grey,
                       fontFamily: 'Inika',
                       fontWeight: FontWeight.bold,
@@ -104,42 +110,72 @@ class _LoginState extends State<Login> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 40),
+                  SizedBox(height: screenHeight * 0.04),
                   CustomTextFormField(
                     controller: emailController,
                     labelText: 'Email',
                     hintText: 'Type your email here',
                     icon: Icon(Icons.email),
                     obscureText: false,
+                    maxLength: 50,
+                    errorMessage: emailError ? emailErrorMessage : null,
+                    hasError: emailError,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: screenHeight * 0.02),
                   CustomTextFormField(
                     controller: passwordController,
                     labelText: 'Password',
                     hintText: 'Type your password here',
                     icon: Icon(Icons.lock),
                     obscureText: true,
+                    maxLength: 16,
+                    errorMessage: passwordError ? passwordErrorMessage : null,
+                    hasError: passwordError,
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: screenHeight * 0.04),
                   CustomButton(
                     onPressed: () async {
+                      setState(() {
+                        emailError = false;
+                        passwordError = false;
+                      });
+
+                      bool isValid = true;
+                      if (emailController.text.isEmpty) {
+                        setState(() {
+                          emailError = true;
+                          emailErrorMessage = 'Please enter your email';
+                        });
+                        isValid = false;
+                      }
+
+                      if (passwordController.text.isEmpty) {
+                        setState(() {
+                          passwordError = true;
+                          passwordErrorMessage = 'Please enter your password';
+                        });
+                        isValid = false;
+                      }
+
+                      if (!isValid) return;
+
                       Users? user = await Auth().signInWithEmailPassword(
-                          emailController.text, passwordController.text);
+                        emailController.text,
+                        passwordController.text,
+                      );
                       if (user != null) {
-                        // El inicio de sesión fue exitoso, navega a la página de restaurantes
                         Navigator.pushNamed(context, '/restaurants');
                       } else {
-                        // El inicio de sesión falló, muestra un AlertDialog
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: Text('Error de inicio de sesión'),
                             content: Text(
-                                'No se pudo iniciar sesión. Por favor, revisa tus credenciales.'),
+                              'Failed to sign in. Please check your credentials.',
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  // Limpiar los campos de texto
                                   emailController.clear();
                                   passwordController.clear();
                                   Navigator.of(context).pop();
@@ -152,59 +188,37 @@ class _LoginState extends State<Login> {
                       }
                     },
                     text: 'Login',
-                    width: 151,
-                    height: 41,
-                    fontSize: 18,
+                    width: screenWidth * 0.35,
+                    height: screenHeight * 0.051,
+                    fontSize: screenWidth * 0.045,
                     textColor: Colors.black,
                   ),
-                  const SizedBox(height: 35),
+                  
+                  SizedBox(height: screenHeight * 0.06),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CustomCircledButton(
-                        onPressed: () {},
-                        diameter: 36,
-                        icon: const Icon(
-                          Icons.person,
-                          color: Colors.black,
-                        ),
-                        buttonColor: const Color(0xFFE2D2B4),
-                      ),
-                      CustomCircledButton(
-                        onPressed: () {},
-                        diameter: 36,
-                        icon: const Icon(
-                          Icons.person,
-                          color: Colors.black,
-                        ),
-                        buttonColor: const Color(0xFFE2D2B4),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 60),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
+                      Text(
                         'Not a member yet?',
                         style: TextStyle(
-                          fontSize: 17.0,
+                          fontSize: screenHeight * 0.02,
                           color: Colors.black,
                           fontFamily: 'Gudea',
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: screenWidth * 0.009),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, '/signup');
                         },
-                        child: const Text(
+                        child: Text(
                           'Sign Up',
                           style: TextStyle(
-                              fontSize: 17.0,
-                              color: Color(0xFF965E4E),
-                              fontFamily: 'Gudea',
-                              fontWeight: FontWeight.bold),
+                            fontSize: screenHeight * 0.02,
+                            color: Color(0xFF965E4E),
+                            fontFamily: 'Gudea',
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       )
                     ],

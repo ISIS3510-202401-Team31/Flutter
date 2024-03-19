@@ -19,52 +19,24 @@ class _SignupState extends State<Signup> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+  bool fullNameError = false;
+  String fullNameErrorMessage = '';
+
+  bool emailError = false;
+  String emailErrorMessage = '';
+
+  bool passwordError = false;
+  String passwordErrorMessage = '';
+
+  bool confirmPasswordError = false;
+  String confirmPasswordErrorMessage = '';
+
   bool _isPasswordValid(String password) {
     if (password.length < 8) return false;
     if (!password.contains(RegExp(r'[A-Z]'))) return false;
     if (!password.contains(RegExp(r'[a-z]'))) return false;
     if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) return false;
     return true;
-  }
-
-  Future<void> _showSuccessDialog(String message) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Success'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showErrorDialog(String message) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -81,24 +53,24 @@ class _SignupState extends State<Signup> {
           rightWidget: Container(
             margin: const EdgeInsets.only(right: 0),
             child: Container(
-              padding: const EdgeInsets.only(left: 8),
-              height: 45,
-              width: 138,
+              padding: EdgeInsets.only(left: screenWidth * 0.03),
+              height: screenHeight * 0.063,
+              width: screenWidth * 0.33,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(screenHeight * 0.01),
                 color: const Color(0xFF965E4E),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(Icons.food_bank, color: Colors.black),
-                  SizedBox(width: 8),
+                  SizedBox(width: screenWidth * 0.015),
                   Text(
                     'UNIFOOD',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'KeaniaOne',
-                      fontSize: 15,
+                      fontSize: screenHeight * 0.02,
                     ),
                   ),
                 ],
@@ -109,18 +81,18 @@ class _SignupState extends State<Signup> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.only(top: 30),
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+          margin: EdgeInsets.only(top: screenHeight * 0.03),
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Create Account',
                     style: TextStyle(
-                      fontSize: 31.0,
+                      fontSize: screenHeight * 0.033,
                       color: Colors.black,
                       fontFamily: 'Inika',
                       fontWeight: FontWeight.bold,
@@ -129,7 +101,7 @@ class _SignupState extends State<Signup> {
                   Text(
                     'Be part of this community!',
                     style: TextStyle(
-                      fontSize: 15.0,
+                      fontSize: screenHeight * 0.017,
                       color: Colors.grey,
                       fontFamily: 'Inika',
                       fontWeight: FontWeight.bold,
@@ -140,39 +112,51 @@ class _SignupState extends State<Signup> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 10),
+                  SizedBox(height: screenHeight * 0.01),
                   CustomTextFormField(
                     controller: fullNameController,
                     labelText: 'Full name',
                     hintText: 'Type your full name here',
                     icon: Icon(Icons.person),
                     obscureText: false,
+                    maxLength: 50,
+                    hasError: fullNameError,
+                    errorMessage: fullNameErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomTextFormField(
                     controller: emailController,
                     labelText: 'Email',
                     hintText: 'Type your email here',
                     icon: Icon(Icons.email),
                     obscureText: false,
+                    maxLength: 50,
+                    hasError: emailError,
+                    errorMessage: emailErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomTextFormField(
                     controller: passwordController,
                     labelText: 'Password',
                     hintText: 'Type your password here',
                     icon: Icon(Icons.lock),
                     obscureText: true,
+                    maxLength: 16,
+                    hasError: passwordError,
+                    errorMessage: passwordErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomTextFormField(
                     controller: confirmPasswordController,
                     labelText: 'Confirm password',
                     hintText: 'Confirm your password here',
                     icon: Icon(Icons.lock),
                     obscureText: true,
+                    maxLength: 16,
+                    hasError: confirmPasswordError,
+                    errorMessage: confirmPasswordErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomButton(
                     onPressed: () async {
                       String fullName = fullNameController.text;
@@ -180,59 +164,127 @@ class _SignupState extends State<Signup> {
                       String password = passwordController.text;
                       String confirmPassword = confirmPasswordController.text;
 
-                      if (fullName.isEmpty &&
-                          email.isEmpty &&
-                          password.isEmpty &&
-                          confirmPassword.isEmpty) {
-                        _showErrorDialog('All fields are required.');
-                        return;
+                      // Reset errors
+                      setState(() {
+                        fullNameError = false;
+                        emailError = false;
+                        passwordError = false;
+                        confirmPasswordError = false;
+                      });
+
+                      // Validate fields
+                      bool isValid = true;
+                      if (fullName.isEmpty) {
+                        setState(() {
+                          fullNameError = true;
+                          fullNameErrorMessage = 'Please enter your full name';
+
+                          isValid = false;
+                        });
                       }
 
-                      if (!_isPasswordValid(password)) {
-                        _showErrorDialog(
-                            'Password must have at least 8 characters, one uppercase, one lowercase, and one special character.');
-                        return;
+                      if (email.isEmpty) {
+                        setState(() {
+                          emailError = true;
+                          emailErrorMessage = 'Please enter an email';
+                          isValid = false;
+                        });
+                      } else if (!email.endsWith('@uniandes.edu.co')) {
+                        setState(() {
+                          emailError = true;
+                          emailErrorMessage =
+                              'Email must be of the domain @uniandes.edu.co.';
+                        });
                       }
 
-                      if (password != confirmPassword) {
-                        _showErrorDialog('Passwords do not match.');
-                        return;
+                      if (password.isEmpty) {
+                        setState(() {
+                          passwordError = true;
+                          passwordErrorMessage = 'Please enter your password';
+                          isValid = false;
+                        });
+                      } else if (!_isPasswordValid(password)) {
+                        setState(() {
+                          passwordError = true;
+                          passwordErrorMessage =
+                              'Password must have at least 8 characters, one uppercase, one lowercase, and one special character.';
+                          isValid = false;
+                        });
                       }
 
-                      if (!email.endsWith('@uniandes.edu.co')) {
-                        _showErrorDialog(
-                            'Email must be of the domain @uniandes.edu.co.');
-                        return;
+                      if (confirmPassword.isEmpty) {
+                        setState(() {
+                          confirmPasswordError = true;
+                          confirmPasswordErrorMessage =
+                              'Please confirm your password';
+                          isValid = false;
+                        });
+                      } else if (confirmPassword != password) {
+                        setState(() {
+                          confirmPasswordError = true;
+                          confirmPasswordErrorMessage =
+                              'Passwords do not match';
+                          isValid = false;
+                        });
                       }
 
-                      Users? user =
-                          await Auth().signUpWithEmailPassword(fullName, email, password);
+                      if (!isValid) return;
+
+                      Users? user = await Auth().signUpWithEmailPassword(
+                        fullName,
+                        email,
+                        password,
+                      );
+
                       if (user != null) {
-                        _showSuccessDialog('Account created successfully!');
+                        // Navigate to login page after successful sign up
+                        Navigator.pushReplacementNamed(context, '/login');
                       } else {
-                        _showErrorDialog(
-                            'Error creating account. The email is already in use or the password does not meet the requirements.');
+                        // Handle sign up failure
+                        // For example, display an error message
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Sign Up Failed'),
+                            content: Text(
+                              'Failed to sign up. Please try again later.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  // Clear text fields
+                                  fullNameController.clear();
+                                  emailController.clear();
+                                  passwordController.clear();
+                                  confirmPasswordController.clear();
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
                       }
                     },
                     text: 'Sign Up',
-                    width: 151,
-                    height: 41,
-                    fontSize: 18,
+                    width: screenWidth * 0.35,
+                    height: screenHeight * 0.051,
+                    fontSize: screenWidth * 0.045,
                     textColor: Colors.black,
                   ),
-                  SizedBox(height: 35),
+                  SizedBox(height: screenHeight * 0.045),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Already a member?',
                         style: TextStyle(
-                          fontSize: 17.0,
+                          fontSize: screenHeight * 0.02,
                           color: Colors.black,
                           fontFamily: 'Gudea',
                         ),
                       ),
-                      SizedBox(width: 6),
+                      SizedBox(width: screenWidth * 0.009),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, '/login');
@@ -240,7 +292,7 @@ class _SignupState extends State<Signup> {
                         child: Text(
                           'Login',
                           style: TextStyle(
-                            fontSize: 17.0,
+                            fontSize: screenHeight * 0.02,
                             color: Color(0xFF965E4E),
                             fontFamily: 'Gudea',
                             fontWeight: FontWeight.bold,
