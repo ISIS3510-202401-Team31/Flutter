@@ -9,6 +9,8 @@ class CustomTextFormField extends StatefulWidget {
   final int? maxLength; // Propiedad para el máximo número de caracteres
   final String? errorMessage; // Nuevo parámetro para el mensaje de error
   final bool hasError; // Nuevo parámetro para indicar si hay un error
+  final bool
+      showCounter; // Nuevo parámetro para controlar la visibilidad del contador de caracteres
 
   const CustomTextFormField({
     Key? key,
@@ -20,6 +22,7 @@ class CustomTextFormField extends StatefulWidget {
     this.maxLength, // Se añade como argumento opcional
     this.errorMessage, // Se añade como argumento opcional
     this.hasError = false, // Se inicializa como false por defecto
+    this.showCounter = true, // Se inicializa como true por defecto
   }) : super(key: key);
 
   @override
@@ -44,16 +47,24 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+      padding: EdgeInsets.all(screenWidth * 0.002),
       child: TextFormField(
         controller: widget.controller,
         focusNode: _focusNode,
         maxLength: widget.maxLength, // Establece el máximo número de caracteres
+        style: TextStyle(
+            fontSize: screenWidth * 0.04), // Ajustar el tamaño de la fuente
         decoration: InputDecoration(
           labelText: widget.labelText,
           hintText: widget.hintText,
-          prefixIcon: widget.icon,
+          prefixIcon: IconTheme(
+            data: IconThemeData(
+                size: screenWidth * 0.07), // Ajustar el tamaño del icono
+            child: widget.icon,
+          ),
           suffixIcon: widget.obscureText
               ? IconButton(
                   icon: Icon(
@@ -68,6 +79,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           errorText: widget.hasError
               ? widget.errorMessage
               : null, // Muestra el mensaje de error si hay un error
+          counterText: widget.showCounter
+              ? null
+              : '', // Controla la visibilidad del contador
           border: UnderlineInputBorder(),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor),
