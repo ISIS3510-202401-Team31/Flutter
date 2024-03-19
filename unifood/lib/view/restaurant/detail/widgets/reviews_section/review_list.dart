@@ -23,7 +23,8 @@ class _ReviewListState extends State<ReviewList> {
     return Container(
       width: screenWidth * 0.9,
       child: Padding(
-        padding: EdgeInsets.symmetric( horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
+        padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -59,17 +60,33 @@ class _ReviewListState extends State<ReviewList> {
               visible: areReviewsVisible,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: widget.reviews.map((review) {
-                  return Padding(
-                    padding:  EdgeInsets.symmetric(vertical: screenHeight * 0.005),
-                    child: ReviewCard(
-                      userImage: review.userImage,
-                      name: review.name,
-                      rating: review.rating,
-                      comment: review.comment,
+                children: <Widget>[
+                  if (widget.reviews.isNotEmpty) // Mostrar solo si hay reviews
+                    ...widget.reviews.map((review) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: screenHeight * 0.005),
+                        child: ReviewCard(
+                          userImage: review.userImage,
+                          name: review.name,
+                          rating: review.rating,
+                          comment: review.comment,
+                        ),
+                      );
+                    }).toList(),
+                  if (widget.reviews.isEmpty) // Mostrar si no hay reviews
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: screenHeight * 0.025),
+                      child: Text(
+                        'No reviews available',
+                        style: TextStyle(
+                          fontSize: screenHeight * 0.02,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
                     ),
-                  );
-                }).toList(),
+                ],
               ),
             ),
           ],

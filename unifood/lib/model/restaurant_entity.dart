@@ -1,4 +1,5 @@
 class Restaurant {
+  final String id;
   final String imageUrl;
   final String logoUrl;
   final String name;
@@ -16,6 +17,7 @@ class Restaurant {
   final String longitude;
 
   Restaurant({
+    required this.id,
     required this.imageUrl,
     required this.logoUrl,
     required this.name,

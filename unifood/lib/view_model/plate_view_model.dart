@@ -4,18 +4,18 @@ import 'package:unifood/repository/plate_repository.dart';
 class PlateViewModel {
   final PlateRepository _plateRepository = PlateRepository();
 
-  Future<List<Plate>> getMenuItems() async {
+  Future<List<Plate>> getPlatesByRestaurantId(String restaurantId) async {
     try {
       final List<Map<String, dynamic>> data =
-          await _plateRepository.getMenuItems();
+          await _plateRepository.getPlatesByRestaurantId(restaurantId);
 
       return data
           .map(
             (item) => Plate(
-              imagePath: item['imagePath'],
-              name: item['nombre'],
-              description: item['descripcion'],
-              price: item['precio'],
+              imagePath: item['imageURL'],
+              name: item['name'],
+              description: item['description'],
+              price: item['price'],
             ),
           )
           .toList();
