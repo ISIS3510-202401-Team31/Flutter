@@ -36,21 +36,34 @@ class UserRepository {
 
   Future<void> updateUserProfileImage(String userId, File imageFile) async {
     try {
-      // Subir la imagen al almacenamiento de Firebase
-      final ref = _storage.ref().child('profile_images').child('$userId.jpg');
-      await ref.putFile(imageFile);
+      // Genera un nombre de archivo único para la imagen
+      String fileName = 'profile_$userId.jpg';
 
-      // Obtener la URL de descarga de la imagen
-      final imageUrl = await ref.getDownloadURL();
+      // Referencia al almacenamiento de Firebase
+      Reference storageReference = _storage.ref().child('profile_images').child(fileName);
 
-      // Actualizar la URL de la imagen de perfil en la base de datos
-      await databaseInstance.collection('users').doc(userId).update({
-        'profileImageUrl': imageUrl,
-      });
+      // Sube la imagen al almacenamiento de Firebase
+      TaskSnapshot uploadTask = await storageReference.putFile(imageFile);
+      String imageUrl = await uploadTask.ref.getDownloadURL();
+
+      // Actualiza la URL de la imagen en la base de datos
+      await _updateImageUrlInDatabase(userId, imageUrl);
     } catch (error) {
-      // Manejar el error de manera apropiada
-      print('Error al actualizar la imagen de perfil: $error');
-      throw Exception('Error al actualizar la imagen de perfil');
+      print('Error al subir la imagen: $error');
+      throw error;
+    }
+  }
+
+  Future<void> _updateImageUrlInDatabase(String userId, String imageUrl) async {
+    try {
+      // Obtén la referencia al documento del usuario en Firestore
+      final userRef = databaseInstance.collection('users').doc(userId);
+
+      // Actualiza el campo de la URL de la imagen
+      await userRef.update({'profileImageUrl': imageUrl});
+    } catch (error) {
+      print('Error al actualizar la URL de la imagen en la base de datos: $error');
+      throw error;
     }
   }
 }

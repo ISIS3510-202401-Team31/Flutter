@@ -21,40 +21,44 @@ class _ProfileState extends State<Profile> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _getImage(String userId) async {
-  final pickedFile = await showDialog<File>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text("Selecciona una imagen"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: Icon(Icons.photo_camera),
-            title: Text("Tomar una foto"),
-            onTap: () async {
-              Navigator.of(context).pop(await _picker.pickImage(source: ImageSource.camera));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.photo_library),
-            title: Text("Seleccionar de la galería"),
-            onTap: () async {
-              Navigator.of(context).pop(await _picker.pickImage(source: ImageSource.gallery));
-            },
-          ),
-        ],
+    final pickedFile = await showDialog<XFile?>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Selecciona una imagen"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.photo_camera),
+              title: Text("Tomar una foto"),
+              onTap: () async {
+                Navigator.of(context)
+                    .pop(await _picker.pickImage(source: ImageSource.camera));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library),
+              title: Text("Seleccionar de la galería"),
+              onTap: () async {
+                Navigator.of(context)
+                    .pop(await _picker.pickImage(source: ImageSource.gallery));
+              },
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
 
-  if (pickedFile != null) {
-    setState(() {
-      _image = File(pickedFile.path);
-    });
-   
-    await UserRepository().updateUserProfileImage(userId, _image!);
+    if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+
+      setState(() {
+        _image = imageFile;
+      });
+
+      await UserRepository().updateUserProfileImage(userId, imageFile);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +179,9 @@ class _ProfileState extends State<Profile> {
                                   },
                                   child: CircleAvatar(
                                     radius: screenHeight * 0.05,
-                                    backgroundImage: _image != null ? FileImage(_image!) : null,
+                                    backgroundImage: _image != null
+                                        ? FileImage(_image!)
+                                        : null,
                                   ),
                                 ),
                               ],
@@ -273,4 +279,3 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
-
