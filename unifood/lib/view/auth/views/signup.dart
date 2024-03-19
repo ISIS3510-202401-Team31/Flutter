@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
-import 'package:unifood/repository/auth.dart';
+import 'package:unifood/repository/auth_repositorydart';
 import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
@@ -206,7 +206,7 @@ class _SignupState extends State<Signup> {
                       }
 
                       Users? user =
-                          await Auth().signUpWithEmailPassword(email, password);
+                          await Auth().signUpWithEmailPassword(fullName, email, password);
                       if (user != null) {
                         _showSuccessDialog('Account created successfully!');
                       } else {

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:unifood/repository/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/utils/routes.dart';
@@ -15,6 +16,9 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+
+  //SharedPreferences
+  await SharedPreferencesService.getInstance();
 
   runApp(const MyApp());
 }
