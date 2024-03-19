@@ -60,7 +60,7 @@ class LocationDetails extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            '${distance.toString()} km away',
+                            '${distance.toStringAsFixed(1)} km away',
                             style:  TextStyle(fontSize: screenHeight * 0.017),
                           ),
                           SizedBox(width: screenWidth * 0.01),

@@ -12,6 +12,8 @@ class Restaurant {
   final int likes;
   final String address;
   final String addressDetail;
+  final String latitude;
+  final String longitude;
 
   Restaurant({
     required this.imageUrl,
@@ -27,5 +29,7 @@ class Restaurant {
     required this.likes,
     required this.address,
     required this.addressDetail,
+    required this.latitude,
+    required this.longitude,
   });
 }
