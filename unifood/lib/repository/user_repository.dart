@@ -50,7 +50,7 @@ class UserRepository {
       await _updateImageUrlInDatabase(userId, imageUrl);
     } catch (error) {
       print('Error al subir la imagen: $error');
-      throw error;
+      rethrow;
     }
   }
 
@@ -63,7 +63,7 @@ class UserRepository {
       await userRef.update({'profileImageUrl': imageUrl});
     } catch (error) {
       print('Error al actualizar la URL de la imagen en la base de datos: $error');
-      throw error;
+      rethrow;
     }
   }
 }

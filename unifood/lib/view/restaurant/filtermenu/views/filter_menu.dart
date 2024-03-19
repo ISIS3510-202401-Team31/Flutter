@@ -230,8 +230,8 @@ Widget _buildTrendyFlavorsSection() {
           style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold),
         ),
       ),
-      SizedBox(height: 8.0),
-      Container(
+      const SizedBox(height: 8.0),
+      SizedBox(
         height: containerHeight, // Altura ajustada dinámicamente
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -241,7 +241,7 @@ Widget _buildTrendyFlavorsSection() {
           },
         ),
       ),
-      Divider(height: 16.0, thickness: 2.0),
+      const Divider(height: 16.0, thickness: 2.0),
     ],
   );
 }

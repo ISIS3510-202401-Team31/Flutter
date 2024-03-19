@@ -25,12 +25,13 @@ class CustomSuggestedRestaurant extends StatelessWidget {
         color: Colors.transparent,
         width: screenWidth * 0.48, // Ancho del contenedor
         child: Card(
-          elevation: 0, // Elevación del Card
+          elevation: 0, 
+          color: Colors.transparent,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.vertical(
+                borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(12), bottom: Radius.circular(12)), // Solo los bordes superiores
                 child: Image.network(
                   restaurantImage,
@@ -40,7 +41,7 @@ class CustomSuggestedRestaurant extends StatelessWidget {
               ),
               // Área de texto con padding que ocupa el 20% del alto del Card
               Padding(
-                padding: EdgeInsets.all(7),
+                padding: const EdgeInsets.all(7),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

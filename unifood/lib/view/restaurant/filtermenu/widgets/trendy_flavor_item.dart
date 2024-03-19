@@ -11,14 +11,14 @@ class TrendyFlavorItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double containerWidth = 300.0; // Ajusta según la necesidad de tu diseño.
-    final double containerHeight = 50.0; // Ajusta según la necesidad de tu diseño.
+    const double containerWidth = 300.0; // Ajusta según la necesidad de tu diseño.
+    const double containerHeight = 50.0; // Ajusta según la necesidad de tu diseño.
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20.0),
-        child: Container(
+        child: SizedBox(
           width: containerWidth,
           height: containerHeight,
           child: Image.asset(

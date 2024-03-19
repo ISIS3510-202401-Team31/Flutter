@@ -63,7 +63,7 @@ class _SignupState extends State<Signup> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(Icons.food_bank, color: Colors.black),
+                  const Icon(Icons.food_bank, color: Colors.black),
                   SizedBox(width: screenWidth * 0.015),
                   Text(
                     'UNIFOOD',
@@ -117,7 +117,7 @@ class _SignupState extends State<Signup> {
                     controller: fullNameController,
                     labelText: 'Full name',
                     hintText: 'Type your full name here',
-                    icon: Icon(Icons.person),
+                    icon: const Icon(Icons.person),
                     obscureText: false,
                     maxLength: 50,
                     hasError: fullNameError,
@@ -128,7 +128,7 @@ class _SignupState extends State<Signup> {
                     controller: emailController,
                     labelText: 'Email',
                     hintText: 'Type your email here',
-                    icon: Icon(Icons.email),
+                    icon: const Icon(Icons.email),
                     obscureText: false,
                     maxLength: 50,
                     hasError: emailError,
@@ -139,7 +139,7 @@ class _SignupState extends State<Signup> {
                     controller: passwordController,
                     labelText: 'Password',
                     hintText: 'Type your password here',
-                    icon: Icon(Icons.lock),
+                    icon: const Icon(Icons.lock),
                     obscureText: true,
                     maxLength: 16,
                     hasError: passwordError,
@@ -150,7 +150,7 @@ class _SignupState extends State<Signup> {
                     controller: confirmPasswordController,
                     labelText: 'Confirm password',
                     hintText: 'Confirm your password here',
-                    icon: Icon(Icons.lock),
+                    icon: const Icon(Icons.lock),
                     obscureText: true,
                     maxLength: 16,
                     hasError: confirmPasswordError,
@@ -245,8 +245,8 @@ class _SignupState extends State<Signup> {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('Sign Up Failed'),
-                            content: Text(
+                            title: const Text('Sign Up Failed'),
+                            content: const Text(
                               'Failed to sign up. Please try again later.',
                             ),
                             actions: [
@@ -259,7 +259,7 @@ class _SignupState extends State<Signup> {
                                   confirmPasswordController.clear();
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('OK'),
+                                child: const Text('OK'),
                               ),
                             ],
                           ),
@@ -293,7 +293,7 @@ class _SignupState extends State<Signup> {
                           'Login',
                           style: TextStyle(
                             fontSize: screenHeight * 0.02,
-                            color: Color(0xFF965E4E),
+                            color: const Color(0xFF965E4E),
                             fontFamily: 'Gudea',
                             fontWeight: FontWeight.bold,
                           ),

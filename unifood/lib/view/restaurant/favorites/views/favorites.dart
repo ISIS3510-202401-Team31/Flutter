@@ -38,7 +38,7 @@ class _FavoritesState extends State<Favorites> {
       future: dataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: SpinKitThreeBounce(
                 color: Colors.black,
@@ -58,7 +58,7 @@ class _FavoritesState extends State<Favorites> {
 
           return _FavoritesWidget(currentUser!, favoriteRestaurants);
         } else {
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: Text('No data available.'),
             ),

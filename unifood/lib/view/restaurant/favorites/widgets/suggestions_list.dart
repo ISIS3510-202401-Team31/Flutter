@@ -103,7 +103,7 @@ class _SuggestedRestaurantsSectionState extends State<SuggestedRestaurantsSectio
                 ),
               );
             } else {
-              return Text('No data available.');
+              return const Text('No data available.');
             }
           },
         ),

@@ -20,7 +20,7 @@ class CategoryItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         decoration: BoxDecoration(
           color: isSelected ? Colors.brown : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(30.0),
@@ -30,7 +30,7 @@ class CategoryItem extends StatelessWidget {
                 color: Colors.brown.shade200,
                 spreadRadius: 1,
                 blurRadius: 5,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
               ),
           ],
         ),
@@ -38,12 +38,12 @@ class CategoryItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (isSelected) ...[
-              Icon(Icons.check, size: 16.0),
-              SizedBox(width: 8.0),
+              const Icon(Icons.check, size: 16.0),
+              const SizedBox(width: 8.0),
             ],
             Text(title),
-            SizedBox(width: 8.0),
-            Text('($count)', style: TextStyle(color: Colors.grey)),
+            const SizedBox(width: 8.0),
+            Text('($count)', style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ),

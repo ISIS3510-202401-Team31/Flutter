@@ -82,7 +82,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           counterText: widget.showCounter
               ? null
               : '', // Controla la visibilidad del contador
-          border: UnderlineInputBorder(),
+          border: const UnderlineInputBorder(),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor),
           ),

@@ -40,7 +40,7 @@ class _RestaurantsState extends State<Restaurants> {
 
     if (!_locationPermissionGranted) {
       // Si el permiso de ubicación aún no se ha concedido, muestra un indicador de carga
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),

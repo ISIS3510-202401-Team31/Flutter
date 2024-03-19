@@ -37,7 +37,7 @@ class CustomRestaurant extends StatelessWidget {
         Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
       },
       child: Card(
-        child: Container(
+        child: SizedBox(
           width: screenWidth * 0.9,
           height: screenHeight * 0.168,
           child: Column(
