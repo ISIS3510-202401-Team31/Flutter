@@ -5,7 +5,7 @@ import 'package:unifood/view/auth/views/signup.dart';
 import 'package:unifood/view/profile/dashboard/views/profile.dart';
 import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
 import 'package:unifood/view/restaurant/dashboard/views/restaurants.dart';
-import 'package:unifood/view/restaurant/favorites/favorites.dart';
+import 'package:unifood/view/restaurant/favorites/views/favorites.dart';
 import 'package:unifood/view/restaurant/search/views/search_view.dart';
 import 'package:unifood/view/profile/preferences/views/preferences.dart';
 import 'package:unifood/view/profile/points/views/points.dart';
@@ -24,7 +24,10 @@ class Routes {
       case '/profile': // Define la ruta para la vista de perfil
         return MaterialPageRoute(builder: (_) => const Profile());
       case '/restaurant_detail': // Define la ruta para el detalle de un restaurante
-        return MaterialPageRoute(builder: (_) => const RestaurantDetail(restaurantId: "",));
+        return MaterialPageRoute(
+            builder: (_) => const RestaurantDetail(
+                  restaurantId: "",
+                ));
       case '/restaurant_search': // Define la ruta para el detalle de un restaurante
         return MaterialPageRoute(builder: (_) => const SearchView());
       case '/preferences': // Define la ruta para las preferencias del usuario
