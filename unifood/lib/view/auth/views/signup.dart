@@ -53,24 +53,24 @@ class _SignupState extends State<Signup> {
           rightWidget: Container(
             margin: const EdgeInsets.only(right: 0),
             child: Container(
-              padding: const EdgeInsets.only(left: 8),
-              height: 45,
-              width: 138,
+              padding: EdgeInsets.only(left: screenWidth * 0.03),
+              height: screenHeight * 0.063,
+              width: screenWidth * 0.33,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(screenHeight * 0.01),
                 color: const Color(0xFF965E4E),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(Icons.food_bank, color: Colors.black),
-                  SizedBox(width: 8),
+                  SizedBox(width: screenWidth * 0.015),
                   Text(
                     'UNIFOOD',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'KeaniaOne',
-                      fontSize: 15,
+                      fontSize: screenHeight * 0.02,
                     ),
                   ),
                 ],
@@ -81,18 +81,18 @@ class _SignupState extends State<Signup> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.only(top: 30),
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+          margin: EdgeInsets.only(top: screenHeight * 0.03),
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Create Account',
                     style: TextStyle(
-                      fontSize: 31.0,
+                      fontSize: screenHeight * 0.033,
                       color: Colors.black,
                       fontFamily: 'Inika',
                       fontWeight: FontWeight.bold,
@@ -101,7 +101,7 @@ class _SignupState extends State<Signup> {
                   Text(
                     'Be part of this community!',
                     style: TextStyle(
-                      fontSize: 15.0,
+                      fontSize: screenHeight * 0.017,
                       color: Colors.grey,
                       fontFamily: 'Inika',
                       fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class _SignupState extends State<Signup> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 10),
+                  SizedBox(height: screenHeight * 0.01),
                   CustomTextFormField(
                     controller: fullNameController,
                     labelText: 'Full name',
@@ -123,7 +123,7 @@ class _SignupState extends State<Signup> {
                     hasError: fullNameError,
                     errorMessage: fullNameErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomTextFormField(
                     controller: emailController,
                     labelText: 'Email',
@@ -134,7 +134,7 @@ class _SignupState extends State<Signup> {
                     hasError: emailError,
                     errorMessage: emailErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomTextFormField(
                     controller: passwordController,
                     labelText: 'Password',
@@ -145,7 +145,7 @@ class _SignupState extends State<Signup> {
                     hasError: passwordError,
                     errorMessage: passwordErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomTextFormField(
                     controller: confirmPasswordController,
                     labelText: 'Confirm password',
@@ -156,7 +156,7 @@ class _SignupState extends State<Signup> {
                     hasError: confirmPasswordError,
                     errorMessage: confirmPasswordErrorMessage,
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: screenHeight * 0.007),
                   CustomButton(
                     onPressed: () async {
                       String fullName = fullNameController.text;
@@ -267,24 +267,24 @@ class _SignupState extends State<Signup> {
                       }
                     },
                     text: 'Sign Up',
-                    width: 151,
-                    height: 41,
-                    fontSize: 18,
+                    width: screenWidth * 0.35,
+                    height: screenHeight * 0.051,
+                    fontSize: screenWidth * 0.045,
                     textColor: Colors.black,
                   ),
-                  SizedBox(height: 35),
+                  SizedBox(height: screenHeight * 0.045),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Already a member?',
                         style: TextStyle(
-                          fontSize: 17.0,
+                          fontSize: screenHeight * 0.02,
                           color: Colors.black,
                           fontFamily: 'Gudea',
                         ),
                       ),
-                      SizedBox(width: 6),
+                      SizedBox(width: screenWidth * 0.009),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, '/login');
@@ -292,7 +292,7 @@ class _SignupState extends State<Signup> {
                         child: Text(
                           'Login',
                           style: TextStyle(
-                            fontSize: 17.0,
+                            fontSize: screenHeight * 0.02,
                             color: Color(0xFF965E4E),
                             fontFamily: 'Gudea',
                             fontWeight: FontWeight.bold,

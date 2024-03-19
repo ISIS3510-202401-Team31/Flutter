@@ -45,7 +45,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
       child: TextFormField(
         controller: widget.controller,
         focusNode: _focusNode,
@@ -68,7 +68,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           errorText: widget.hasError
               ? widget.errorMessage
               : null, // Muestra el mensaje de error si hay un error
-          border: const UnderlineInputBorder(),
+          border: UnderlineInputBorder(),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor),
           ),
