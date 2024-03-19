@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
 
 class CustomRestaurant extends StatelessWidget {
   final String imageUrl;
@@ -8,6 +9,7 @@ class CustomRestaurant extends StatelessWidget {
   final double distance;
   final double rating;
   final double avgPrice;
+  final String id;
 
   const CustomRestaurant({
     super.key,
@@ -18,6 +20,7 @@ class CustomRestaurant extends StatelessWidget {
     required this.distance,
     required this.rating,
     required this.avgPrice,
+    required this.id,
   });
 
   @override
@@ -30,7 +33,7 @@ class CustomRestaurant extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, '/restaurant_detail');
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
       },
       child: Card(
         child: Container(

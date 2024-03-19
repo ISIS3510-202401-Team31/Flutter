@@ -34,8 +34,9 @@ class PlateCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(screenWidth * 0.02)),
-                child: Image.asset(
+                child: Image.network(
                   imagePath,
+                  width: double.infinity,
                   fit: BoxFit.cover,
                   height: screenHeight * 0.109,
                 ),

@@ -24,7 +24,7 @@ class Routes {
       case '/profile': // Define la ruta para la vista de perfil
         return MaterialPageRoute(builder: (_) => const Profile());
       case '/restaurant_detail': // Define la ruta para el detalle de un restaurante
-        return MaterialPageRoute(builder: (_) => const RestaurantDetail());
+        return MaterialPageRoute(builder: (_) => const RestaurantDetail(restaurantId: "",));
       case '/restaurant_search': // Define la ruta para el detalle de un restaurante
         return MaterialPageRoute(builder: (_) => const SearchView());
       case '/preferences': // Define la ruta para las preferencias del usuario

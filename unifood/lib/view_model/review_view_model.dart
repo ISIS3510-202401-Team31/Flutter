@@ -4,10 +4,10 @@ import 'package:unifood/repository/review_repository.dart';
 class ReviewViewModel {
   final ReviewRepository _reviewRepository = ReviewRepository();
 
-  Future<List<Review>> getReviews() async {
+  Future<List<Review>> getReviewsByRestaurantId(String restaurantId) async {
     try {
       final List<Map<String, dynamic>> data =
-          await _reviewRepository.getReviews();
+          await _reviewRepository.getReviewsByRestaurantId(restaurantId);
 
       return data
           .map(
