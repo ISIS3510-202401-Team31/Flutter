@@ -12,9 +12,9 @@ class RestaurantViewModel {
     return _getRestaurantData(await _getUserLocation());
   }
 
-  Future<Restaurant?> getRestaurantByName(String restaurantName) async {
+  Future<Restaurant?> getRestaurantById(String restaurantName) async {
     final userLocation = await _getUserLocation();
-    final data = await _restaurantRepository.getRestaurantByName(restaurantName);
+    final data = await _restaurantRepository.getRestaurantById(restaurantName);
     return data != null ? _mapSingleRestaurantData(data, userLocation) : null;
   }
 
@@ -53,6 +53,7 @@ class RestaurantViewModel {
     final distance = DistanceCalculator.calculateDistanceInKm(userLocation.latitude, userLocation.longitude, restaurantLat, restaurantLong);
 
     return Restaurant(
+      id: item['docId'] ?? '',
       imageUrl: item['imageURL'] ?? '',
       logoUrl: item['logoURL'] ?? '',
       name: item['name'] ?? '',

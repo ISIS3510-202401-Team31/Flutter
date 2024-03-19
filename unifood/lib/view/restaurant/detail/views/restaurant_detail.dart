@@ -9,7 +9,8 @@ import 'package:unifood/view_model/restaurant_view_model.dart';
 import 'package:unifood/view_model/review_view_model.dart';
 
 class RestaurantDetail extends StatefulWidget {
-  const RestaurantDetail({Key? key}) : super(key: key);
+  final String restaurantId;
+  const RestaurantDetail({Key? key, required this.restaurantId}) : super(key: key);
 
   @override
   _RestaurantDetailState createState() => _RestaurantDetailState();
@@ -25,9 +26,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final restaurantInfoData = await RestaurantViewModel().getRestaurantByName("El Carnal");
-    final menuItemsData = await PlateViewModel().getMenuItems();
-    final reviewsData = await ReviewViewModel().getReviews();
+    final restaurantInfoData = await RestaurantViewModel().getRestaurantById(widget.restaurantId);
+    final menuItemsData = await PlateViewModel().getPlatesByRestaurantId(widget.restaurantId);
+    final reviewsData = await ReviewViewModel().getReviewsByRestaurantId(widget.restaurantId);
 
     return [restaurantInfoData, menuItemsData, reviewsData];
   }
@@ -94,7 +95,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ],
             );
-          } else if (snapshot.hasData) {
+          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             final data = snapshot.data!;
             final restaurantInfo = RestaurantInfo(restaurant: data[0]);
             final menuGrid = MenuGrid(menuItems: data[1]);

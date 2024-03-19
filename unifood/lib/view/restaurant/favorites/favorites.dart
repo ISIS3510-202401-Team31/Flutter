@@ -90,6 +90,7 @@ class Favorites extends StatelessWidget {
                       child: Column(
                         children: favoriteRestaurants.map((restaurant) {
                           return CustomRestaurant(
+                            id: restaurant.id,
                             imageUrl: restaurant.imageUrl,
                             logoUrl: restaurant.logoUrl,
                             name: restaurant.name,
@@ -148,6 +149,7 @@ class Favorites extends StatelessWidget {
                       child: Column(
                         children: nearbyRestaurants.map((restaurant) {
                           return CustomRestaurant(
+                            id: restaurant.id,
                             imageUrl: restaurant.imageUrl,
                             logoUrl: restaurant.logoUrl,
                             name: restaurant.name,

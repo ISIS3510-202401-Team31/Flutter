@@ -33,7 +33,7 @@ class ReviewCard extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: screenHeight * 0.035,
-                    backgroundImage: AssetImage(userImage),
+                    backgroundImage: NetworkImage(userImage),
                   ),
                   SizedBox(width: screenWidth * 0.025),
                   Expanded(
