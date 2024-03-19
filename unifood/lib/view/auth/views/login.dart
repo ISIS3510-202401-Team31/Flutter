@@ -17,6 +17,11 @@ class _LoginState extends State<Login> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
 
+  bool emailError = false;
+  bool passwordError = false;
+  String? emailErrorMessage;
+  String? passwordErrorMessage;
+
   @override
   void initState() {
     super.initState();
@@ -111,6 +116,9 @@ class _LoginState extends State<Login> {
                     hintText: 'Type your email here',
                     icon: Icon(Icons.email),
                     obscureText: false,
+                    maxLength: 50,
+                    errorMessage: emailError ? emailErrorMessage : null,
+                    hasError: emailError,
                   ),
                   const SizedBox(height: 20),
                   CustomTextFormField(
@@ -119,23 +127,56 @@ class _LoginState extends State<Login> {
                     hintText: 'Type your password here',
                     icon: Icon(Icons.lock),
                     obscureText: true,
+                    maxLength: 16,
+                    errorMessage: passwordError ? passwordErrorMessage : null,
+                    hasError: passwordError,
                   ),
                   const SizedBox(height: 40),
                   CustomButton(
                     onPressed: () async {
+                      // Restablecer errores
+                      setState(() {
+                        emailError = false;
+                        passwordError = false;
+                      });
+
+                      // Validar campos
+                      bool isValid = true;
+                      if (emailController.text.isEmpty) {
+                        setState(() {
+                          emailError = true;
+                          emailErrorMessage = 'Please enter your email';
+                        });
+                        isValid = false;
+                      }
+
+                      if (passwordController.text.isEmpty) {
+                        setState(() {
+                          passwordError = true;
+                          passwordErrorMessage = 'Please enter your password';
+                        });
+                        isValid = false;
+                      }
+
+                      if (!isValid) return;
+
+                      // Realizar inicio de sesión
                       Users? user = await Auth().signInWithEmailPassword(
-                          emailController.text, passwordController.text);
+                        emailController.text,
+                        passwordController.text,
+                      );
                       if (user != null) {
                         // El inicio de sesión fue exitoso, navega a la página de restaurantes
                         Navigator.pushNamed(context, '/restaurants');
                       } else {
-                        // El inicio de sesión falló, muestra un AlertDialog
+                        // El inicio de sesión falló, mostrar mensaje de error
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: Text('Error de inicio de sesión'),
                             content: Text(
-                                'No se pudo iniciar sesión. Por favor, revisa tus credenciales.'),
+                              'Failed to sign in. Please check your credentials.',
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {

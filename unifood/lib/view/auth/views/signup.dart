@@ -19,52 +19,24 @@ class _SignupState extends State<Signup> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+  bool fullNameError = false;
+  String fullNameErrorMessage = '';
+
+  bool emailError = false;
+  String emailErrorMessage = '';
+
+  bool passwordError = false;
+  String passwordErrorMessage = '';
+
+  bool confirmPasswordError = false;
+  String confirmPasswordErrorMessage = '';
+
   bool _isPasswordValid(String password) {
     if (password.length < 8) return false;
     if (!password.contains(RegExp(r'[A-Z]'))) return false;
     if (!password.contains(RegExp(r'[a-z]'))) return false;
     if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) return false;
     return true;
-  }
-
-  Future<void> _showSuccessDialog(String message) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Success'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showErrorDialog(String message) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -147,6 +119,9 @@ class _SignupState extends State<Signup> {
                     hintText: 'Type your full name here',
                     icon: Icon(Icons.person),
                     obscureText: false,
+                    maxLength: 50,
+                    hasError: fullNameError,
+                    errorMessage: fullNameErrorMessage,
                   ),
                   SizedBox(height: 7),
                   CustomTextFormField(
@@ -155,6 +130,9 @@ class _SignupState extends State<Signup> {
                     hintText: 'Type your email here',
                     icon: Icon(Icons.email),
                     obscureText: false,
+                    maxLength: 50,
+                    hasError: emailError,
+                    errorMessage: emailErrorMessage,
                   ),
                   SizedBox(height: 7),
                   CustomTextFormField(
@@ -163,6 +141,9 @@ class _SignupState extends State<Signup> {
                     hintText: 'Type your password here',
                     icon: Icon(Icons.lock),
                     obscureText: true,
+                    maxLength: 16,
+                    hasError: passwordError,
+                    errorMessage: passwordErrorMessage,
                   ),
                   SizedBox(height: 7),
                   CustomTextFormField(
@@ -171,6 +152,9 @@ class _SignupState extends State<Signup> {
                     hintText: 'Confirm your password here',
                     icon: Icon(Icons.lock),
                     obscureText: true,
+                    maxLength: 16,
+                    hasError: confirmPasswordError,
+                    errorMessage: confirmPasswordErrorMessage,
                   ),
                   SizedBox(height: 7),
                   CustomButton(
@@ -180,38 +164,106 @@ class _SignupState extends State<Signup> {
                       String password = passwordController.text;
                       String confirmPassword = confirmPasswordController.text;
 
-                      if (fullName.isEmpty &&
-                          email.isEmpty &&
-                          password.isEmpty &&
-                          confirmPassword.isEmpty) {
-                        _showErrorDialog('All fields are required.');
-                        return;
+                      // Reset errors
+                      setState(() {
+                        fullNameError = false;
+                        emailError = false;
+                        passwordError = false;
+                        confirmPasswordError = false;
+                      });
+
+                      // Validate fields
+                      bool isValid = true;
+                      if (fullName.isEmpty) {
+                        setState(() {
+                          fullNameError = true;
+                          fullNameErrorMessage = 'Please enter your full name';
+
+                          isValid = false;
+                        });
                       }
 
-                      if (!_isPasswordValid(password)) {
-                        _showErrorDialog(
-                            'Password must have at least 8 characters, one uppercase, one lowercase, and one special character.');
-                        return;
+                      if (email.isEmpty) {
+                        setState(() {
+                          emailError = true;
+                          emailErrorMessage = 'Please enter an email';
+                          isValid = false;
+                        });
+                      } else if (!email.endsWith('@uniandes.edu.co')) {
+                        setState(() {
+                          emailError = true;
+                          emailErrorMessage =
+                              'Email must be of the domain @uniandes.edu.co.';
+                        });
                       }
 
-                      if (password != confirmPassword) {
-                        _showErrorDialog('Passwords do not match.');
-                        return;
+                      if (password.isEmpty) {
+                        setState(() {
+                          passwordError = true;
+                          passwordErrorMessage = 'Please enter your password';
+                          isValid = false;
+                        });
+                      } else if (!_isPasswordValid(password)) {
+                        setState(() {
+                          passwordError = true;
+                          passwordErrorMessage =
+                              'Password must have at least 8 characters, one uppercase, one lowercase, and one special character.';
+                          isValid = false;
+                        });
                       }
 
-                      if (!email.endsWith('@uniandes.edu.co')) {
-                        _showErrorDialog(
-                            'Email must be of the domain @uniandes.edu.co.');
-                        return;
+                      if (confirmPassword.isEmpty) {
+                        setState(() {
+                          confirmPasswordError = true;
+                          confirmPasswordErrorMessage =
+                              'Please confirm your password';
+                          isValid = false;
+                        });
+                      } else if (confirmPassword != password) {
+                        setState(() {
+                          confirmPasswordError = true;
+                          confirmPasswordErrorMessage =
+                              'Passwords do not match';
+                          isValid = false;
+                        });
                       }
 
-                      Users? user =
-                          await Auth().signUpWithEmailPassword(fullName, email, password);
+                      if (!isValid) return;
+
+                      Users? user = await Auth().signUpWithEmailPassword(
+                        fullName,
+                        email,
+                        password,
+                      );
+
                       if (user != null) {
-                        _showSuccessDialog('Account created successfully!');
+                        // Navigate to login page after successful sign up
+                        Navigator.pushReplacementNamed(context, '/login');
                       } else {
-                        _showErrorDialog(
-                            'Error creating account. The email is already in use or the password does not meet the requirements.');
+                        // Handle sign up failure
+                        // For example, display an error message
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Sign Up Failed'),
+                            content: Text(
+                              'Failed to sign up. Please try again later.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  // Clear text fields
+                                  fullNameController.clear();
+                                  emailController.clear();
+                                  passwordController.clear();
+                                  confirmPasswordController.clear();
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
                       }
                     },
                     text: 'Sign Up',
