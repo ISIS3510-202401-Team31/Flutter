@@ -25,8 +25,10 @@ class RestaurantViewModel {
     return _filterNearbyRestaurants(data, userLocation);
   }
 
-  Future<List<Restaurant>> getRecommendedRestaurants(String userId, String categoryFilter) async {
-    final data = await _restaurantRepository.fetchRecommendedRestaurants(userId, categoryFilter);
+  Future<List<Restaurant>> getRecommendedRestaurants(
+      String userId, String categoryFilter) async {
+    final data = await _restaurantRepository.fetchRecommendedRestaurants(
+        userId, categoryFilter);
     final userLocation = await _getUserLocation();
     return _mapRestaurantData(data, userLocation);
   }
@@ -66,14 +68,22 @@ class RestaurantViewModel {
     }
   }
 
-  List<Restaurant> _mapRestaurantData(List<Map<String, dynamic>> data, Position userLocation) {
-    return data.map((item) => _mapSingleRestaurantData(item, userLocation)).toList();
+  List<Restaurant> _mapRestaurantData(
+      List<Map<String, dynamic>> data, Position userLocation) {
+    return data
+        .map((item) => _mapSingleRestaurantData(item, userLocation))
+        .toList();
   }
 
-  Restaurant _mapSingleRestaurantData(Map<String, dynamic> item, Position userLocation) {
+  Restaurant _mapSingleRestaurantData(
+      Map<String, dynamic> item, Position userLocation) {
     final restaurantLat = double.parse(item['latitud']);
     final restaurantLong = double.parse(item['longitud']);
-    final distance = DistanceCalculator.calculateDistanceInKm(userLocation.latitude, userLocation.longitude, restaurantLat, restaurantLong);
+    final distance = DistanceCalculator.calculateDistanceInKm(
+        userLocation.latitude,
+        userLocation.longitude,
+        restaurantLat,
+        restaurantLong);
 
     return Restaurant(
       id: item['docId'] ?? '',
@@ -95,7 +105,8 @@ class RestaurantViewModel {
     );
   }
 
-  List<Restaurant> _filterNearbyRestaurants(List<Map<String, dynamic>> data, Position userLocation) {
+  List<Restaurant> _filterNearbyRestaurants(
+      List<Map<String, dynamic>> data, Position userLocation) {
     return data
         .where((item) => _isNearbyRestaurant(item, userLocation))
         .map((item) => _mapSingleRestaurantData(item, userLocation))
@@ -105,9 +116,11 @@ class RestaurantViewModel {
   bool _isNearbyRestaurant(Map<String, dynamic> item, Position userLocation) {
     final restaurantLat = double.parse(item['latitud']);
     final restaurantLong = double.parse(item['longitud']);
-    final distance = DistanceCalculator.calculateDistanceInKm(userLocation.latitude, userLocation.longitude, restaurantLat, restaurantLong);
+    final distance = DistanceCalculator.calculateDistanceInKm(
+        userLocation.latitude,
+        userLocation.longitude,
+        restaurantLat,
+        restaurantLong);
     return distance <= 30.5;
   }
-
-  
 }
