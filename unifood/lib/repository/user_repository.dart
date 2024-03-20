@@ -46,21 +46,18 @@ class UserRepository {
 
   Future<void> updateUserProfileImage(String userId, File imageFile) async {
     try {
-      // Genera un nombre de archivo único para la imagen
       String fileName = 'profile_$userId.jpg';
 
-      // Referencia al almacenamiento de Firebase
       Reference storageReference =
           _storage.ref().child('profile_images').child(fileName);
 
-      // Sube la imagen al almacenamiento de Firebase
       TaskSnapshot uploadTask = await storageReference.putFile(imageFile);
+
       String imageUrl = await uploadTask.ref.getDownloadURL();
 
-      // Actualiza la URL de la imagen en la base de datos
       await _updateImageUrlInDatabase(userId, imageUrl);
     } catch (e, stackTrace) {
-      // Guardar la información del error en la base de datos
+     
       final errorInfo = {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
@@ -75,13 +72,9 @@ class UserRepository {
 
   Future<void> _updateImageUrlInDatabase(String userId, String imageUrl) async {
     try {
-      // Obtén la referencia al documento del usuario en Firestore
       final userRef = databaseInstance.collection('users').doc(userId);
-
-      // Actualiza el campo de la URL de la imagen
       await userRef.update({'profileImageUrl': imageUrl});
     }  catch (e, stackTrace) {
-      // Guardar la información del error en la base de datos
       final errorInfo = {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
