@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
@@ -65,15 +66,27 @@ class RestaurantRepository {
   Future<List<Map<String, dynamic>>> fetchRecommendedRestaurants(
       String userId, String categoryFilter) async {
     try {
-      final response = await http.get(
-          Uri.parse('http://3.22.0.19:5000//recommend/$userId/$categoryFilter'));
+      final response = await http
+        .get(Uri.parse(
+            'http://3.22.0.19:5000//recommend/$userId/$categoryFilter'))
+        .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body);
         return List<Map<String, dynamic>>.from(responseData);
       } else {
-        throw Exception('Failed to load recommended restaurants');
+        print('Failed to load recommended restaurants. Status code: ${response.statusCode}');
+        return []; 
       }
+    } on TimeoutException catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'fetchRecommendedRestaurants',
+      };
+      ErrorRepository().saveError(errorInfo);
+      throw('Timeout while fetching recommended restaurants: $e');
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
@@ -85,5 +98,5 @@ class RestaurantRepository {
       print('Error when fetching recommended restaurants in repository: $e');
       rethrow;
     }
-  }
+}
 }

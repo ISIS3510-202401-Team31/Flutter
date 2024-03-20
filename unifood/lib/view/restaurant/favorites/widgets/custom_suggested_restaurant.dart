@@ -32,14 +32,13 @@ class CustomSuggestedRestaurant extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12), bottom: Radius.circular(12)), // Solo los bordes superiores
+                    top: Radius.circular(12), bottom: Radius.circular(12)), 
                 child: Image.network(
                   restaurantImage,
                   height: screenHeight * 0.13,
-                  fit: BoxFit.cover, // Ajuste de la imagen
+                  fit: BoxFit.cover, 
                 ),
               ),
-              // Área de texto con padding que ocupa el 20% del alto del Card
               Padding(
                 padding: const EdgeInsets.all(7),
                 child: Row(
