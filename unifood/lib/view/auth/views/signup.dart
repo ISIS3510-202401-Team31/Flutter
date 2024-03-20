@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/auth_repository.dart';
-import 'package:unifood/view/widgets/custom_appbar.dart';
+import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
 
@@ -46,38 +46,41 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(screenHeight * 0.06),
-        child: CustomAppBar(
+        child: CustomAppBarBuilder(
           screenHeight: screenHeight,
           screenWidth: screenWidth,
           showBackButton: true,
-          rightWidget: Container(
-            margin: const EdgeInsets.only(right: 0),
-            child: Container(
-              padding: EdgeInsets.only(left: screenWidth * 0.03),
-              height: screenHeight * 0.063,
-              width: screenWidth * 0.33,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(screenHeight * 0.01),
-                color: const Color(0xFF965E4E),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Icon(Icons.food_bank, color: Colors.black),
-                  SizedBox(width: screenWidth * 0.015),
-                  Text(
-                    'UNIFOOD',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'KeaniaOne',
-                      fontSize: screenHeight * 0.02,
-                    ),
+        )
+            .setRightWidget(
+              Container(
+                margin: const EdgeInsets.only(right: 0),
+                child: Container(
+                  padding: EdgeInsets.only(left: screenWidth * 0.03),
+                  height: screenHeight * 0.063,
+                  width: screenWidth * 0.33,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(screenHeight * 0.01),
+                    color: const Color(0xFF965E4E),
                   ),
-                ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.food_bank, color: Colors.black),
+                      SizedBox(width: screenWidth * 0.015),
+                      Text(
+                        'UNIFOOD',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'KeaniaOne',
+                          fontSize: screenHeight * 0.02,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
+            )
+            .build(context),
       ),
       body: SingleChildScrollView(
         child: Container(
