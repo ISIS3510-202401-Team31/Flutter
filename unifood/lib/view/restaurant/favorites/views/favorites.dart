@@ -88,31 +88,37 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(screenHeight * 0.06),
-        child: CustomAppBar(
+        child: CustomAppBarBuilder(
           screenHeight: screenHeight,
           screenWidth: screenWidth,
           showBackButton: true,
-          rightWidget: Row(
-            children: [
-              Container(
-                child: CustomCircledButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/profile');
-                  },
-                  diameter: 36,
-                  icon: const Icon(
-                    Icons.person,
-                    color: Colors.black,
+        )
+            .setRightWidget(
+              Row(
+                children: [
+                  Container(
+                    child: CustomCircledButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                      diameter: 36,
+                      icon: const Icon(
+                        Icons.person,
+                        color: Colors.black,
+                      ),
+                      buttonColor: const Color(0xFF965E4E),
+                    ),
                   ),
-                  buttonColor: const Color(0xFF965E4E),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
+            )
+            .build(context),
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.015, left: screenWidth * 0.04, right: screenWidth * 0.04),
+        padding: EdgeInsets.only(
+            top: screenHeight * 0.015,
+            left: screenWidth * 0.04,
+            right: screenWidth * 0.04),
         child: Column(
           children: [
             SuggestedRestaurantsSection(userId: widget.currentUser.uid),
@@ -122,7 +128,8 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
               children: [
                 Text(
                   'Favorite Restaurants',
-                  style: TextStyle(fontFamily: 'KeaniaOne', fontSize: screenWidth * 0.06),
+                  style: TextStyle(
+                      fontFamily: 'KeaniaOne', fontSize: screenWidth * 0.06),
                 ),
                 IconButton(
                   onPressed: () {
@@ -130,13 +137,14 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
                   },
                   icon: Icon(
                     Icons.search_rounded,
-                    size: screenWidth * 0.08,
+                    size: screenHeight * 0.035,
                   ),
                 )
               ],
             ),
             Container(
-              padding: EdgeInsets.only(left: screenWidth * 0.1, right: screenWidth * 0.025),
+              padding: EdgeInsets.only(
+                  left: screenWidth * 0.1, right: screenWidth * 0.025),
               height: screenHeight * 0.005,
               color: const Color(0xFF965E4E),
             ),

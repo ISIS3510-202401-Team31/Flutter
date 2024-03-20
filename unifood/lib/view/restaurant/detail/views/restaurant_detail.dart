@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.dart';
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
+import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view_model/plate_view_model.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
@@ -10,7 +11,8 @@ import 'package:unifood/view_model/review_view_model.dart';
 
 class RestaurantDetail extends StatefulWidget {
   final String restaurantId;
-  const RestaurantDetail({Key? key, required this.restaurantId}) : super(key: key);
+  const RestaurantDetail({Key? key, required this.restaurantId})
+      : super(key: key);
 
   @override
   _RestaurantDetailState createState() => _RestaurantDetailState();
@@ -26,9 +28,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final restaurantInfoData = await RestaurantViewModel().getRestaurantById(widget.restaurantId);
-    final menuItemsData = await PlateViewModel().getPlatesByRestaurantId(widget.restaurantId);
-    final reviewsData = await ReviewViewModel().getReviewsByRestaurantId(widget.restaurantId);
+    final restaurantInfoData =
+        await RestaurantViewModel().getRestaurantById(widget.restaurantId);
+    final menuItemsData =
+        await PlateViewModel().getPlatesByRestaurantId(widget.restaurantId);
+    final reviewsData =
+        await ReviewViewModel().getReviewsByRestaurantId(widget.restaurantId);
 
     return [restaurantInfoData, menuItemsData, reviewsData];
   }
@@ -41,35 +46,20 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(screenHeight * 0.05),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.search, size: screenWidth * 0.07),
-              onPressed: () {
-                Navigator.pushNamed(context, "/filtermenu");
-              },
-            ),
-          ],
-          flexibleSpace: Container(
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(left: screenWidth * 0.015, top: screenHeight * 0.045),
-            child: CustomCircledButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/restaurants');
-              },
-              diameter: screenHeight * 0.0335,
-              icon: Icon(
-                Icons.chevron_left_sharp,
-                color: Colors.black,
-                size: screenHeight * 0.0335,
+        child: CustomAppBarBuilder(
+          screenHeight: screenHeight,
+          screenWidth: screenWidth,
+          showBackButton: true,
+        )
+            .setRightWidget(
+              IconButton(
+                icon: Icon(Icons.search, size: screenWidth * 0.07),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/filtermenu");
+                },
               ),
-              buttonColor: Colors.white,
-            ),
-          ),
-        ),
+            )
+            .build(context),
       ),
       body: FutureBuilder<List<dynamic>>(
         future: dataFuture,

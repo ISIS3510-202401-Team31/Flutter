@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/utils/distance_calculator.dart';
+import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_options.dart';
@@ -90,44 +91,24 @@ class _ProfileState extends State<Profile> {
           return Scaffold(
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(screenHeight * 0.05),
-              child: AppBar(
-                automaticallyImplyLeading: false,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                flexibleSpace: Container(
-                  alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.only(
-                      left: screenWidth * 0.015, top: screenHeight * 0.045),
-                  child: Row(
-                    children: <Widget>[
-                      CustomCircledButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/restaurants');
-                        },
-                        diameter: screenHeight * 0.0335,
-                        icon: Icon(
-                          Icons.chevron_left_sharp,
-                          color: Colors.black,
-                          size: screenHeight * 0.0335,
-                        ),
-                        buttonColor: Colors.white,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: screenHeight * 0.01, left: screenWidth * 0.2),
-                        child: Text(
-                          'Bogotá',
-                          style: TextStyle(
-                            fontSize: screenHeight * 0.018,
-                            fontWeight: FontWeight.w300,
-                          ),
+              child: CustomAppBarBuilder(
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
+                showBackButton: true,
+              )
+                  .setRightWidget(
+                    Container(
+                      margin: EdgeInsets.only(right: screenWidth * 0.44),
+                      child: Text(
+                        'Bogotá',
+                        style: TextStyle(
+                          fontSize: screenHeight * 0.018,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                centerTitle: true,
-              ),
+                    ),
+                  )
+                  .build(context),
             ),
             body: SingleChildScrollView(
               child: SizedBox(

@@ -105,9 +105,9 @@ class _RestaurantsState extends State<Restaurants> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/restaurant_search');
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.search_rounded,
-                    size: 25,
+                    size: screenHeight * 0.035,
                   ),
                 )
               ],

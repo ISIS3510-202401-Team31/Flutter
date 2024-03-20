@@ -65,8 +65,8 @@ class RestaurantRepository {
   Future<List<Map<String, dynamic>>> fetchRecommendedRestaurants(
       String userId, String categoryFilter) async {
     try {
-      final response = await http.get(Uri.parse(
-          'http://3.129.13.41:5000//recommend/$userId/$categoryFilter'));
+      final response = await http.get(
+          Uri.parse('http://3.22.0.19//recommend/$userId/$categoryFilter'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body);
