@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/location_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
+import 'package:unifood/utils/distance_calculator.dart';
 
 class UserViewModel extends ChangeNotifier {
   final UserRepository _repository = UserRepository();
+  final LocationRepository _locationRepository = LocationRepository();
   late Users _user;
 
   Users get user => _user;
@@ -19,7 +23,6 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  
   Future<void> updateUserProfileImage(String userId, File imageFile) async {
     try {
       await _repository.updateUserProfileImage(userId, imageFile);
@@ -30,4 +33,21 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
+  Future<Position> _getUserLocation() async {
+    try {
+      return await _locationRepository.getUserLocation();
+    } catch (error) {
+      print('Error getting user location: $error');
+      rethrow;
+    }
+  }
+
+  Future<String> getDistanceFromCampus() async {
+    final userLocation = await _getUserLocation();
+    final campusLat = double.parse('4.6029417');
+    final campusLong = double.parse('-74.0653178');
+    final distance = DistanceCalculator.calculateDistanceInKm(
+        userLocation.latitude, userLocation.longitude, campusLat, campusLong);
+    return distance.toStringAsFixed(2);
+  }
 }

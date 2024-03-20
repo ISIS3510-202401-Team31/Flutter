@@ -1,13 +1,17 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/user_repository.dart';
+import 'package:unifood/utils/distance_calculator.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_options.dart';
+import 'package:unifood/view_model/restaurant_view_model.dart';
+import 'package:unifood/view_model/user_view_model.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -149,7 +153,7 @@ class _ProfileState extends State<Profile> {
                                 Expanded(
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: screenWidth * 0.05),
+                                        horizontal: screenWidth * 0.03),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -165,10 +169,57 @@ class _ProfileState extends State<Profile> {
                                         Text(
                                           userData.email,
                                           style: TextStyle(
-                                            fontSize: screenHeight * 0.02,
+                                            fontSize: screenHeight * 0.0155,
                                             color: Colors.grey,
                                           ),
                                         ),
+                                        SizedBox(height: screenHeight * 0.008),
+                                        FutureBuilder<String>(
+                                          future: UserViewModel()
+                                              .getDistanceFromCampus(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              // Muestra un indicador de carga mientras se espera el resultado
+                                              return Center(
+                                                child: SpinKitThreeBounce(
+                                                  color: Colors.black,
+                                                  size: screenHeight * 0.03,
+                                                ),
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              // Muestra un mensaje de error si ocurre algún error
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            } else {
+                                              // Muestra el texto devuelto por la función
+                                              final distance = snapshot.data;
+                                              return Row(
+                                                children: [
+                                                  Text(
+                                                    '$distance',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: screenHeight *
+                                                            0.015),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          screenWidth * 0.01),
+                                                  Text(
+                                                    'km away from campus.',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: screenHeight *
+                                                            0.015),
+                                                  )
+                                                ],
+                                              );
+                                            }
+                                          },
+                                        )
                                       ],
                                     ),
                                   ),
@@ -259,7 +310,19 @@ class _ProfileState extends State<Profile> {
                                     CustomSettingOption(
                                       icon: Icons.logout,
                                       text: 'Log Out',
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        try {
+                                          await FirebaseAuth.instance.signOut();
+                                          // Navegar a la pantalla de inicio de sesión o a otra pantalla según sea necesario
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              '/login',
+                                              (route) => false);
+                                        } catch (error) {
+                                          print('Error signing out: $error');
+                                          // Manejar el error según sea necesario
+                                        }
+                                      },
                                     ),
                                   ],
                                 ),
