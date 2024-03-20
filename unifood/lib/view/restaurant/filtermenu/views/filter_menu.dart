@@ -289,6 +289,7 @@ Widget _buildResultsMenu() {
       itemBuilder: (context, index) {
         final restaurant = restaurantsToShow[index];
         return RestaurantCard(
+          id: restaurant['id'], // Asegúrate de que este sea el campo correcto para el id del restaurante
           name: restaurant['title'], // Asegúrate de que este sea el campo correcto para el nombre del restaurante
           logo: restaurant['logo'] ?? 'assets/images/elcarnal_logo.jpeg', // Proporciona una imagen por defecto si no hay logo
           state: restaurant['state'] ?? 'Closed', // Asume un estado por defecto si no está proporcionado

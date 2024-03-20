@@ -66,7 +66,7 @@ class RestaurantRepository {
       String userId, String categoryFilter) async {
     try {
       final response = await http.get(
-          Uri.parse('http://3.22.0.19//recommend/$userId/$categoryFilter'));
+          Uri.parse('http://3.22.0.19:5000//recommend/$userId/$categoryFilter'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body);

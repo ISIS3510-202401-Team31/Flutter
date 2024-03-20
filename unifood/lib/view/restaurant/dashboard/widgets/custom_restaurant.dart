@@ -53,7 +53,7 @@ class CustomRestaurant extends StatelessWidget {
               Expanded(
                 flex: 1, // Asigna espacio proporcional a los detalles
                 child: Container(
-                  color: const Color(0xFFE2D2B4),
+                  color: Colors.white.withOpacity(0.9),
                   child: Padding(
                     padding: EdgeInsets.all(basePadding),
                     child: Row(
