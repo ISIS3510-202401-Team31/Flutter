@@ -34,6 +34,9 @@ class _FavoritesState extends State<Favorites> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return FutureBuilder<List<dynamic>>(
       future: dataFuture,
       builder: (context, snapshot) {
@@ -47,9 +50,33 @@ class _FavoritesState extends State<Favorites> {
             ),
           );
         } else if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Text('Error: ${snapshot.error}'),
+          return Padding(
+            padding: EdgeInsets.all(screenWidth * 0.03),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Oops! Something went wrong.\nPlease try again later.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontWeight: FontWeight.bold, // Letra en negrita
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  IconButton(
+                    icon: Icon(
+                      Icons.refresh,
+                      size: MediaQuery.of(context).size.width * 0.08,
+                    ),
+                    onPressed: () {
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         } else if (snapshot.hasData) {

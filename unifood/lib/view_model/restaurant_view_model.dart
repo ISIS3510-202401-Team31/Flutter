@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/error_repository.dart';
@@ -27,16 +29,37 @@ class RestaurantViewModel {
 
   Future<List<Restaurant>> getRecommendedRestaurants(
       String userId, String categoryFilter) async {
-    final data = await _restaurantRepository.fetchRecommendedRestaurants(
-        userId, categoryFilter);
-    final userLocation = await _getUserLocation();
-    return _mapRestaurantData(data, userLocation);
+    try {
+      final data = await _restaurantRepository.fetchRecommendedRestaurants(
+          userId, categoryFilter);
+      final userLocation = await _getUserLocation();
+      return _mapRestaurantData(data, userLocation);
+    } on TimeoutException catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getRecommendedRestaurants',
+      };
+      ErrorRepository().saveError(errorInfo);
+       throw('Timeout while fetching recommended restaurants: $e');
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getRecommendedRestaurants',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching recommended restaurants in ViewModel: $e');
+      rethrow;
+    }
   }
 
   Future<Position> _getUserLocation() async {
     try {
       return await _locationRepository.getUserLocation();
-    }  catch (e, stackTrace) {
+    } catch (e, stackTrace) {
       // Guardar la información del error en la base de datos
       final errorInfo = {
         'error': e.toString(),
@@ -54,7 +77,7 @@ class RestaurantViewModel {
     try {
       final data = await _restaurantRepository.getRestaurants();
       return _mapRestaurantData(data, userLocation);
-    }  catch (e, stackTrace) {
+    } catch (e, stackTrace) {
       // Guardar la información del error en la base de datos
       final errorInfo = {
         'error': e.toString(),

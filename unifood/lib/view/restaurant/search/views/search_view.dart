@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_card.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_logo.dart';
@@ -37,9 +38,42 @@ class _SearchViewState extends State<SearchView> {
           future: RestaurantViewModel().getRestaurants(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(
+                child: SpinKitThreeBounce(
+                  color: Colors.black,
+                  size: 30.0,
+                ),
+              );
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Padding(
+                padding: EdgeInsets.all(screenWidth * 0.03),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Oops! Something went wrong.\nPlease try again later.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontWeight: FontWeight.bold, // Letra en negrita
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.02),
+                      IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          size: MediaQuery.of(context).size.width * 0.08,
+                        ),
+                        onPressed: () {
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
             } else {
               final restaurants = snapshot.data!;
               _restaurantList = restaurants;
@@ -104,14 +138,13 @@ class _SearchViewState extends State<SearchView> {
   }
 
   void _performSearch(String query) {
-  setState(() {
-    _searchResults.clear(); 
+    setState(() {
+      _searchResults.clear();
 
-    if (query.isNotEmpty) {
-      _searchResults.addAll(_restaurantList.where((restaurant) =>
-          restaurant.name.toLowerCase().contains(query.toLowerCase())));
-    }
-  });
-}
-
+      if (query.isNotEmpty) {
+        _searchResults.addAll(_restaurantList.where((restaurant) =>
+            restaurant.name.toLowerCase().contains(query.toLowerCase())));
+      }
+    });
+  }
 }
