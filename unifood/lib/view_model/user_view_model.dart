@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/location_repository.dart';
+import 'package:unifood/repository/error_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/utils/distance_calculator.dart';
 
@@ -18,17 +19,32 @@ class UserViewModel extends ChangeNotifier {
     try {
       _user = await _repository.getUser(userId);
       notifyListeners();
-    } catch (e) {
-      print('Failed to get user: $e');
+    }  catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getUser',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching user in view model: $e');
     }
   }
 
   Future<void> updateUserProfileImage(String userId, File imageFile) async {
     try {
       await _repository.updateUserProfileImage(userId, imageFile);
-    } catch (error) {
-      // Manejar el error según sea necesario
-      print('Error al actualizar la imagen de perfil: $error');
+    }  catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'updateUserProfileImage',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when updating user profile image in view model: $e');
       rethrow;
     }
   }
@@ -36,8 +52,16 @@ class UserViewModel extends ChangeNotifier {
   Future<Position> _getUserLocation() async {
     try {
       return await _locationRepository.getUserLocation();
-    } catch (error) {
-      print('Error getting user location: $error');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'updateUserProfileImage',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when getting user location repository: $e');
       rethrow;
     }
   }

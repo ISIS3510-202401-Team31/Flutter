@@ -78,7 +78,6 @@ class _FilterMenuState extends State<FilterMenu> {
 Widget build(BuildContext context) {
   // Obtén el tamaño de la pantalla y el padding seguro
   final Size screenSize = MediaQuery.of(context).size;
-  final EdgeInsets safeAreaPadding = MediaQuery.of(context).padding;
 
   return Scaffold(
     appBar: AppBar(

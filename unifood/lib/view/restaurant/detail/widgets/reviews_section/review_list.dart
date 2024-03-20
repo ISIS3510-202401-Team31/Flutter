@@ -39,7 +39,7 @@ class _ReviewListState extends State<ReviewList> {
                   ),
                 ),
                 CustomCircledButton(
-                  onPressed: () {
+                  onPressed:(){
                     setState(() {
                       areReviewsVisible = !areReviewsVisible;
                     });

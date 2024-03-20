@@ -1,11 +1,12 @@
 import 'package:unifood/data/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:unifood/repository/error_repository.dart';
 
 class ReviewRepository {
-  
   FirebaseFirestore databaseInstance = FirebaseService().database;
-  
-  Future<List<Map<String, dynamic>>> getReviewsByRestaurantId(String restaurantId) async {
+
+  Future<List<Map<String, dynamic>>> getReviewsByRestaurantId(
+      String restaurantId) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await databaseInstance
           .collection('restaurants')
@@ -14,10 +15,17 @@ class ReviewRepository {
           .get();
 
       return querySnapshot.docs.map((doc) => doc.data()).toList();
-    } catch (error) {
-      print('Error fetching reviews: $error');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getReviewsByRestaurantId',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching reviews by id in repository: $e');
       rethrow;
     }
   }
-
 }
