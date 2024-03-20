@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
+import 'package:unifood/repository/error_repository.dart';
 
 class RestaurantRepository {
   FirebaseFirestore databaseInstance = FirebaseService().database;
@@ -19,8 +20,16 @@ class RestaurantRepository {
       }).toList();
 
       return restaurants;
-    } catch (error) {
-      print('Error fetching menu items: $error');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getRestaurants',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching restaurants in repository: $e');
       rethrow;
     }
   }
@@ -39,15 +48,25 @@ class RestaurantRepository {
         print('No restaurant found with id: $restaurantId');
         return null;
       }
-    } catch (error) {
-      print('Error fetching restaurant by id: $error');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getRestaurantById',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching restaurant by id in repository: $e');
       rethrow;
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchRecommendedRestaurants(String userId, String categoryFilter) async {
+  Future<List<Map<String, dynamic>>> fetchRecommendedRestaurants(
+      String userId, String categoryFilter) async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.0.21:5000//recommend/$userId/$categoryFilter'));
+      final response = await http.get(Uri.parse(
+          'http://3.129.13.41:5000//recommend/$userId/$categoryFilter'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body);
@@ -55,8 +74,15 @@ class RestaurantRepository {
       } else {
         throw Exception('Failed to load recommended restaurants');
       }
-    } catch (error) {
-      print('Error fetching recommended restaurants: $error');
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'fetchRecommendedRestaurants',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching recommended restaurants in repository: $e');
       rethrow;
     }
   }

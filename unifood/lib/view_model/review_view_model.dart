@@ -1,4 +1,5 @@
 import 'package:unifood/model/review_entity.dart';
+import 'package:unifood/repository/error_repository.dart';
 import 'package:unifood/repository/review_repository.dart';
 
 class ReviewViewModel {
@@ -8,6 +9,7 @@ class ReviewViewModel {
     try {
       final List<Map<String, dynamic>> data =
           await _reviewRepository.getReviewsByRestaurantId(restaurantId);
+      
 
       return data
           .map(
@@ -19,8 +21,16 @@ class ReviewViewModel {
             ),
           )
           .toList();
-    } catch (error) {
-      print('Error fetching menu items in view model: $error');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getReviewsByRestaurantId',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching reviews by id in view model: $e');
       rethrow;
     }
   }

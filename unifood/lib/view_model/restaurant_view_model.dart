@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/repository/error_repository.dart';
 import 'package:unifood/repository/location_repository.dart';
 import 'package:unifood/repository/restaurant_repository.dart';
 import 'package:unifood/utils/distance_calculator.dart';
@@ -35,8 +36,16 @@ class RestaurantViewModel {
   Future<Position> _getUserLocation() async {
     try {
       return await _locationRepository.getUserLocation();
-    } catch (error) {
-      print('Error getting user location: $error');
+    }  catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getUserLocation',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print("Error getting users location: $e");
       rethrow;
     }
   }
@@ -45,8 +54,16 @@ class RestaurantViewModel {
     try {
       final data = await _restaurantRepository.getRestaurants();
       return _mapRestaurantData(data, userLocation);
-    } catch (error) {
-      print('Error fetching menu items: $error');
+    }  catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getRestaurantData',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching restaurants in view model: $e');
       rethrow;
     }
   }
