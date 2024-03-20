@@ -4,7 +4,6 @@ import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.da
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view_model/plate_view_model.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
 import 'package:unifood/view_model/review_view_model.dart';

@@ -6,12 +6,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/user_repository.dart';
-import 'package:unifood/utils/distance_calculator.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_options.dart';
-import 'package:unifood/view_model/restaurant_view_model.dart';
 import 'package:unifood/view_model/user_view_model.dart';
 
 class Profile extends StatefulWidget {
