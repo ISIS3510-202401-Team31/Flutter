@@ -88,7 +88,7 @@ class _PreferencesState extends State<Preferences> {
               // Agregar Divider con Padding para margen
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // Margen horizontal para el Divider
-                child: Divider(color: Colors.grey),
+                child: const Divider(color: Colors.grey),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -104,7 +104,7 @@ class _PreferencesState extends State<Preferences> {
               // Agregar otro Divider con Padding para margen antes de SettingsCheckboxList
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // Margen horizontal para el Divider
-                child: Divider(color: Colors.grey),
+                child: const Divider(color: Colors.grey),
               ),
               const SizedBox(height: 20),
               SettingsCheckboxList(checkboxTitles: _checkboxTitles, isChecked: _isChecked),

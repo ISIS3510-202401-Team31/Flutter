@@ -45,7 +45,7 @@ class CustomSettingOption extends StatelessWidget {
                   text,
                   style: TextStyle(
                     fontSize: screenHeight * 0.0215,
-                    color: Color.fromARGB(255, 128, 126, 126),
+                    color: const Color.fromARGB(255, 128, 126, 126),
                   ),
                 ),
               ],

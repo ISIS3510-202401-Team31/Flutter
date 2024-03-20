@@ -18,7 +18,7 @@ class LocationDetails extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
+    return SizedBox(
       width: screenWidth * 0.9,
       height: screenHeight * 0.11,
       child: Padding(
@@ -34,7 +34,7 @@ class LocationDetails extends StatelessWidget {
               ),
             ),
             SizedBox(height: screenHeight * 0.005),
-            Container(
+            SizedBox(
               height: screenHeight * 0.05,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,7 +66,7 @@ class LocationDetails extends StatelessWidget {
                           SizedBox(width: screenWidth * 0.01),
                            Icon(
                             Icons.location_on,
-                            color: Color.fromARGB(255, 129, 128, 128),
+                            color: const Color.fromARGB(255, 129, 128, 128),
                             size: screenHeight * 0.02,
                           ),
                         ],

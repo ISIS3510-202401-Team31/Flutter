@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/utils/string_utils.dart';
 
 class CustomSuggestedRestaurant extends StatelessWidget {
   final String restaurantName;
   final String restaurantImage;
-  final String filter;
+  final double restaurantPrice;
   final VoidCallback onTap;
 
   const CustomSuggestedRestaurant({
     Key? key,
     required this.restaurantName,
     required this.restaurantImage,
-    required this.filter,
+    required this.restaurantPrice,
     required this.onTap,
   }) : super(key: key);
 
@@ -24,12 +25,13 @@ class CustomSuggestedRestaurant extends StatelessWidget {
         color: Colors.transparent,
         width: screenWidth * 0.48, // Ancho del contenedor
         child: Card(
-          elevation: 0, // Elevación del Card
+          elevation: 0, 
+          color: Colors.transparent,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.vertical(
+                borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(12), bottom: Radius.circular(12)), // Solo los bordes superiores
                 child: Image.network(
                   restaurantImage,
@@ -39,7 +41,7 @@ class CustomSuggestedRestaurant extends StatelessWidget {
               ),
               // Área de texto con padding que ocupa el 20% del alto del Card
               Padding(
-                padding: EdgeInsets.all(7),
+                padding: const EdgeInsets.all(7),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -52,7 +54,7 @@ class CustomSuggestedRestaurant extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      filter,
+                      formatNumberWithCommas(restaurantPrice),
                       style: TextStyle(
                         fontSize: screenHeight *
                             0.015, // Tamaño del texto de la ubicación del restaurante

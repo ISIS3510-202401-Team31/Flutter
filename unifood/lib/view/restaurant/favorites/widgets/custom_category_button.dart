@@ -22,7 +22,7 @@ class CustomCategoryButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
-          elevation: 1.0, // Controla la elevación del botón
+          elevation: 1, 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -31,7 +31,7 @@ class CustomCategoryButton extends StatelessWidget {
           text,
           style: TextStyle(
             color: Colors.black,
-            fontSize: screenHeight * 0.013,
+            fontSize: screenHeight * 0.012,
             fontWeight: FontWeight.bold,
           ),
         ),

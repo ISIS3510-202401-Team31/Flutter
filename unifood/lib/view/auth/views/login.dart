@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
-import 'package:unifood/repository/auth_repositorydart';
+import 'package:unifood/repository/auth_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
-import 'package:unifood/view/widgets/custom_circled_button.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -49,7 +48,7 @@ class _LoginState extends State<Login> {
           screenWidth: screenWidth,
           showBackButton: true,
           rightWidget: Container(
-            margin: EdgeInsets.only(right: 0),
+            margin: const EdgeInsets.only(right: 0),
             child: Container(
               padding: EdgeInsets.only(left: screenWidth * 0.03),
               height: screenHeight * 0.063,
@@ -61,7 +60,7 @@ class _LoginState extends State<Login> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(Icons.food_bank, color: Colors.black),
+                  const Icon(Icons.food_bank, color: Colors.black),
                   SizedBox(width: screenWidth * 0.015),
                   Text(
                     'UNIFOOD',
@@ -115,7 +114,7 @@ class _LoginState extends State<Login> {
                     controller: emailController,
                     labelText: 'Email',
                     hintText: 'Type your email here',
-                    icon: Icon(Icons.email),
+                    icon: const Icon(Icons.email),
                     obscureText: false,
                     maxLength: 50,
                     errorMessage: emailError ? emailErrorMessage : null,
@@ -127,7 +126,7 @@ class _LoginState extends State<Login> {
                     controller: passwordController,
                     labelText: 'Password',
                     hintText: 'Type your password here',
-                    icon: Icon(Icons.lock),
+                    icon: const Icon(Icons.lock),
                     obscureText: true,
                     maxLength: 16,
                     errorMessage: passwordError ? passwordErrorMessage : null,
@@ -171,8 +170,8 @@ class _LoginState extends State<Login> {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('Error de inicio de sesión'),
-                            content: Text(
+                            title: const Text('Error de inicio de sesión'),
+                            content: const Text(
                               'Failed to sign in. Please check your credentials.',
                             ),
                             actions: [
@@ -182,7 +181,7 @@ class _LoginState extends State<Login> {
                                   passwordController.clear();
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Aceptar'),
+                                child: const Text('Aceptar'),
                               ),
                             ],
                           ),
@@ -216,7 +215,7 @@ class _LoginState extends State<Login> {
                           'Sign Up',
                           style: TextStyle(
                             fontSize: screenHeight * 0.02,
-                            color: Color(0xFF965E4E),
+                            color: const Color(0xFF965E4E),
                             fontFamily: 'Gudea',
                             fontWeight: FontWeight.bold,
                           ),

@@ -7,7 +7,7 @@ import 'package:unifood/repository/shared_preferences.dart';
 class Auth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseService().database;
-  SharedPreferencesService _prefsService = SharedPreferencesService();
+  final SharedPreferencesService _prefsService = SharedPreferencesService();
 
   Future<void> signOut() async {
     try {

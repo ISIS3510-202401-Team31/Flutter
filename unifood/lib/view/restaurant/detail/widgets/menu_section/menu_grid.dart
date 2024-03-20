@@ -20,7 +20,7 @@ class _MenuGridState extends State<MenuGrid> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
+    return SizedBox(
       width: screenWidth * 0.9,
       child: Padding(
         padding: EdgeInsets.symmetric( horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),

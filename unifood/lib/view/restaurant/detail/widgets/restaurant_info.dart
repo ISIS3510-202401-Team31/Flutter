@@ -14,12 +14,12 @@ class RestaurantInfo extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
+    return SizedBox(
       width: screenWidth * 0.9,
       height: screenHeight * 0.5,
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: screenHeight * 0.25,
             child: Column(
               children: [

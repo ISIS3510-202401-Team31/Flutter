@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/utils/string_utils.dart';
 import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
 
 class CustomRestaurant extends StatelessWidget {
@@ -36,9 +37,9 @@ class CustomRestaurant extends StatelessWidget {
         Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
       },
       child: Card(
-        child: Container(
+        child: SizedBox(
           width: screenWidth * 0.9,
-          height: screenHeight * 0.165,
+          height: screenHeight * 0.168,
           child: Column(
             children: [
               Expanded(
@@ -105,7 +106,7 @@ class CustomRestaurant extends StatelessWidget {
                                 ),
                                 SizedBox(width: screenWidth * 0.005),
                                 Text(
-                                  '${avgPrice.toStringAsFixed(1)} k',
+                                  formatNumberWithCommas(avgPrice),
                                   style: TextStyle(
                                     fontSize: fontSize * 0.8,
                                     color: Colors.grey.shade600,

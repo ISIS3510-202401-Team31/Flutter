@@ -43,12 +43,12 @@ class CustomSettingOptionWithIcons extends StatelessWidget {
           itemBuilder: (context, index) {
             return Container(
               width: itemWidth,
-              padding: EdgeInsets.symmetric(horizontal: 10), // Añade un poco de espacio entre los elementos
+              padding: const EdgeInsets.symmetric(horizontal: 10), // Añade un poco de espacio entre los elementos
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(imagePaths[index], width: imageSize, height: imageSize),
-                  SizedBox(height: 4), // Espacio entre la imagen y el texto
+                  const SizedBox(height: 4), // Espacio entre la imagen y el texto
                   Text(texts[index], style: TextStyle(fontSize: fontSize * 0.9, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 ],
               ),

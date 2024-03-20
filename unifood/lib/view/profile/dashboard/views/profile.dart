@@ -24,21 +24,21 @@ class _ProfileState extends State<Profile> {
     final pickedFile = await showDialog<XFile?>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Selecciona una imagen"),
+        title: const Text("Selecciona una imagen"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.photo_camera),
-              title: Text("Tomar una foto"),
+              leading: const Icon(Icons.photo_camera),
+              title: const Text("Tomar una foto"),
               onTap: () async {
                 Navigator.of(context)
                     .pop(await _picker.pickImage(source: ImageSource.camera));
               },
             ),
             ListTile(
-              leading: Icon(Icons.photo_library),
-              title: Text("Seleccionar de la galería"),
+              leading: const Icon(Icons.photo_library),
+              title: const Text("Seleccionar de la galería"),
               onTap: () async {
                 Navigator.of(context)
                     .pop(await _picker.pickImage(source: ImageSource.gallery));
@@ -126,13 +126,13 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             body: SingleChildScrollView(
-              child: Container(
+              child: SizedBox(
                 width: screenWidth * 0.985,
                 height: screenHeight * 0.8,
                 child: Padding(
                   padding: EdgeInsets.only(
                       top: screenHeight * 0.025, left: screenWidth * 0.02),
-                  child: Container(
+                  child: SizedBox(
                     height: screenHeight * 0.2,
                     width: screenWidth * 0.9,
                     child: Column(

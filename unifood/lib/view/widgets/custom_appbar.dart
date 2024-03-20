@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {

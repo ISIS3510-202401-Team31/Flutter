@@ -2,7 +2,7 @@ class Plate {
   final String imagePath;
   final String name;
   final String description;
-  final int price;
+  final double price;
 
   Plate({
     required this.imagePath,

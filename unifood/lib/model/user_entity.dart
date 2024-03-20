@@ -1,8 +1,8 @@
 class Users {
-  final uid;
+  final String uid;
   final String name;
   final String email;
-   String? profileImageUrl; // Puede ser nulo si el usuario no ha establecido una imagen de perfil
+  String? profileImageUrl; // Puede ser nulo si el usuario no ha establecido una imagen de perfil
 
   Users({
     required this.uid,

@@ -20,7 +20,7 @@ class _ReviewListState extends State<ReviewList> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
+    return SizedBox(
       width: screenWidth * 0.9,
       child: Padding(
         padding: EdgeInsets.symmetric(
