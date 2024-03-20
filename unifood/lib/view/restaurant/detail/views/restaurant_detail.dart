@@ -71,18 +71,36 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Column(
-              children: [
-                Text('Error: ${snapshot.error}'),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      dataFuture = fetchData(); // Recargar los datos
-                    });
-                  },
-                  child: const Text('Retry'),
+            return Padding(
+              padding: EdgeInsets.all(screenWidth * 0.03),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Oops! Something went wrong.\nPlease try again later.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        fontWeight: FontWeight.bold, // Letra en negrita
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                    IconButton(
+                      icon: Icon(
+                        Icons.refresh,
+                        size: MediaQuery.of(context).size.width * 0.08,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          dataFuture = fetchData();
+                        });
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             );
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             final data = snapshot.data!;

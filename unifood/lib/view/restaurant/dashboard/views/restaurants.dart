@@ -129,10 +129,38 @@ class _RestaurantsState extends State<Restaurants> {
                     ),
                   );
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return Padding(
+                    padding: EdgeInsets.all(screenWidth * 0.03),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Oops! Something went wrong.\nPlease try again later.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
+                              fontWeight: FontWeight.bold, // Letra en negrita
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.02),
+                          IconButton(
+                            icon: Icon(
+                              Icons.refresh,
+                              size: MediaQuery.of(context).size.width * 0.08,
+                            ),
+                            onPressed: () {
+                              setState(() {});
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   final List<Restaurant> favoriteRestaurants = snapshot.data!;
-
                   return Container(
                     color: const Color(0xFF965E4E).withOpacity(0.15),
                     height: screenHeight * 0.338,
