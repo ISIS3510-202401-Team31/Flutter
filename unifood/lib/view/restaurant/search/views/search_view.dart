@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_card.dart';
@@ -80,14 +81,20 @@ class _SearchViewState extends State<SearchView> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: restaurants
-                        .map((restaurant) => RestaurantLogo(
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (var restaurant in restaurants)
+                          Padding(
+                            padding: EdgeInsets.all(screenWidth * 0.037),
+                            child: RestaurantLogo(
                               logo: restaurant.logoUrl,
                               id: restaurant.id,
-                            ))
-                        .toList(),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   Container(
