@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/utils/string_utils.dart';
+import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
 
 class CustomSuggestedRestaurant extends StatelessWidget {
+  final String id;
   final String restaurantName;
   final String restaurantImage;
   final double restaurantPrice;
-  final VoidCallback onTap;
 
   const CustomSuggestedRestaurant({
     Key? key,
+    required this.id,
     required this.restaurantName,
     required this.restaurantImage,
     required this.restaurantPrice,
-    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -20,10 +21,12 @@ class CustomSuggestedRestaurant extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
-      onTap: onTap,
+      onTap: (){
+         Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id )));
+      },
       child: Container(
         color: Colors.transparent,
-        width: screenWidth * 0.48, // Ancho del contenedor
+        width: screenWidth * 0.48, 
         child: Card(
           elevation: 0, 
           color: Colors.transparent,

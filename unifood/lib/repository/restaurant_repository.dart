@@ -15,8 +15,7 @@ class RestaurantRepository {
 
       List<Map<String, dynamic>> restaurants = querySnapshot.docs.map((doc) {
         Map<String, dynamic> restaurantData = doc.data();
-        restaurantData['docId'] =
-            doc.id; // Agregar el docId a los datos del restaurante
+        restaurantData['docId'] =doc.id; 
         return restaurantData;
       }).toList();
 
@@ -37,6 +36,7 @@ class RestaurantRepository {
 
   Future<Map<String, dynamic>?> getRestaurantById(String restaurantId) async {
     try {
+      print(restaurantId);
       DocumentSnapshot<Map<String, dynamic>?> docSnapshot =
           await databaseInstance
               .collection('restaurants')
@@ -73,7 +73,14 @@ class RestaurantRepository {
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body);
-        return List<Map<String, dynamic>>.from(responseData);
+       List<Map<String, dynamic>> restaurantsData = List<Map<String, dynamic>>.from(responseData);
+
+      for (Map<String, dynamic> restaurantData in restaurantsData) {
+        restaurantData['id'] = restaurantData['docId']; // Asignar docId como el id del restaurante
+      }
+
+      return restaurantsData;
+
       } else {
         print('Failed to load recommended restaurants. Status code: ${response.statusCode}');
         return []; 
