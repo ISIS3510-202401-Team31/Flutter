@@ -30,8 +30,7 @@ class RestaurantViewModel {
   Future<List<Restaurant>> getRecommendedRestaurants(
       String userId, String categoryFilter) async {
     try {
-      final data = await _restaurantRepository.fetchRecommendedRestaurants(
-          userId, categoryFilter);
+      final data = await _restaurantRepository.fetchRecommendedRestaurants(userId, categoryFilter);
       final userLocation = await _getUserLocation();
       return _mapRestaurantData(data, userLocation);
     } on TimeoutException catch (e, stackTrace) {

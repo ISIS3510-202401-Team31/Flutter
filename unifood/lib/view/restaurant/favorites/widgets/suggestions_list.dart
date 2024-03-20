@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/view/restaurant/favorites/widgets/custom_category_button.dart';
 import 'package:unifood/view/restaurant/favorites/widgets/custom_suggested_restaurant.dart';
+import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
 
 class SuggestedRestaurantsSection extends StatefulWidget {
@@ -83,8 +84,7 @@ class _SuggestedRestaurantsSectionState
           ),
           SizedBox(height: screenHeight * 0.02),
           FutureBuilder<List<Restaurant>>(
-            future: RestaurantViewModel().getRecommendedRestaurants(
-                widget.userId, filter), // Usar el filtro actual
+            future: RestaurantViewModel().getRecommendedRestaurants(widget.userId, filter), 
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -105,7 +105,7 @@ class _SuggestedRestaurantsSectionState
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.red,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            fontSize: screenWidth * 0.04,
                             fontWeight: FontWeight.bold, // Letra en negrita
                           ),
                         ),
@@ -129,31 +129,44 @@ class _SuggestedRestaurantsSectionState
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: suggestedRestaurants.map((restaurant) {
+                      print(restaurant.id);
+                      print(restaurant.name);
                       return CustomSuggestedRestaurant(
+                        id: restaurant.id,
                         restaurantName: restaurant.name,
                         restaurantImage: restaurant.imageUrl,
                         restaurantPrice: restaurant.avgPrice,
-                        onTap: () {},
                       );
                     }).toList(),
                   ),
                 );
               } else {
-                return Center(
-                  child: Container(
-                    padding: EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: Colors.grey[200],
-                    ),
-                    child: Text(
-                      'No data available',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.transparent.withOpacity(0.5),
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        fontWeight: FontWeight.bold,
-                      ),
+                return Padding(
+                  padding: EdgeInsets.all(screenHeight * 0.03),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "You haven't set your preferences",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: screenHeight * 0.015,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: screenHeight * 0.02),
+                        CustomButton(
+                            text: "Go to preferences",
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/preferences');
+                            },
+                            height: screenHeight * 0.04,
+                            width: screenWidth * 0.4,
+                            fontSize: screenHeight * 0.015,
+                            textColor: Colors.black)
+                      ],
                     ),
                   ),
                 );
