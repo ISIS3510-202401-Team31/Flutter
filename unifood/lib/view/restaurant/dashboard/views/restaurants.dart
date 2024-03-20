@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
-import 'package:unifood/view/widgets/custom_appbar.dart';
+import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
@@ -50,40 +50,44 @@ class _RestaurantsState extends State<Restaurants> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(screenHeight * 0.06),
-        child: CustomAppBar(
+        child: CustomAppBarBuilder(
           screenHeight: screenHeight,
           screenWidth: screenWidth,
           showBackButton: false,
-          rightWidget: Row(
-            children: [
-              Container(
-                child: CustomCircledButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/favorites');
-                    },
-                    diameter: 36,
-                    icon: const Icon(
-                      Icons.favorite,
-                      color: Colors.black,
+        )
+            .setRightWidget(
+              Row(
+                children: [
+                  Container(
+                    child: CustomCircledButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/favorites');
+                      },
+                      diameter: 36,
+                      icon: const Icon(
+                        Icons.favorite,
+                        color: Colors.black,
+                      ),
+                      buttonColor: const Color(0xFF965E4E),
                     ),
-                    buttonColor: const Color(0xFF965E4E)),
-              ),
-              Container(
-                child: CustomCircledButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/profile');
-                  },
-                  diameter: 36,
-                  icon: const Icon(
-                    Icons.person,
-                    color: Colors.black,
                   ),
-                  buttonColor: const Color(0xFF965E4E),
-                ),
+                  Container(
+                    child: CustomCircledButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                      diameter: 36,
+                      icon: const Icon(
+                        Icons.person,
+                        color: Colors.black,
+                      ),
+                      buttonColor: const Color(0xFF965E4E),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            )
+            .build(context),
       ),
       body: Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.01, left: 20, right: 20),
@@ -217,9 +221,9 @@ class _RestaurantsState extends State<Restaurants> {
                         'No restaurants available.\nYou are out of service areas',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: screenHeight *0.02,
-                          fontWeight:  FontWeight.bold, 
-                          fontStyle: FontStyle.italic, 
+                          fontSize: screenHeight * 0.02,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
                           color: Colors.grey[600],
                         ),
                       ),

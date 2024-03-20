@@ -4,7 +4,7 @@ import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/view/restaurant/favorites/widgets/suggestions_list.dart';
-import 'package:unifood/view/widgets/custom_appbar.dart';
+import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:unifood/view_model/restaurant_view_model.dart';
