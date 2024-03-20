@@ -1,9 +1,15 @@
+import 'dart:ui';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/services.dart';
+import 'package:unifood/repository/error_repository.dart';
 import 'package:unifood/repository/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/utils/routes.dart';
+
+List<Map<String, dynamic>> errores = [];
 
 void main() async {
   //Firebase connection
@@ -19,6 +25,28 @@ void main() async {
 
   //SharedPreferences
   await SharedPreferencesService.getInstance();
+
+  //Error handling
+  FlutterError.onError = (errorDetails) {
+    final errorInfo = {
+      'error': errorDetails.toString(),
+      'stacktrace': errorDetails.stack.toString(),
+      'timestamp': DateTime.now(),
+    };
+    ErrorRepository().saveError(errorInfo);
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    final errorInfo = {
+      'error': error.toString(),
+      'stacktrace': stack.toString(),
+      'timestamp': DateTime.now(),
+    };
+    ErrorRepository().saveError(errorInfo);
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
   runApp(const MyApp());
 }

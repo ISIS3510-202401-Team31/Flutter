@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/error_repository.dart';
 import 'package:unifood/repository/shared_preferences.dart';
 
 class Auth {
@@ -13,8 +14,16 @@ class Auth {
     try {
       await _auth.signOut();
       await _prefsService.clearUser();
-    } catch (e) {
-      print('Error al cerrar sesión: $e');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'signOut',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error log out: $e');
     }
   }
 
@@ -29,7 +38,8 @@ class Auth {
     );
   }
 
-  Future<Users?> signUpWithEmailPassword(String name, String email, String password) async {
+  Future<Users?> signUpWithEmailPassword(
+      String name, String email, String password) async {
     try {
       if (!email.endsWith('@uniandes.edu.co')) {
         print('El correo debe ser de dominio @uniandes.edu.co');
@@ -57,8 +67,16 @@ class Auth {
 
       print('Cuenta creada exitosamente!');
       return newUser;
-    } catch (e) {
-      print('Error al crear la cuenta: $e');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'signUpWithEmailPassword',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error sign up: $e');
       return null;
     }
   }
@@ -72,14 +90,21 @@ class Auth {
 
       Users user = await _fetchUserFromFirestore(authResult.user!.uid);
       _prefsService.saveUser(user);
-      
 
       print('Sesión iniciada exitosamente!');
       print('Usuario: ${user.name}');
       return user;
-    } catch (e) {
-      print('Error al autenticar: $e');
-      return null;
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'signInWithEmailPassword',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error sign in: $e');
     }
+    return null;
   }
 }

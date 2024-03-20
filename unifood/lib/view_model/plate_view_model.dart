@@ -1,4 +1,5 @@
 import 'package:unifood/model/plate_entity.dart';
+import 'package:unifood/repository/error_repository.dart';
 import 'package:unifood/repository/plate_repository.dart';
 
 class PlateViewModel {
@@ -19,8 +20,16 @@ class PlateViewModel {
             ),
           )
           .toList();
-    } catch (error) {
-      print('Error fetching menu items in view model: $error');
+    }  catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getPlatesByRestaurantId',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching plates by id in view model: $e');
       rethrow;
     }
   }

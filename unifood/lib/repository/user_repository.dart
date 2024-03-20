@@ -4,9 +4,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/error_repository.dart';
 
 class UserRepository {
-  
   FirebaseFirestore databaseInstance = FirebaseService().database;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -21,7 +21,8 @@ class UserRepository {
 
   Future<Users> getUser(String userId) async {
     try {
-      final snapshot = await databaseInstance.collection('users').doc(userId).get();
+      final snapshot =
+          await databaseInstance.collection('users').doc(userId).get();
       final data = snapshot.data() as Map<String, dynamic>;
       return Users(
         uid: userId,
@@ -29,8 +30,17 @@ class UserRepository {
         email: data['email'],
         profileImageUrl: data['profileImageUrl'],
       );
-    } catch (e) {
-      throw Exception('Failed to get user: $e');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getUser',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching user in repository: $e');
+      rethrow;
     }
   }
 
@@ -40,7 +50,8 @@ class UserRepository {
       String fileName = 'profile_$userId.jpg';
 
       // Referencia al almacenamiento de Firebase
-      Reference storageReference = _storage.ref().child('profile_images').child(fileName);
+      Reference storageReference =
+          _storage.ref().child('profile_images').child(fileName);
 
       // Sube la imagen al almacenamiento de Firebase
       TaskSnapshot uploadTask = await storageReference.putFile(imageFile);
@@ -48,8 +59,16 @@ class UserRepository {
 
       // Actualiza la URL de la imagen en la base de datos
       await _updateImageUrlInDatabase(userId, imageUrl);
-    } catch (error) {
-      print('Error al subir la imagen: $error');
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'updateUserProfileImage',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when updating user profile image in repository: $e');
       rethrow;
     }
   }
@@ -61,8 +80,16 @@ class UserRepository {
 
       // Actualiza el campo de la URL de la imagen
       await userRef.update({'profileImageUrl': imageUrl});
-    } catch (error) {
-      print('Error al actualizar la URL de la imagen en la base de datos: $error');
+    }  catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'updateImageUrlInDatabase',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when updating image URL in database: $e');
       rethrow;
     }
   }

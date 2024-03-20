@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '746895338475',
     projectId: 'unifood-31',
     authDomain: 'unifood-31.firebaseapp.com',
+    databaseURL: 'https://unifood-31-default-rtdb.firebaseio.com',
     storageBucket: 'unifood-31.appspot.com',
     measurementId: 'G-1NJRZMNFY7',
   );
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:746895338475:android:3afb4f328f90e0c02307ae',
     messagingSenderId: '746895338475',
     projectId: 'unifood-31',
+    databaseURL: 'https://unifood-31-default-rtdb.firebaseio.com',
     storageBucket: 'unifood-31.appspot.com',
   );
 
@@ -66,6 +68,7 @@ class DefaultFirebaseOptions {
     appId: '1:746895338475:ios:d211763be0c933002307ae',
     messagingSenderId: '746895338475',
     projectId: 'unifood-31',
+    databaseURL: 'https://unifood-31-default-rtdb.firebaseio.com',
     storageBucket: 'unifood-31.appspot.com',
     iosBundleId: 'com.example.unifood',
   );
@@ -75,6 +78,7 @@ class DefaultFirebaseOptions {
     appId: '1:746895338475:ios:deb9bd1231ac069e2307ae',
     messagingSenderId: '746895338475',
     projectId: 'unifood-31',
+    databaseURL: 'https://unifood-31-default-rtdb.firebaseio.com',
     storageBucket: 'unifood-31.appspot.com',
     iosBundleId: 'com.example.unifood.RunnerTests',
   );
