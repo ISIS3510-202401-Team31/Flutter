@@ -261,11 +261,12 @@ class _ProfileState extends State<Profile> {
                                       },
                                     ),
                                     CustomSettingsButton(
-                                      icon: Icons.notifications,
+                                      icon: Icons.home,
                                       backgroundColor: const Color.fromARGB(
                                           255, 169, 75, 75),
                                       onPressed: () {
-                                        // Add functionality for the settings button
+                                        Navigator.pushNamed(context,
+                                            '/restaurants'); // Add functionality for the settings button
                                       },
                                     ),
                                     CustomSettingsButton(
