@@ -159,7 +159,7 @@ class _SignupState extends State<Signup> {
                     hasError: confirmPasswordError,
                     errorMessage: confirmPasswordErrorMessage,
                   ),
-                  SizedBox(height: screenHeight * 0.007),
+                  SizedBox(height: screenHeight * 0.015),
                   CustomButton(
                     onPressed: () async {
                       String fullName = fullNameController.text;
@@ -303,7 +303,8 @@ class _SignupState extends State<Signup> {
                         ),
                       )
                     ],
-                  )
+                  ),
+                  SizedBox(height: screenHeight * 0.015),
                 ],
               )
             ],
