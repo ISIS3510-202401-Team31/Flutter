@@ -4,6 +4,8 @@ import 'package:unifood/view/profile/preferences/widgets/custom_app_bar.dart';
 import 'package:unifood/view/profile/preferences/widgets/price_range_selector.dart';
 import 'package:unifood/view/profile/preferences/widgets/section_header.dart';
 import 'package:unifood/view/profile/preferences/widgets/settings_checkbox_list.dart';
+import 'package:unifood/model/preferences_entity.dart';
+import 'package:unifood/view_model/preferences_view_model.dart';
 
 class Preferences extends StatefulWidget {
   const Preferences({Key? key}) : super(key: key);
@@ -14,7 +16,13 @@ class Preferences extends StatefulWidget {
 
 class _PreferencesState extends State<Preferences> {
   RangeValues _currentRangeValues = const RangeValues(10000, 80000);
+  final PreferencesViewModel _viewModel = PreferencesViewModel();
 
+  // Add a list for each of the preference types to hold the items.
+  List<PreferenceItem> _restrictions = [];
+  List<PreferenceItem> _tastes = [];
+  bool _isEditingRestrictions = false;
+  bool _isEditingTastes = false;
   final List<String> _checkboxTitles = [
     "Recommend Restaurants with Daily Discounts",
     "Only Recommend Healthy Restaurants",
@@ -25,11 +33,65 @@ class _PreferencesState extends State<Preferences> {
 
   final List<bool> _isChecked = List<bool>.filled(5, false);
 
+  // Dummy user ID for example purposes, replace with the actual user ID as needed.
+  final String userId = 'dummy_user_id';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  void _loadPreferences() async {
+    var preferences = await _viewModel.loadCommonPreferences();
+    if (preferences != null) {
+      setState(() {
+        _restrictions = preferences.restrictions;
+        _tastes = preferences.tastes;
+        _currentRangeValues = RangeValues(
+          preferences.priceRange.minPrice.toDouble(),
+          preferences.priceRange.maxPrice.toDouble(),
+        );
+      });
+    }
+  }
+
+  void handleDeleteItem(int index, String type) async {
+    setState(() {
+      if (type == 'restrictions') {
+        _restrictions.removeAt(index);
+      } else if (type == 'tastes') {
+        _tastes.removeAt(index);
+      }
+    });
+
+    PriceRange currentPriceRange = PriceRange(
+      minPrice: _currentRangeValues.start
+          .round(), // Assuming _currentRangeValues is a RangeValues object
+      maxPrice: _currentRangeValues.end.round(),
+    );
+
+    PreferencesEntity updatedPreferences = PreferencesEntity(
+      restrictions: _restrictions,
+      tastes: _tastes,
+      priceRange: currentPriceRange,
+    );
+
+    try {
+      await _viewModel.updateUserPreferences(userId, updatedPreferences);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Preference updated successfully')),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update preferences')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSizeTitle = screenWidth * 0.045; // Ajuste dinámico del tamaño de la fuente
-
     return Scaffold(
       appBar: const CustomAppBar(),
       body: SingleChildScrollView(
@@ -38,56 +100,58 @@ class _PreferencesState extends State<Preferences> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SectionHeader(title: 'Dietary Restrictions', actionText: 'Modify Restrictions', onTap: () {}),
-              CustomSettingOptionWithIcons(
-                imagePaths: const [
-                  'assets/images/vegan.png',
-                  'assets/images/GlutenFree.png',
-                  'assets/images/NutFree.png',
-                  'assets/images/SugarFree.png',
-                  'assets/images/GlutenFree.png', 
-                ],
-                texts: const [
-                  'VEGAN',
-                  'GLUTEN FREE',
-                  'NUT FREE',
-                  'SUGAR FREE',
-                  'EXTRA', 
-                ],
-                onPressed: () {},
+              SectionHeader(
+                title: 'Dietary Restrictions',
+                actionText:
+                    _isEditingRestrictions ? 'Done' : 'Modify Restrictions',
+                onTap: () {
+                  setState(() {
+                    _isEditingRestrictions = !_isEditingRestrictions;
+                  });
+                },
               ),
-              SectionHeader(title: 'Tastes', actionText: 'Modify Tastes', onTap: () {}),
               CustomSettingOptionWithIcons(
-                imagePaths: const [
-                  'assets/images/Burgers.png',
-                  'assets/images/Tacos.png',
-                  'assets/images/Pasta.png',
-                  'assets/images/Nuggets.png',
-                  'assets/images/Tacos.png', 
-                ],
-                texts: const [
-                  'BURGERS',
-                  'TACOS',
-                  'PASTA',
-                  'NUGGETS',
-                  'EXTRA TACOS', 
-                ],
+                items: _restrictions,
+                userId: userId,
                 onPressed: () {},
+                onDeleteItem: (index, type) {
+                  if (_isEditingRestrictions) {
+                    handleDeleteItem(index, 'restrictions');
+                  }
+                },
+              ),
+              SectionHeader(
+                title: 'Tastes',
+                actionText: _isEditingTastes ? 'Done' : 'Modify Tastes',
+                onTap: () {
+                  setState(() {
+                    _isEditingTastes = !_isEditingTastes;
+                  });
+                },
+              ),
+              CustomSettingOptionWithIcons(
+                items: _tastes,
+                userId: userId,
+                onPressed: () {},
+                onDeleteItem: (index, type) {
+                  if (_isEditingTastes) {
+                    handleDeleteItem(index, 'tastes');
+                  }
+                },
               ),
               const SizedBox(height: 20),
               Center(
                 child: Text(
                   'Price Range for Restaurants',
                   style: TextStyle(
-                    fontSize: fontSizeTitle, 
+                    fontSize: screenWidth * 0.045,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              // Agregar Divider con Padding para margen
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // Margen horizontal para el Divider
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                 child: const Divider(color: Colors.grey),
               ),
               Padding(
@@ -98,16 +162,20 @@ class _PreferencesState extends State<Preferences> {
                     setState(() {
                       _currentRangeValues = values;
                     });
+                    // Consider saving the new price range to the database if necessary
                   },
                 ),
               ),
-              // Agregar otro Divider con Padding para margen antes de SettingsCheckboxList
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // Margen horizontal para el Divider
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                 child: const Divider(color: Colors.grey),
               ),
               const SizedBox(height: 20),
-              SettingsCheckboxList(checkboxTitles: _checkboxTitles, isChecked: _isChecked),
+              SettingsCheckboxList(
+                checkboxTitles: _checkboxTitles,
+                isChecked: _isChecked,
+                // Add onChange logic if necessary to save checkbox state
+              ),
             ],
           ),
         ),
