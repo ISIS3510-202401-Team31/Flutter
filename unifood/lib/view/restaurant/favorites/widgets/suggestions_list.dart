@@ -17,9 +17,17 @@ class SuggestedRestaurantsSection extends StatefulWidget {
       _SuggestedRestaurantsSectionState();
 }
 
+enum FilterType {
+  restrictions,
+  price,
+  tastes,
+}
+
 class _SuggestedRestaurantsSectionState
     extends State<SuggestedRestaurantsSection> {
-  late String filter = 'price';
+  late String filter = 'restrictions';
+  FilterType selectedFilter =
+      FilterType.restrictions; // Valor inicial del filtro seleccionado
 
   @override
   Widget build(BuildContext context) {
@@ -59,32 +67,41 @@ class _SuggestedRestaurantsSectionState
                   onPressed: () {
                     setState(() {
                       filter = 'restrictions';
+                      selectedFilter = FilterType.restrictions;
                     });
                   },
                   text: 'Restrictions',
+                  isSelected: selectedFilter == FilterType.restrictions,
                 ),
                 CustomCategoryButton(
                   onPressed: () {
                     setState(() {
                       filter = 'price';
+                      selectedFilter = FilterType.price;
                     });
                   },
                   text: 'Price',
+                  isSelected: selectedFilter ==
+                      FilterType.price, // Agrega esta propiedad
                 ),
                 CustomCategoryButton(
                   onPressed: () {
                     setState(() {
                       filter = 'tastes';
+                      selectedFilter = FilterType.tastes;
                     });
                   },
                   text: 'Food type',
+                  isSelected: selectedFilter ==
+                      FilterType.tastes, // Agrega esta propiedad
                 ),
               ],
             ),
           ),
           SizedBox(height: screenHeight * 0.02),
           FutureBuilder<List<Restaurant>>(
-            future: RestaurantViewModel().getRecommendedRestaurants(widget.userId, filter), 
+            future: RestaurantViewModel()
+                .getRecommendedRestaurants(widget.userId, filter),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
