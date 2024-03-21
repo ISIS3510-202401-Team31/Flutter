@@ -1,6 +1,7 @@
 import 'package:unifood/model/preferences_entity.dart';
 import 'package:unifood/repository/preferences_repository.dart';
 import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/user_repository.dart';
 
 class PreferencesViewModel {
   final PreferencesRepository _preferencesRepository = PreferencesRepository();
@@ -11,6 +12,15 @@ class PreferencesViewModel {
     } catch (e, stackTrace) {
       _handleError(e, stackTrace, 'loadCommonPreferences');
       rethrow;
+    }
+  }
+
+  Future<PreferencesEntity?> loadUserPreferences() async {
+    try {
+      return await _preferencesRepository.getUserPreferences();
+    } catch (e, stackTrace) {
+      _handleError(e, stackTrace, 'loadUserPreferences');
+      return null;
     }
   }
 
@@ -26,11 +36,14 @@ class PreferencesViewModel {
     print('Error in PreferencesViewModel - $functionContext: $e');
   }
 
-  Future<void> updateUserPreferences(
-      String userId, PreferencesEntity preferences) async {
+  Future<void> updateUserPreferences(PreferencesEntity preferences) async {
     try {
-      await _preferencesRepository.updatePreferencesByUserId(
-          userId, preferences);
+      final user = await UserRepository().getUserSession();
+      if (user != null) {
+        await _preferencesRepository.updateUserPreferences(preferences);
+      } else {
+        throw Exception('User session not found');
+      }
     } catch (e, stackTrace) {
       _handleError(e, stackTrace, 'updateUserPreferences');
       rethrow;

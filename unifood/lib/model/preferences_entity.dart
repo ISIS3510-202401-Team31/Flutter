@@ -2,37 +2,58 @@ class PreferencesEntity {
   final List<PreferenceItem> restrictions;
   final List<PreferenceItem> tastes;
   final PriceRange priceRange;
+
   PreferencesEntity({
     required this.restrictions,
     required this.tastes,
     required this.priceRange,
   });
-  factory PreferencesEntity.fromMap(Map<String, dynamic> map) {
-    List<PreferenceItem> convert(Map<String, dynamic> items) {
+
+  factory PreferencesEntity.fromMap(Map<String, dynamic> map,
+      {bool isUserPreferences = false}) {
+    List<PreferenceItem> convertListForUser(List<dynamic> list) {
+      return list
+          .map((item) => PreferenceItem(text: item, imageUrl: ''))
+          .toList();
+    }
+
+    List<PreferenceItem> convertMapForGeneral(Map<String, dynamic> map) {
       List<PreferenceItem> list = [];
-      items.forEach((key, value) {
-        if (!key.endsWith('text') && value is String) {
+      map.forEach((key, value) {
+        if (key != 'text' && value is String) {
+          // Assuming the value is always a String URL
           var textKey = '${key}text';
-          var textValue = items[textKey];
+          var textValue = map[
+              textKey]; // Retrieve the actual text using 'text' appended key
           if (textValue is String) {
-            list.add(PreferenceItem(imageUrl: value, text: textValue));
+            list.add(PreferenceItem(text: textValue, imageUrl: value));
           }
         }
       });
       return list;
     }
 
-    Map<String, dynamic> restrictionsMap =
-        Map<String, dynamic>.from(map['Restrictions'] ?? {});
-    Map<String, dynamic> tastesMap =
-        Map<String, dynamic>.from(map['tastes'] ?? {});
-    Map<String, dynamic> priceRangeMap =
-        Map<String, dynamic>.from(map['priceRange'] ?? {});
+    List<PreferenceItem> restrictions;
+    List<PreferenceItem> tastes;
+
+    if (isUserPreferences) {
+      restrictions = map['restrictions'] != null
+          ? convertListForUser(map['restrictions'])
+          : [];
+      tastes = map['tastes'] != null ? convertListForUser(map['tastes']) : [];
+    } else {
+      restrictions = map['Restrictions'] != null
+          ? convertMapForGeneral(map['Restrictions'])
+          : [];
+      tastes = map['tastes'] != null ? convertMapForGeneral(map['tastes']) : [];
+    }
+
+    PriceRange priceRange = PriceRange.fromMap(map['priceRange']);
 
     return PreferencesEntity(
-      restrictions: convert(restrictionsMap),
-      tastes: convert(tastesMap),
-      priceRange: PriceRange.fromMap(priceRangeMap),
+      restrictions: restrictions,
+      tastes: tastes,
+      priceRange: priceRange,
     );
   }
 }
@@ -40,16 +61,11 @@ class PreferencesEntity {
 class PriceRange {
   final int minPrice;
   final int maxPrice;
+
   PriceRange({
     required this.minPrice,
     required this.maxPrice,
   });
-  Map<String, dynamic> toMap() {
-    return {
-      'minPrice': minPrice,
-      'maxPrice': maxPrice,
-    };
-  }
 
   factory PriceRange.fromMap(Map<String, dynamic> map) {
     return PriceRange(
@@ -57,13 +73,28 @@ class PriceRange {
       maxPrice: map['maxPrice'] ?? 0,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'minPrice': minPrice,
+      'maxPrice': maxPrice,
+    };
+  }
 }
 
 class PreferenceItem {
   final String imageUrl;
   final String text;
+
   PreferenceItem({
     required this.imageUrl,
     required this.text,
   });
+
+  factory PreferenceItem.fromMap(Map<String, dynamic> map) {
+    return PreferenceItem(
+      imageUrl: map['imageUrl'] ?? '', // Providing a default value if null
+      text: map['text'], // Assuming 'text' is always provided
+    );
+  }
 }
