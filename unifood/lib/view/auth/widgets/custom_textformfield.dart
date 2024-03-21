@@ -47,28 +47,31 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
-      padding: EdgeInsets.all(screenWidth * 0.002),
+      padding: EdgeInsets.all(screenHeight * 0.002),
       child: TextFormField(
         controller: widget.controller,
         focusNode: _focusNode,
         maxLength: widget.maxLength, // Establece el máximo número de caracteres
         style: TextStyle(
-            fontSize: screenWidth * 0.04), // Ajustar el tamaño de la fuente
+            fontSize: screenHeight * 0.017), // Ajustar el tamaño de la fuente
         decoration: InputDecoration(
           labelText: widget.labelText,
+          labelStyle: TextStyle(fontSize: screenHeight * 0.015),
           hintText: widget.hintText,
+          hintStyle: TextStyle(fontSize: screenHeight * 0.015),
           prefixIcon: IconTheme(
             data: IconThemeData(
-                size: screenWidth * 0.07), // Ajustar el tamaño del icono
+                size: screenHeight * 0.025), // Ajustar el tamaño del icono
             child: widget.icon,
           ),
           suffixIcon: widget.obscureText
               ? IconButton(
                   icon: Icon(
                       _obscureText ? Icons.visibility : Icons.visibility_off),
+                  iconSize: screenHeight * 0.025, // Tamaño del icono del ojito
                   onPressed: () {
                     setState(() {
                       _obscureText = !_obscureText;

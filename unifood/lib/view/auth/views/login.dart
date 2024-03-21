@@ -80,155 +80,158 @@ class _LoginState extends State<Login> {
             .build(context),
       ),
       body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(top: screenHeight * 0.04),
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: screenHeight * 0.033,
-                      color: Colors.black,
-                      fontFamily: 'Inika',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Please sign in to continue',
-                    style: TextStyle(
-                      fontSize: screenHeight * 0.017,
-                      color: Colors.grey,
-                      fontFamily: 'Inika',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: screenHeight * 0.04),
-                  CustomTextFormField(
-                    controller: emailController,
-                    labelText: 'Email',
-                    hintText: 'Type your email here',
-                    icon: const Icon(Icons.email),
-                    obscureText: false,
-                    maxLength: 50,
-                    errorMessage: emailError ? emailErrorMessage : null,
-                    hasError: emailError,
-                    showCounter: false,
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  CustomTextFormField(
-                    controller: passwordController,
-                    labelText: 'Password',
-                    hintText: 'Type your password here',
-                    icon: const Icon(Icons.lock),
-                    obscureText: true,
-                    maxLength: 16,
-                    errorMessage: passwordError ? passwordErrorMessage : null,
-                    hasError: passwordError,
-                    showCounter: false,
-                  ),
-                  SizedBox(height: screenHeight * 0.04),
-                  CustomButton(
-                    onPressed: () async {
-                      setState(() {
-                        emailError = false;
-                        passwordError = false;
-                      });
-
-                      bool isValid = true;
-                      if (emailController.text.isEmpty) {
-                        setState(() {
-                          emailError = true;
-                          emailErrorMessage = 'Please enter your email';
-                        });
-                        isValid = false;
-                      }
-
-                      if (passwordController.text.isEmpty) {
-                        setState(() {
-                          passwordError = true;
-                          passwordErrorMessage = 'Please enter your password';
-                        });
-                        isValid = false;
-                      }
-
-                      if (!isValid) return;
-
-                      Users? user = await Auth().signInWithEmailPassword(
-                        emailController.text,
-                        passwordController.text,
-                      );
-                      if (user != null) {
-                        Navigator.pushNamed(context, '/restaurants');
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Error de inicio de sesión'),
-                            content: const Text(
-                              'Failed to sign in. Please check your credentials.',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  emailController.clear();
-                                  passwordController.clear();
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Aceptar'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                    text: 'Login',
-                    width: screenWidth * 0.35,
-                    height: screenHeight * 0.051,
-                    fontSize: screenWidth * 0.045,
-                    textColor: Colors.black,
-                  ),
-                  SizedBox(height: screenHeight * 0.06),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Not a member yet?',
-                        style: TextStyle(
-                          fontSize: screenHeight * 0.02,
-                          color: Colors.black,
-                          fontFamily: 'Gudea',
-                        ),
+        child: Padding(
+          padding: EdgeInsets.only(top: screenHeight * 0.13),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Login',
+                      style: TextStyle(
+                        fontSize: screenHeight * 0.033,
+                        color: Colors.black,
+                        fontFamily: 'Inika',
+                        fontWeight: FontWeight.bold,
                       ),
-                      SizedBox(width: screenWidth * 0.009),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/signup');
-                        },
-                        child: Text(
-                          'Sign Up',
+                    ),
+                    Text(
+                      'Please sign in to continue',
+                      style: TextStyle(
+                        fontSize: screenHeight * 0.017,
+                        color: Colors.grey,
+                        fontFamily: 'Inika',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: screenHeight * 0.04),
+                    CustomTextFormField(
+                      controller: emailController,
+                      labelText: 'Email',
+                      hintText: 'Type your email here',
+                      icon: const Icon(Icons.email),
+                      obscureText: false,
+                      maxLength: 50,
+                      errorMessage: emailError ? emailErrorMessage : null,
+                      hasError: emailError,
+                      showCounter: false,
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                    CustomTextFormField(
+                      controller: passwordController,
+                      labelText: 'Password',
+                      hintText: 'Type your password here',
+                      icon: const Icon(Icons.lock),
+                      obscureText: true,
+                      maxLength: 16,
+                      errorMessage: passwordError ? passwordErrorMessage : null,
+                      hasError: passwordError,
+                      showCounter: false,
+                    ),
+                    SizedBox(height: screenHeight * 0.04),
+                    CustomButton(
+                      onPressed: () async {
+                        setState(() {
+                          emailError = false;
+                          passwordError = false;
+                        });
+
+                        bool isValid = true;
+                        if (emailController.text.isEmpty) {
+                          setState(() {
+                            emailError = true;
+                            emailErrorMessage = 'Please enter your email';
+                          });
+                          isValid = false;
+                        }
+
+                        if (passwordController.text.isEmpty) {
+                          setState(() {
+                            passwordError = true;
+                            passwordErrorMessage = 'Please enter your password';
+                          });
+                          isValid = false;
+                        }
+
+                        if (!isValid) return;
+
+                        Users? user = await Auth().signInWithEmailPassword(
+                          emailController.text,
+                          passwordController.text,
+                        );
+                        if (user != null) {
+                          Navigator.pushNamed(context, '/restaurants');
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Error de inicio de sesión'),
+                              content: const Text(
+                                'Failed to sign in. Please check your credentials.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    emailController.clear();
+                                    passwordController.clear();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Aceptar'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                      text: 'Login',
+                      width: screenWidth * 0.35,
+                      height: screenHeight * 0.051,
+                      fontSize: screenWidth * 0.045,
+                      textColor: Colors.black,
+                    ),
+                    SizedBox(height: screenHeight * 0.06),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Not a member yet?',
                           style: TextStyle(
                             fontSize: screenHeight * 0.02,
-                            color: const Color(0xFF965E4E),
+                            color: Colors.black,
                             fontFamily: 'Gudea',
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      )
-                    ],
-                  )
-                ],
-              )
-            ],
+                        SizedBox(width: screenWidth * 0.009),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/signup');
+                          },
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              fontSize: screenHeight * 0.02,
+                              color: const Color(0xFF965E4E),
+                              fontFamily: 'Gudea',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.015),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
