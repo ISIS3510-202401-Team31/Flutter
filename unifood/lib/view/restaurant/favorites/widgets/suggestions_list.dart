@@ -150,7 +150,12 @@ class _SuggestedRestaurantsSectionState
                         id: restaurant.id,
                         restaurantName: restaurant.name,
                         restaurantImage: restaurant.imageUrl,
-                        restaurantPrice: restaurant.avgPrice,
+                        restaurantPrice: selectedFilter == FilterType.price
+                            ? restaurant.avgPrice
+                            : null,
+                        restaurantFoodType: selectedFilter == FilterType.tastes
+                            ? restaurant.foodType
+                            : null,
                       );
                     }).toList(),
                   ),
