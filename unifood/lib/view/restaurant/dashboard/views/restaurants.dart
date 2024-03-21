@@ -118,73 +118,75 @@ class _RestaurantsState extends State<Restaurants> {
               color: const Color(0xFF965E4E),
             ),
             const SizedBox(height: 10),
-            FutureBuilder<List<Restaurant>>(
-              future: RestaurantViewModel().getRestaurants(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: SpinKitThreeBounce(
-                      color: Colors.black,
-                      size: 30.0,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.03),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Oops! Something went wrong.\nPlease try again later.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.04,
-                              fontWeight: FontWeight.bold, // Letra en negrita
-                            ),
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          IconButton(
-                            icon: Icon(
-                              Icons.refresh,
-                              size: MediaQuery.of(context).size.width * 0.08,
-                            ),
-                            onPressed: () {
-                              setState(() {});
-                            },
-                          ),
-                        ],
+            Expanded(
+              child: FutureBuilder<List<Restaurant>>(
+                future: RestaurantViewModel().getRestaurants(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: SpinKitThreeBounce(
+                        color: Colors.black,
+                        size: 30.0,
                       ),
-                    ),
-                  );
-                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final List<Restaurant> favoriteRestaurants = snapshot.data!;
-                  return Container(
-                    color: const Color(0xFF965E4E).withOpacity(0.15),
-                    height: screenHeight * 0.338,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: favoriteRestaurants.map((restaurant) {
-                          return CustomRestaurant(
-                            id: restaurant.id,
-                            imageUrl: restaurant.imageUrl,
-                            logoUrl: restaurant.logoUrl,
-                            name: restaurant.name,
-                            isOpen: restaurant.isOpen,
-                            distance: restaurant.distance,
-                            rating: restaurant.rating,
-                            avgPrice: restaurant.avgPrice,
-                          );
-                        }).toList(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Padding(
+                      padding: EdgeInsets.all(screenWidth * 0.03),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Oops! Something went wrong.\nPlease try again later.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
+                                fontWeight: FontWeight.bold, // Letra en negrita
+                              ),
+                            ),
+                            SizedBox(height: screenHeight * 0.02),
+                            IconButton(
+                              icon: Icon(
+                                Icons.refresh,
+                                size: MediaQuery.of(context).size.width * 0.08,
+                              ),
+                              onPressed: () {
+                                setState(() {});
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                } else {
-                  return const Center(child: Text('No data available.'));
-                }
-              },
+                    );
+                  } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    final List<Restaurant> favoriteRestaurants = snapshot.data!;
+                    return Container(
+                      color: const Color(0xFF965E4E).withOpacity(0.15),
+                      height: screenHeight * 0.338,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: favoriteRestaurants.map((restaurant) {
+                            return CustomRestaurant(
+                              id: restaurant.id,
+                              imageUrl: restaurant.imageUrl,
+                              logoUrl: restaurant.logoUrl,
+                              name: restaurant.name,
+                              isOpen: restaurant.isOpen,
+                              distance: restaurant.distance,
+                              rating: restaurant.rating,
+                              avgPrice: restaurant.avgPrice,
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: Text('No data available.'));
+                  }
+                },
+              ),
             ),
             SizedBox(height: screenHeight * 0.015),
             Row(
@@ -206,61 +208,61 @@ class _RestaurantsState extends State<Restaurants> {
               color: const Color(0xFF965E4E),
             ),
             SizedBox(height: screenHeight * 0.01),
-            FutureBuilder<List<Restaurant>>(
-              future: RestaurantViewModel().getRestaurantsNearby(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: SpinKitThreeBounce(
-                      color: Colors.black,
-                      size: 30.0,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final List<Restaurant> nearbyRestaurants = snapshot.data!;
-
-                  return Container(
-                    height: screenHeight * 0.338,
-                    color: const Color(0xFF965E4E).withOpacity(0.15),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: nearbyRestaurants.map((restaurant) {
-                          return CustomRestaurant(
-                            id: restaurant.id,
-                            imageUrl: restaurant.imageUrl,
-                            logoUrl: restaurant.logoUrl,
-                            name: restaurant.name,
-                            isOpen: restaurant.isOpen,
-                            distance: restaurant.distance,
-                            rating: restaurant.rating,
-                            avgPrice: restaurant.avgPrice,
-                          );
-                        }).toList(),
+            Expanded(
+              child: FutureBuilder<List<Restaurant>>(
+                future: RestaurantViewModel().getRestaurantsNearby(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: SpinKitThreeBounce(
+                        color: Colors.black,
+                        size: 30.0,
                       ),
-                    ),
-                  );
-                } else {
-                  return Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.05),
-                    child: Center(
-                      child: Text(
-                        'No restaurants available.\nYou are out of service areas',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: screenHeight * 0.02,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.grey[600],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    final List<Restaurant> nearbyRestaurants = snapshot.data!;
+                    return Container(
+                      height: screenHeight * 0.338,
+                      color: const Color(0xFF965E4E).withOpacity(0.15),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: nearbyRestaurants.map((restaurant) {
+                            return CustomRestaurant(
+                              id: restaurant.id,
+                              imageUrl: restaurant.imageUrl,
+                              logoUrl: restaurant.logoUrl,
+                              name: restaurant.name,
+                              isOpen: restaurant.isOpen,
+                              distance: restaurant.distance,
+                              rating: restaurant.rating,
+                              avgPrice: restaurant.avgPrice,
+                            );
+                          }).toList(),
                         ),
                       ),
-                    ),
-                  );
-                }
-              },
+                    );
+                  } else {
+                    return Padding(
+                      padding: EdgeInsets.all(screenWidth * 0.05),
+                      child: Center(
+                        child: Text(
+                          'No restaurants available.\nYou are out of service areas',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.02,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
-            SizedBox(height: screenHeight * 0.01),
           ],
         ),
       ),
