@@ -129,8 +129,6 @@ class _SuggestedRestaurantsSectionState
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: suggestedRestaurants.map((restaurant) {
-                      print(restaurant.id);
-                      print(restaurant.name);
                       return CustomSuggestedRestaurant(
                         id: restaurant.id,
                         restaurantName: restaurant.name,

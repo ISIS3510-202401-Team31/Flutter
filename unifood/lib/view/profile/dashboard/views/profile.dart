@@ -232,9 +232,10 @@ class _ProfileState extends State<Profile> {
                                   },
                                   child: CircleAvatar(
                                     radius: screenHeight * 0.05,
-                                    backgroundImage: _image != null
-                                        ? FileImage(_image!)
-                                        : null,
+                                    backgroundImage: _image == null
+                                        ? NetworkImage(
+                                                userData.profileImageUrl!)
+                                            : FileImage(_image!) as ImageProvider,
                                   ),
                                 ),
                               ],
