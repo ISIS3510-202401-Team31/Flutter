@@ -4,6 +4,9 @@ import 'package:unifood/repository/auth_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
+import 'package:unifood/repository/devices_repository.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -18,6 +21,10 @@ class _SignupState extends State<Signup> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final DevicesRepository devicesRepository = DevicesRepository(
+    firestore: FirebaseFirestore.instance,
+    deviceInfoPlugin: DeviceInfoPlugin(),
+  );
 
   bool fullNameError = false;
   String fullNameErrorMessage = '';
@@ -242,6 +249,7 @@ class _SignupState extends State<Signup> {
                       if (user != null) {
                         // Navigate to login page after successful sign up
                         Navigator.pushReplacementNamed(context, '/login');
+                        await devicesRepository.updateDevicesMap();
                       } else {
                         // Handle sign up failure
                         // For example, display an error message
