@@ -7,6 +7,7 @@ import 'package:unifood/view/profile/preferences/widgets/save_changes_boton.dart
 import 'package:unifood/view/profile/preferences/widgets/reset_button.dart';
 import 'package:unifood/model/preferences_entity.dart';
 import 'package:unifood/view_model/preferences_view_model.dart';
+import 'package:unifood/view/widgets/custom_setting_option_builder.dart';
 
 class Preferences extends StatefulWidget {
   const Preferences({Key? key}) : super(key: key);
@@ -187,24 +188,23 @@ class _PreferencesState extends State<Preferences> {
                   });
                 },
               ),
-              CustomSettingOptionWithIcons(
-                items: _restrictions,
-                isEditing: _isEditingRestrictions,
-                userId: userId,
-                type: 'restrictions',
-                markedForDeletion: _markedForDeletionRestrictions,
-                onPressed: () {},
-                onDeleteItem: (index, type) {
-                  if (_isEditingRestrictions) {
-                    handleDeleteItem(index, 'restrictions');
-                  }
-                },
-                onRestoreItem: (index, type) {
-                  if (_isEditingRestrictions) {
-                    handleRestoreItem(index, 'restrictions');
-                  }
-                },
-              ),
+              CustomSettingOptionWithIconsBuilder()
+                  .setItems(_restrictions)
+                  .setIsEditing(_isEditingRestrictions)
+                  .setUserId(userId)
+                  .setType('restrictions')
+                  .setMarkedForDeletion(_markedForDeletionRestrictions)
+                  .setOnPressed(() {
+                // Your onPressed logic here, if any.
+              }).setOnDeleteItem((index, type) {
+                if (_isEditingRestrictions) {
+                  handleDeleteItem(index, 'restrictions');
+                }
+              }).setOnRestoreItem((index, type) {
+                if (_isEditingRestrictions) {
+                  handleRestoreItem(index, 'restrictions');
+                }
+              }).build(),
               SectionHeader(
                 title: 'Tastes',
                 actionText: _isEditingTastes ? 'Done' : 'Modify Tastes',
@@ -214,25 +214,23 @@ class _PreferencesState extends State<Preferences> {
                   });
                 },
               ),
-              CustomSettingOptionWithIcons(
-                items: _tastes,
-                isEditing: _isEditingTastes,
-                userId: userId,
-                type: 'tastes',
-                markedForDeletion: _markedForDeletionTastes,
-                onPressed: () {},
-                onDeleteItem: (index, type) {
-                  if (_isEditingTastes) {
-                    handleDeleteItem(index, 'tastes');
-                  }
-                },
-                onRestoreItem: (index, type) {
-                  // Add this callback
-                  if (_isEditingTastes) {
-                    handleRestoreItem(index, 'tastes');
-                  }
-                },
-              ),
+              CustomSettingOptionWithIconsBuilder()
+                  .setItems(_tastes)
+                  .setIsEditing(_isEditingTastes)
+                  .setUserId(userId)
+                  .setType('tastes')
+                  .setMarkedForDeletion(_markedForDeletionTastes)
+                  .setOnPressed(() {
+                // Your onPressed logic here, if any.
+              }).setOnDeleteItem((index, type) {
+                if (_isEditingTastes) {
+                  handleDeleteItem(index, 'tastes');
+                }
+              }).setOnRestoreItem((index, type) {
+                if (_isEditingTastes) {
+                  handleRestoreItem(index, 'tastes');
+                }
+              }).build(),
               ResetWidget(
                 onReset: () {
                   _reloadGeneralPreferences();
