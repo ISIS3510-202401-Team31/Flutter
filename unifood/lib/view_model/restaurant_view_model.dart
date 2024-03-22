@@ -144,6 +144,6 @@ class RestaurantViewModel {
         userLocation.longitude,
         restaurantLat,
         restaurantLong);
-    return distance <= 30.5;
+    return distance <= 10.5;
   }
 }

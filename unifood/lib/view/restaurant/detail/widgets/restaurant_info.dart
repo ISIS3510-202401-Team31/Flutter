@@ -85,7 +85,9 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                             Row(
                               children: [
                                 Text(
-                                  widget.restaurant.likes.toString(),
+                                  _isLiked
+                                      ? (widget.restaurant.likes + 1).toString()
+                                      : widget.restaurant.likes.toString(),
                                   style:
                                       TextStyle(fontSize: screenWidth * 0.035),
                                 ),
