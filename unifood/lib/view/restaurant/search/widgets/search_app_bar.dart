@@ -16,13 +16,14 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
       elevation: 0,
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(screenWidth * 0.1),
+        preferredSize: Size.fromHeight(screenHeight * 0.1),
         child: Padding(
           padding: EdgeInsets.all(screenWidth * 0.05),
           child: Column(
@@ -42,7 +43,8 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
                   SizedBox(width: screenWidth * 0.025),
                   Expanded(
                     child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.00625),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.00625),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(screenWidth * 0.05),
@@ -92,5 +94,5 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 32);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + 34);
 }

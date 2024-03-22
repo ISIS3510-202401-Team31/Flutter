@@ -6,11 +6,10 @@ class CustomTextFormField extends StatefulWidget {
   final Icon icon;
   final bool obscureText;
   final TextEditingController controller;
-  final int? maxLength; // Propiedad para el máximo número de caracteres
-  final String? errorMessage; // Nuevo parámetro para el mensaje de error
-  final bool hasError; // Nuevo parámetro para indicar si hay un error
-  final bool
-      showCounter; // Nuevo parámetro para controlar la visibilidad del contador de caracteres
+  final int? maxLength;
+  final String? errorMessage;
+  final bool hasError;
+  final bool showCounter;
 
   const CustomTextFormField({
     Key? key,
@@ -19,10 +18,10 @@ class CustomTextFormField extends StatefulWidget {
     required this.icon,
     required this.obscureText,
     required this.controller,
-    this.maxLength, // Se añade como argumento opcional
-    this.errorMessage, // Se añade como argumento opcional
-    this.hasError = false, // Se inicializa como false por defecto
-    this.showCounter = true, // Se inicializa como true por defecto
+    this.maxLength,
+    this.errorMessage,
+    this.hasError = false,
+    this.showCounter = true,
   }) : super(key: key);
 
   @override
@@ -49,29 +48,36 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
+    // Define el tamaño personalizado de la línea
+    final double lineWidth = 2.0;
+
+    // Define el borde personalizado con el ancho de línea personalizado
+    final InputBorder border = UnderlineInputBorder(
+      borderSide:
+          BorderSide(color: Theme.of(context).primaryColor, width: lineWidth),
+    );
+
     return Container(
       padding: EdgeInsets.all(screenHeight * 0.002),
       child: TextFormField(
         controller: widget.controller,
         focusNode: _focusNode,
-        maxLength: widget.maxLength, // Establece el máximo número de caracteres
-        style: TextStyle(
-            fontSize: screenHeight * 0.017), // Ajustar el tamaño de la fuente
+        maxLength: widget.maxLength,
+        style: TextStyle(fontSize: screenHeight * 0.017),
         decoration: InputDecoration(
           labelText: widget.labelText,
-          labelStyle: TextStyle(fontSize: screenHeight * 0.015),
+          labelStyle: TextStyle(fontSize: screenHeight * 0.017),
           hintText: widget.hintText,
-          hintStyle: TextStyle(fontSize: screenHeight * 0.015),
+          hintStyle: TextStyle(fontSize: screenHeight * 0.017),
           prefixIcon: IconTheme(
-            data: IconThemeData(
-                size: screenHeight * 0.025), // Ajustar el tamaño del icono
+            data: IconThemeData(size: screenHeight * 0.025),
             child: widget.icon,
           ),
           suffixIcon: widget.obscureText
               ? IconButton(
                   icon: Icon(
                       _obscureText ? Icons.visibility : Icons.visibility_off),
-                  iconSize: screenHeight * 0.025, // Tamaño del icono del ojito
+                  iconSize: screenHeight * 0.025,
                   onPressed: () {
                     setState(() {
                       _obscureText = !_obscureText;
@@ -79,25 +85,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   },
                 )
               : null,
-          errorText: widget.hasError
-              ? widget.errorMessage
-              : null, // Muestra el mensaje de error si hay un error
-          counterText: widget.showCounter
-              ? null
-              : '', // Controla la visibilidad del contador
-          border: const UnderlineInputBorder(),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).primaryColor),
-          ),
+          errorText: widget.hasError ? widget.errorMessage : null,
+          counterText: widget.showCounter ? null : '',
+          //border: border,
+          focusedBorder: border,
         ),
         keyboardType: TextInputType.emailAddress,
         obscureText: widget.obscureText ? _obscureText : false,
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return widget.errorMessage ??
-                'Por favor ingrese su email'; // Mensaje de error personalizado
+            return widget.errorMessage ?? 'Por favor ingrese su email';
           }
-          // Puedes agregar validaciones adicionales aquí
           return null;
         },
       ),

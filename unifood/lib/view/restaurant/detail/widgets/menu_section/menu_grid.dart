@@ -23,17 +23,18 @@ class _MenuGridState extends State<MenuGrid> {
     return SizedBox(
       width: screenWidth * 0.9,
       child: Padding(
-        padding: EdgeInsets.symmetric( horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
+        padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                 Text(
+                Text(
                   'Menu',
                   style: TextStyle(
-                    fontSize:  screenHeight * 0.0225,
+                    fontSize: screenHeight * 0.0225,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -78,7 +79,17 @@ class _MenuGridState extends State<MenuGrid> {
                         );
                       },
                     )
-                  : const Text('No menu items available.'),
+                  : Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: screenHeight * 0.025),
+                      child: Text(
+                        'No reviews available',
+                        style: TextStyle(
+                          fontSize: screenHeight * 0.02,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
             ),
           ],
         ),

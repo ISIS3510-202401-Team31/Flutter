@@ -118,7 +118,8 @@ class _RestaurantsState extends State<Restaurants> {
               color: const Color(0xFF965E4E),
             ),
             const SizedBox(height: 10),
-            Expanded(
+            Container(
+              height: screenHeight *0.338,
               child: FutureBuilder<List<Restaurant>>(
                 future: RestaurantViewModel().getRestaurants(),
                 builder: (context, snapshot) {
@@ -208,7 +209,8 @@ class _RestaurantsState extends State<Restaurants> {
               color: const Color(0xFF965E4E),
             ),
             SizedBox(height: screenHeight * 0.01),
-            Expanded(
+            Container(
+              height: screenHeight * 0.338,
               child: FutureBuilder<List<Restaurant>>(
                 future: RestaurantViewModel().getRestaurantsNearby(),
                 builder: (context, snapshot) {
@@ -224,7 +226,7 @@ class _RestaurantsState extends State<Restaurants> {
                   } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     final List<Restaurant> nearbyRestaurants = snapshot.data!;
                     return Container(
-                      height: screenHeight * 0.338,
+                      height: screenHeight*0.338,
                       color: const Color(0xFF965E4E).withOpacity(0.15),
                       child: SingleChildScrollView(
                         child: Column(
@@ -263,6 +265,7 @@ class _RestaurantsState extends State<Restaurants> {
                 },
               ),
             ),
+            SizedBox(height: screenHeight * 0.01),
           ],
         ),
       ),

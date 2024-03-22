@@ -4,10 +4,17 @@ import 'package:unifood/view/restaurant/detail/widgets/details_bar.dart';
 import 'package:unifood/view/restaurant/detail/widgets/location_details.dart';
 import 'package:unifood/view/restaurant/detail/widgets/rating_stars.dart';
 
-class RestaurantInfo extends StatelessWidget {
+class RestaurantInfo extends StatefulWidget {
   final Restaurant restaurant;
 
   const RestaurantInfo({Key? key, required this.restaurant}) : super(key: key);
+
+  @override
+  _RestaurantInfoState createState() => _RestaurantInfoState();
+}
+
+class _RestaurantInfoState extends State<RestaurantInfo> {
+  bool _isLiked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +36,7 @@ class RestaurantInfo extends StatelessWidget {
                       left: screenWidth * 0.08,
                       right: screenWidth * 0.08),
                   child: Image.network(
-                    restaurant.imageUrl,
+                    widget.restaurant.imageUrl,
                     height: screenHeight * 0.12,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -44,7 +51,8 @@ class RestaurantInfo extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: screenHeight * 0.028,
-                        backgroundImage: NetworkImage(restaurant.logoUrl),
+                        backgroundImage:
+                            NetworkImage(widget.restaurant.logoUrl),
                       ),
                       SizedBox(width: screenWidth * 0.04),
                       Expanded(
@@ -52,41 +60,51 @@ class RestaurantInfo extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              restaurant.name,
+                              widget.restaurant.name,
                               style: TextStyle(
                                 fontSize: screenHeight * 0.0225,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              restaurant.phoneNumber,
+                              widget.restaurant.phoneNumber,
                               style: TextStyle(fontSize: screenWidth * 0.03),
                             ),
                           ],
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                restaurant.likes.toString(),
-                                style: TextStyle(fontSize: screenWidth * 0.035),
-                              ),
-                              SizedBox(width: screenWidth * 0.01),
-                              Icon(
-                                Icons.favorite,
-                                color: Colors.red,
-                                size: screenWidth * 0.04,
-                              ),
-                            ],
-                          ),
-                          RatingStars(
-                            rating: restaurant.rating,
-                            iconSize: screenWidth * 0.04,
-                          ),
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isLiked = !_isLiked;
+                          });
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  widget.restaurant.likes.toString(),
+                                  style:
+                                      TextStyle(fontSize: screenWidth * 0.035),
+                                ),
+                                SizedBox(width: screenWidth * 0.01),
+                                Icon(
+                                  _isLiked
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: _isLiked ? Colors.red : Colors.red,
+                                  size: screenWidth * 0.04,
+                                ),
+                              ],
+                            ),
+                            RatingStars(
+                              rating: widget.restaurant.rating,
+                              iconSize: screenWidth * 0.04,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -95,14 +113,14 @@ class RestaurantInfo extends StatelessWidget {
             ),
           ),
           DetailsBar(
-            foodType: restaurant.foodType,
-            avgPrice: restaurant.avgPrice,
-            workingHours: restaurant.workingHours,
+            foodType: widget.restaurant.foodType,
+            avgPrice: widget.restaurant.avgPrice,
+            workingHours: widget.restaurant.workingHours,
           ),
           LocationDetails(
-            address: restaurant.address,
-            addressDetail: restaurant.addressDetail,
-            distance: restaurant.distance,
+            address: widget.restaurant.address,
+            addressDetail: widget.restaurant.addressDetail,
+            distance: widget.restaurant.distance,
           ),
         ],
       ),
