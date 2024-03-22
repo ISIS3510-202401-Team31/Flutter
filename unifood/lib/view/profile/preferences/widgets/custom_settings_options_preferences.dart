@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/preferences_entity.dart'; // Ensure the path is correct
+import 'package:unifood/view/widgets/custom_setting_option_builder.dart';
 
 typedef OnDeleteItem = void Function(int index, String type);
 typedef OnRestoreItem = void Function(int index, String type);
