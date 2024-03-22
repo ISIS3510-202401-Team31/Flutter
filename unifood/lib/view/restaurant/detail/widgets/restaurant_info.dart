@@ -85,7 +85,9 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                             Row(
                               children: [
                                 Text(
-                                  widget.restaurant.likes.toString(),
+                                  _isLiked
+                                      ? (widget.restaurant.likes + 1).toString()
+                                      : widget.restaurant.likes.toString(),
                                   style:
                                       TextStyle(fontSize: screenWidth * 0.035),
                                 ),
@@ -121,6 +123,8 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
             address: widget.restaurant.address,
             addressDetail: widget.restaurant.addressDetail,
             distance: widget.restaurant.distance,
+            latitude: widget.restaurant.latitude,
+            longitude: widget.restaurant.longitude,
           ),
         ],
       ),

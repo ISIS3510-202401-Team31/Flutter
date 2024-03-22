@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LocationDetails extends StatelessWidget {
   final String address;
   final String addressDetail;
   final double distance;
+  final String latitude;
+  final String longitude;
 
   const LocationDetails({
     Key? key,
     required this.address,
     required this.addressDetail,
     required this.distance,
+    required this.latitude,
+    required this.longitude,
   }) : super(key: key);
 
   @override
@@ -75,7 +80,7 @@ class LocationDetails extends StatelessWidget {
                         child: CustomButton(
                           text: 'Open in Map',
                           onPressed: () {
-                            // Add the desired functionality for the button
+                            _launchMaps(latitude, longitude);
                           },
                           height: screenHeight * 0.025,
                           width: screenWidth * 0.015,
@@ -93,4 +98,18 @@ class LocationDetails extends StatelessWidget {
       ),
     );
   }
+
+  _launchMaps(latitude, longitude) async {
+
+  // The URL scheme for launching Google Maps with a specific location
+  final url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+  final uri = Uri.parse(url);
+
+    if (!await launchUrl(uri, mode: LaunchMode.inAppWebView)) {
+      throw Exception('Could not launch $url');
+    }
+  }
 }
+
+
