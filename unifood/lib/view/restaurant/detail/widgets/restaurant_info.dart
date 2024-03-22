@@ -123,6 +123,8 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
             address: widget.restaurant.address,
             addressDetail: widget.restaurant.addressDetail,
             distance: widget.restaurant.distance,
+            latitude: widget.restaurant.latitude,
+            longitude: widget.restaurant.longitude,
           ),
         ],
       ),
