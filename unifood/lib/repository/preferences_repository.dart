@@ -34,15 +34,14 @@ class PreferencesRepository {
     try {
       final user = await UserRepository().getUserSession();
       if (user != null) {
-        // Fetch the user preferences subcollection
+
         final preferencesCollection = _firestore
             .collection('users')
             .doc(user.uid)
             .collection('preferences');
-        // Query the subcollection to get the single document snapshot
+
         final querySnapshot = await preferencesCollection.limit(1).get();
 
-        // Check if there's at least one document in the collection
         if (querySnapshot.docs.isNotEmpty) {
           final docSnapshot = querySnapshot.docs.first;
 

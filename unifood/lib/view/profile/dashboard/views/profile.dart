@@ -134,7 +134,7 @@ class _ProfileState extends State<Profile> {
             body: SingleChildScrollView(
               child: SizedBox(
                 width: screenWidth * 0.985,
-                height: screenHeight * 0.8,
+                height: screenHeight * 0.82,
                 child: Padding(
                   padding: EdgeInsets.only(
                       top: screenHeight * 0.025, left: screenWidth * 0.02),
@@ -171,7 +171,7 @@ class _ProfileState extends State<Profile> {
                                         Text(
                                           userData.email,
                                           style: TextStyle(
-                                            fontSize: screenHeight * 0.0155,
+                                            fontSize: screenWidth * 0.033,
                                             color: Colors.grey,
                                           ),
                                         ),
@@ -234,8 +234,8 @@ class _ProfileState extends State<Profile> {
                                     radius: screenHeight * 0.05,
                                     backgroundImage: _image == null
                                         ? NetworkImage(
-                                                userData.profileImageUrl!)
-                                            : FileImage(_image!) as ImageProvider,
+                                            userData.profileImageUrl!)
+                                        : FileImage(_image!) as ImageProvider,
                                   ),
                                 ),
                               ],

@@ -6,16 +6,16 @@ class CustomSuggestedRestaurant extends StatelessWidget {
   final String id;
   final String restaurantName;
   final String restaurantImage;
-  final double? restaurantPrice; // Cambio a nullable
-  final String? restaurantFoodType; // Nuevo parámetro para tipo de comida
+  final double? restaurantPrice; 
+  final String? restaurantFoodType;
 
   const CustomSuggestedRestaurant({
     Key? key,
     required this.id,
     required this.restaurantName,
     required this.restaurantImage,
-    this.restaurantPrice, // Cambiado a nullable
-    this.restaurantFoodType, // Nuevo parámetro para tipo de comida
+    this.restaurantPrice,
+    this.restaurantFoodType,
   }) : super(key: key);
 
   @override
@@ -54,18 +54,18 @@ class CustomSuggestedRestaurant extends StatelessWidget {
                       restaurantName,
                       style: TextStyle(
                         fontSize: screenHeight *
-                            0.015, // Tamaño del texto del nombre del restaurante
-                        fontWeight: FontWeight.bold, // Negrita
+                            0.015, 
+                        fontWeight: FontWeight.bold, 
                       ),
                     ),
                     Text(
                       restaurantPrice != null
                           ? formatNumberWithCommas(restaurantPrice!)
-                          : restaurantFoodType ??
-                              '', // Mostrar precio si está presente, de lo contrario, mostrar tipo de comida
+                          : restaurantFoodType != null
+                              ? restaurantFoodType!
+                              : '',
                       style: TextStyle(
-                        fontSize: screenHeight *
-                            0.015, // Tamaño del texto de la ubicación del restaurante
+                        fontSize: screenHeight * 0.015,
                         color: Colors.black,
                       ),
                     ),

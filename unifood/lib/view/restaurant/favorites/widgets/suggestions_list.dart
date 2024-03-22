@@ -82,7 +82,7 @@ class _SuggestedRestaurantsSectionState
                   },
                   text: 'Price',
                   isSelected: selectedFilter ==
-                      FilterType.price, // Agrega esta propiedad
+                      FilterType.price,
                 ),
                 CustomCategoryButton(
                   onPressed: () {

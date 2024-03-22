@@ -30,7 +30,8 @@ class RestaurantViewModel {
   Future<List<Restaurant>> getRecommendedRestaurants(
       String userId, String categoryFilter) async {
     try {
-      final data = await _restaurantRepository.fetchRecommendedRestaurants(userId, categoryFilter);
+      final data = await _restaurantRepository.fetchRecommendedRestaurants(
+          userId, categoryFilter);
       final userLocation = await _getUserLocation();
       return _mapRestaurantData(data, userLocation);
     } on TimeoutException catch (e, stackTrace) {
@@ -41,7 +42,7 @@ class RestaurantViewModel {
         'function': 'getRecommendedRestaurants',
       };
       ErrorRepository().saveError(errorInfo);
-       throw('Timeout while fetching recommended restaurants: $e');
+      throw ('Timeout while fetching recommended restaurants: $e');
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
@@ -108,23 +109,23 @@ class RestaurantViewModel {
         restaurantLong);
 
     return Restaurant(
-      id: item['docId'] ?? '',
-      imageUrl: item['imageURL'] ?? '',
-      logoUrl: item['logoURL'] ?? '',
-      name: item['name'] ?? '',
-      isOpen: item['isOpen'] ?? false,
-      distance: distance,
-      rating: item['rating']?.toDouble() ?? 0.0,
-      avgPrice: item['avgPrice']?.toDouble() ?? 0.0,
-      foodType: item['foodType'] ?? '',
-      phoneNumber: item['phoneNumber'] ?? '',
-      workingHours: item['workingHours'] ?? '',
-      likes: item['likes']?.toInt() ?? 0,
-      address: item['address'] ?? '',
-      addressDetail: item['addressDetail'] ?? '',
-      latitude: item['latitud'] ?? '',
-      longitude: item['longitud'] ?? '',
-    );
+        id: item['docId'] ?? '',
+        imageUrl: item['imageURL'] ?? '',
+        logoUrl: item['logoURL'] ?? '',
+        name: item['name'] ?? '',
+        isOpen: item['isOpen'] ?? false,
+        distance: distance,
+        rating: item['rating']?.toDouble() ?? 0.0,
+        avgPrice: item['avgPrice']?.toDouble() ?? 0.0,
+        foodType: item['foodType'] ?? '',
+        phoneNumber: item['phoneNumber'] ?? '',
+        workingHours: item['workingHours'] ?? '',
+        likes: item['likes']?.toInt() ?? 0,
+        address: item['address'] ?? '',
+        addressDetail: item['addressDetail'] ?? '',
+        latitude: item['latitud'] ?? '',
+        longitude: item['longitud'] ?? ''
+        );
   }
 
   List<Restaurant> _filterNearbyRestaurants(
