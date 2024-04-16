@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:unifood/model/user_entity.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 
 class UserRepository {
   FirebaseFirestore databaseInstance = FirebaseService().database;
@@ -38,7 +38,7 @@ class UserRepository {
         'timestamp': DateTime.now(),
         'function': 'getUser',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching user in repository: $e');
       rethrow;
     }
@@ -64,7 +64,7 @@ class UserRepository {
         'timestamp': DateTime.now(),
         'function': 'updateUserProfileImage',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when updating user profile image in repository: $e');
       rethrow;
     }
@@ -81,7 +81,7 @@ class UserRepository {
         'timestamp': DateTime.now(),
         'function': 'updateImageUrlInDatabase',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when updating image URL in database: $e');
       rethrow;
     }

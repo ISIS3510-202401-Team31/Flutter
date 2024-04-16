@@ -1,5 +1,5 @@
 import 'package:unifood/model/plate_entity.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/plate_repository.dart';
 
 class PlateViewModel {
@@ -30,7 +30,7 @@ class PlateViewModel {
         'timestamp': DateTime.now(),
         'function': 'getPlatesByRestaurantId',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching plates by id in view model: $e');
       rethrow;
     }
@@ -58,7 +58,7 @@ class PlateViewModel {
         'timestamp': DateTime.now(),
         'function': 'getPlateById',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching plate by id in view model: $e');
       rethrow;
     }

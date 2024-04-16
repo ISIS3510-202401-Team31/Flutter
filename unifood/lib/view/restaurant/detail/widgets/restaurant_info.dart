@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/detail/widgets/details_bar.dart';
 import 'package:unifood/view/restaurant/detail/widgets/location_details.dart';
 import 'package:unifood/view/restaurant/detail/widgets/rating_stars.dart';
@@ -15,6 +16,14 @@ class RestaurantInfo extends StatefulWidget {
 
 class _RestaurantInfoState extends State<RestaurantInfo> {
   bool _isLiked = false;
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +87,7 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                           setState(() {
                             _isLiked = !_isLiked;
                           });
+                          _onUserInteraction("Like Restaurant", "Tap");
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unifood/data/firebase_service.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 
 class PlateRepository {
   FirebaseFirestore databaseInstance = FirebaseService().database;
@@ -29,7 +29,7 @@ class PlateRepository {
         'timestamp': DateTime.now(),
         'function': 'getPlatesByRestaurantId',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching plates by id in repository: $e');
       rethrow;
     }
@@ -64,7 +64,7 @@ class PlateRepository {
         'timestamp': DateTime.now(),
         'function': 'getRestaurantById',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching restaurant by id in repository: $e');
       rethrow;
     }

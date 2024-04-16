@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/utils/string_utils.dart';
 import 'package:unifood/view/restaurant/plateDetail/view/plate_detail.dart';
 
@@ -20,6 +21,14 @@ class PlateCard extends StatelessWidget {
     required this.price,
   }) : super(key: key);
 
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -28,6 +37,7 @@ class PlateCard extends StatelessWidget {
     return InkWell(
       onTap: () {
          Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlateDetail(plateId: id, restaurantId: restaurantId)));
+        _onUserInteraction("Plate Detail", "Tap");
       },
       child: Card(
         elevation: 2,

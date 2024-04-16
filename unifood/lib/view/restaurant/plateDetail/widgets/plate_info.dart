@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/plate_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/utils/string_utils.dart';
 
 class PlateInfo extends StatefulWidget {
@@ -13,6 +14,14 @@ class PlateInfo extends StatefulWidget {
 
 class _PlateInfoState extends State<PlateInfo> {
   bool isLiked = false;
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +68,7 @@ class _PlateInfoState extends State<PlateInfo> {
                     setState(() {
                       isLiked = !isLiked;
                     });
+                    _onUserInteraction("Plate Like", "Tap");
                   },
                 ),
               ],

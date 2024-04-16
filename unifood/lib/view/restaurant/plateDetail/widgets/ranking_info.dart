@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 
 class RankingInfo extends StatefulWidget {
@@ -13,73 +14,87 @@ class RankingInfo extends StatefulWidget {
 class _RankingInfoState extends State<RankingInfo> {
   bool isInfoVisible = true;
 
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    return SizedBox(
-      width: screenWidth * 0.9,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Ranking',
-                  style: TextStyle(
-                    fontSize: screenHeight * 0.0225,
-                    fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        _onUserInteraction("Plate Ranking", "Tap");
+      },
+      child: SizedBox(
+        width: screenWidth * 0.9,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.075, vertical: screenHeight * 0.01),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Ranking',
+                    style: TextStyle(
+                      fontSize: screenHeight * 0.0225,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                CustomCircledButton(
-                  onPressed: () {
-                    setState(() {
-                      isInfoVisible = !isInfoVisible;
-                    });
-                  },
-                  diameter: screenHeight * 0.0025,
-                  icon: Icon(
-                    isInfoVisible
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_up,
-                    color: Colors.black,
-                    size: screenHeight * 0.0335,
+                  CustomCircledButton(
+                    onPressed: () {
+                      setState(() {
+                        isInfoVisible = !isInfoVisible;
+                      });
+                      _onUserInteraction("Plate Ranking", "Tap");
+                    },
+                    diameter: screenHeight * 0.0025,
+                    icon: Icon(
+                      isInfoVisible
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_up,
+                      color: Colors.black,
+                      size: screenHeight * 0.0335,
+                    ),
+                    buttonColor: Colors.white,
                   ),
-                  buttonColor: Colors.white,
-                ),
-              ],
-            ),
-            Visibility(
-              visible: isInfoVisible,
-              child: widget.characteristics.isNotEmpty
-                  ? Padding(
-                      padding: EdgeInsets.all(screenWidth * 0.02),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: widget.characteristics.entries.map((entry) {
-                          return _buildCharacteristicRow(
-                              entry.key, entry.value, screenWidth);
-                        }).toList(),
-                      ),
-                    )
-                  : Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: screenHeight * 0.025),
-                      child: Text(
-                        'No ranking available',
-                        style: TextStyle(
-                          fontSize: screenHeight * 0.02,
-                          fontStyle: FontStyle.italic,
+                ],
+              ),
+              Visibility(
+                visible: isInfoVisible,
+                child: widget.characteristics.isNotEmpty
+                    ? Padding(
+                        padding: EdgeInsets.all(screenWidth * 0.02),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: widget.characteristics.entries.map((entry) {
+                            return _buildCharacteristicRow(
+                                entry.key, entry.value, screenWidth);
+                          }).toList(),
+                        ),
+                      )
+                    : Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: screenHeight * 0.025),
+                        child: Text(
+                          'No ranking available',
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.02,
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
                       ),
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

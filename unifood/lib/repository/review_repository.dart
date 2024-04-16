@@ -1,6 +1,6 @@
 import 'package:unifood/data/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 
 class ReviewRepository {
   FirebaseFirestore databaseInstance = FirebaseService().database;
@@ -23,7 +23,7 @@ class ReviewRepository {
         'timestamp': DateTime.now(),
         'function': 'getReviewsByRestaurantId',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching reviews by id in repository: $e');
       rethrow;
     }
@@ -48,7 +48,7 @@ class ReviewRepository {
         'timestamp': DateTime.now(),
         'function': 'getReviewsByRestaurantId',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching reviews by id in repository: $e');
       rethrow;
     }

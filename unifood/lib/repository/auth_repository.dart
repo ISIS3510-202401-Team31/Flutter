@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:unifood/model/user_entity.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/shared_preferences.dart';
 
 class Auth {
@@ -22,7 +22,7 @@ class Auth {
         'timestamp': DateTime.now(),
         'function': 'signOut',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error log out: $e');
     }
   }
@@ -75,7 +75,7 @@ class Auth {
         'timestamp': DateTime.now(),
         'function': 'signUpWithEmailPassword',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error sign up: $e');
       return null;
     }
@@ -102,7 +102,7 @@ class Auth {
         'timestamp': DateTime.now(),
         'function': 'signInWithEmailPassword',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error sign in: $e');
     }
     return null;

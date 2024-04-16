@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.dart';
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
@@ -37,6 +38,14 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     return [restaurantInfoData, menuItemsData, reviewsData];
   }
 
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -55,6 +64,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 icon: Icon(Icons.search, size: screenWidth * 0.07),
                 onPressed: () {
                   Navigator.pushNamed(context, "/filtermenu");
+                  _onUserInteraction("Menu Search", "Tap");
                 },
               ),
             )
@@ -105,18 +115,25 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             final data = snapshot.data!;
             final restaurantInfo = RestaurantInfo(restaurant: data[0]);
-            final menuGrid = MenuGrid(menuItems: data[1], restaurantId: widget.restaurantId);
+            final menuGrid =
+                MenuGrid(menuItems: data[1], restaurantId: widget.restaurantId);
             final reviewList = ReviewList(reviews: data[2]);
 
-            return Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    restaurantInfo,
-                    menuGrid,
-                    reviewList,
-                  ],
+            return NotificationListener<ScrollUpdateNotification>(
+              onNotification: (notification) {
+                _onUserInteraction("Restaurant Detail", "Scroll");
+                return true;
+              },
+              child: Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      restaurantInfo,
+                      menuGrid,
+                      reviewList,
+                    ],
+                  ),
                 ),
               ),
             );

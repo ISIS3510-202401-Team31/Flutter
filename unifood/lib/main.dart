@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/services.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +33,7 @@ void main() async {
       'stacktrace': errorDetails.stack.toString(),
       'timestamp': DateTime.now(),
     };
-    ErrorRepository().saveError(errorInfo);
+    AnalyticsRepository().saveError(errorInfo);
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
 
@@ -43,7 +43,7 @@ void main() async {
       'stacktrace': stack.toString(),
       'timestamp': DateTime.now(),
     };
-    ErrorRepository().saveError(errorInfo);
+    AnalyticsRepository().saveError(errorInfo);
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };

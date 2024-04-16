@@ -1,5 +1,5 @@
 import 'package:unifood/model/review_entity.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/review_repository.dart';
 
 class ReviewViewModel {
@@ -29,7 +29,7 @@ class ReviewViewModel {
         'timestamp': DateTime.now(),
         'function': 'getReviewsByRestaurantId',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching reviews by id in view model: $e');
       rethrow;
     }
@@ -58,7 +58,7 @@ class ReviewViewModel {
         'timestamp': DateTime.now(),
         'function': 'getReviewsByPlateId',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching reviews by plate id in view model: $e');
       rethrow;
     }

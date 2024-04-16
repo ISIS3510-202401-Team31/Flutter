@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/plate_entity.dart';
 import 'package:unifood/model/review_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
 import 'package:unifood/view/restaurant/plateDetail/widgets/plate_info.dart';
 import 'package:unifood/view/restaurant/plateDetail/widgets/ranking_info.dart';
@@ -35,6 +36,14 @@ class _PlateDetailState extends State<PlateDetail> {
     final reviewsData = await ReviewViewModel()
         .getReviewsByPlateId(widget.plateId, widget.restaurantId);
     return [plateInfoData, reviewsData];
+  }
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
   }
 
   @override
@@ -104,15 +113,21 @@ class _PlateDetailState extends State<PlateDetail> {
             final data = snapshot.data!;
             final Plate plate = data[0];
             final List<Review> reviews = data[1];
-            return Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    PlateInfo(plate: plate),
-                    RankingInfo(characteristics: plate.ranking),
-                    ReviewList(reviews: reviews),
-                  ],
+            return NotificationListener<ScrollUpdateNotification>(
+              onNotification: (notification) {
+                _onUserInteraction("Plate Detail", "Scroll");
+                return true;
+              },
+              child: Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      PlateInfo(plate: plate),
+                      RankingInfo(characteristics: plate.ranking),
+                      ReviewList(reviews: reviews),
+                    ],
+                  ),
                 ),
               ),
             );
