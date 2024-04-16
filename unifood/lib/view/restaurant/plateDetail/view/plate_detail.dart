@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.dart';
-import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
+import 'package:unifood/model/plate_entity.dart';
+import 'package:unifood/model/review_entity.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
+import 'package:unifood/view/restaurant/plateDetail/widgets/plate_info.dart';
+import 'package:unifood/view/restaurant/plateDetail/widgets/ranking_info.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view_model/plate_view_model.dart';
-import 'package:unifood/view_model/restaurant_view_model.dart';
 import 'package:unifood/view_model/review_view_model.dart';
 
-class RestaurantDetail extends StatefulWidget {
+class PlateDetail extends StatefulWidget {
+  final String plateId;
   final String restaurantId;
-  const RestaurantDetail({Key? key, required this.restaurantId})
+  const PlateDetail(
+      {Key? key, required this.plateId, required this.restaurantId})
       : super(key: key);
 
   @override
-  _RestaurantDetailState createState() => _RestaurantDetailState();
+  _PlateDetailState createState() => _PlateDetailState();
 }
 
-class _RestaurantDetailState extends State<RestaurantDetail> {
+class _PlateDetailState extends State<PlateDetail> {
   late Future<List<dynamic>> dataFuture;
 
   @override
@@ -27,14 +30,11 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final restaurantInfoData =
-        await RestaurantViewModel().getRestaurantById(widget.restaurantId);
-    final menuItemsData =
-        await PlateViewModel().getPlatesByRestaurantId(widget.restaurantId);
-    final reviewsData =
-        await ReviewViewModel().getReviewsByRestaurantId(widget.restaurantId);
-
-    return [restaurantInfoData, menuItemsData, reviewsData];
+    final plateInfoData = await PlateViewModel()
+        .getPlateById(widget.plateId, widget.restaurantId);
+    final reviewsData = await ReviewViewModel()
+        .getReviewsByPlateId(widget.plateId, widget.restaurantId);
+    return [plateInfoData, reviewsData];
   }
 
   @override
@@ -82,46 +82,42 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.red,
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        fontWeight: FontWeight.bold, // Letra en negrita
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.02),
                     IconButton(
                       icon: Icon(
                         Icons.refresh,
-                        size: MediaQuery.of(context).size.width * 0.08,
+                        size: screenWidth * 0.08,
                       ),
                       onPressed: () {
-                        setState(() {
-                          dataFuture = fetchData();
-                        });
+                        setState(() {});
                       },
                     ),
                   ],
                 ),
               ),
             );
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          } else if (snapshot.hasData) {
             final data = snapshot.data!;
-            final restaurantInfo = RestaurantInfo(restaurant: data[0]);
-            final menuGrid = MenuGrid(menuItems: data[1], restaurantId: widget.restaurantId);
-            final reviewList = ReviewList(reviews: data[2]);
-
+            final Plate plate = data[0];
+            final List<Review> reviews = data[1];
             return Container(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    restaurantInfo,
-                    menuGrid,
-                    reviewList,
+                    PlateInfo(plate: plate),
+                    RankingInfo(characteristics: plate.ranking),
+                    ReviewList(reviews: reviews),
                   ],
                 ),
               ),
             );
           } else {
-            return const Center(
+            return Center(
               child: Text('No data available.'),
             );
           }

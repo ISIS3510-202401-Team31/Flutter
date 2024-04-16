@@ -34,4 +34,33 @@ class ReviewViewModel {
       rethrow;
     }
   }
+
+  Future<List<Review>> getReviewsByPlateId(String plateId, String restaurantId) async {
+    try {
+      final List<Map<String, dynamic>> data =
+          await _reviewRepository.getReviewsByPlateId(plateId, restaurantId);
+
+      return data
+          .map(
+            (item) => Review(
+              userImage: item['userImage'],
+              name: item['name'],
+              comment: item['comment'],
+              rating: item['rating'].toDouble(),
+            ),
+          )
+          .toList();
+    } catch (e, stackTrace) {
+
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getReviewsByPlateId',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching reviews by plate id in view model: $e');
+      rethrow;
+    }
+  }
 }

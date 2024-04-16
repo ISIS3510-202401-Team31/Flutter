@@ -4,9 +4,10 @@ import 'package:unifood/view/restaurant/detail/widgets/menu_section/plate_card.d
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 
 class MenuGrid extends StatefulWidget {
+  final String restaurantId;
   final List<Plate> menuItems;
 
-  const MenuGrid({Key? key, required this.menuItems}) : super(key: key);
+  const MenuGrid({Key? key, required this.menuItems, required this.restaurantId}) : super(key: key);
 
   @override
   _MenuGridState createState() => _MenuGridState();
@@ -72,6 +73,8 @@ class _MenuGridState extends State<MenuGrid> {
                       itemBuilder: (context, index) {
                         final item = widget.menuItems[index];
                         return PlateCard(
+                          id: item.id,
+                          restaurantId: widget.restaurantId,
                           imagePath: item.imagePath,
                           name: item.name,
                           description: item.description,
@@ -83,7 +86,7 @@ class _MenuGridState extends State<MenuGrid> {
                       padding:
                           EdgeInsets.symmetric(vertical: screenHeight * 0.025),
                       child: Text(
-                        'No reviews available',
+                        'No menu items available',
                         style: TextStyle(
                           fontSize: screenHeight * 0.02,
                           fontStyle: FontStyle.italic,

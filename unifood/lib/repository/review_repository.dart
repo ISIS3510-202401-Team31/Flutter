@@ -28,4 +28,29 @@ class ReviewRepository {
       rethrow;
     }
   }
+
+  Future<List<Map<String, dynamic>>> getReviewsByPlateId( String plateId, String restaurantId) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await databaseInstance
+          .collection('restaurants')
+          .doc(restaurantId)
+          .collection('plates')
+          .doc(plateId)
+          .collection('reviews')
+          .get();
+
+      return querySnapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getReviewsByRestaurantId',
+      };
+      ErrorRepository().saveError(errorInfo);
+      print('Error when fetching reviews by id in repository: $e');
+      rethrow;
+    }
+  }
 }

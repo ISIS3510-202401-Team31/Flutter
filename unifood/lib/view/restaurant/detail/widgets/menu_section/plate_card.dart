@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/utils/string_utils.dart';
+import 'package:unifood/view/restaurant/plateDetail/view/plate_detail.dart';
 
 class PlateCard extends StatelessWidget {
+  final String id;
+  final String restaurantId;
   final String imagePath;
   final String name;
   final String description;
@@ -9,6 +12,8 @@ class PlateCard extends StatelessWidget {
 
   const PlateCard({
     Key? key,
+    required this.id,
+    required this.restaurantId,
     required this.imagePath,
     required this.name,
     required this.description,
@@ -22,7 +27,7 @@ class PlateCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        print('PlateCard $name tapped');
+         Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlateDetail(plateId: id, restaurantId: restaurantId)));
       },
       child: Card(
         elevation: 2,

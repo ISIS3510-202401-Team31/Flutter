@@ -34,7 +34,7 @@ class CustomRestaurant extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id )));
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
       },
       child: Card(
         child: SizedBox(
