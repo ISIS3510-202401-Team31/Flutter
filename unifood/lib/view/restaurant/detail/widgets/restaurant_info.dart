@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
@@ -44,11 +45,12 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                       top: screenHeight * 0.04,
                       left: screenWidth * 0.08,
                       right: screenWidth * 0.08),
-                  child: Image.network(
-                    widget.restaurant.imageUrl,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.restaurant.imageUrl,
                     height: screenHeight * 0.12,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => const SizedBox.shrink(),
                   ),
                 ),
                 Padding(
@@ -61,7 +63,7 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                       CircleAvatar(
                         radius: screenHeight * 0.028,
                         backgroundImage:
-                            NetworkImage(widget.restaurant.logoUrl),
+                            CachedNetworkImageProvider(widget.restaurant.logoUrl),
                       ),
                       SizedBox(width: screenWidth * 0.04),
                       Expanded(

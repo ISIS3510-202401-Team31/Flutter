@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';

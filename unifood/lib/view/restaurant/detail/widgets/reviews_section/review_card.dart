@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ReviewCard extends StatelessWidget {
@@ -33,7 +34,7 @@ class ReviewCard extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: screenHeight * 0.035,
-                    backgroundImage: NetworkImage(userImage),
+                    backgroundImage: CachedNetworkImageProvider(userImage),
                   ),
                   SizedBox(width: screenWidth * 0.025),
                   Expanded(

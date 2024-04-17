@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
@@ -43,7 +44,7 @@ class RestaurantLogo extends StatelessWidget {
         ),
         child: CircleAvatar(
           radius: screenWidth * 0.07,
-          backgroundImage: NetworkImage(logo),
+          backgroundImage: CachedNetworkImageProvider(logo),
         ),
       ),
     );

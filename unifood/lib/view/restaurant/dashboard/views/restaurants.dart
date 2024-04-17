@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
@@ -139,7 +137,7 @@ class _RestaurantsState extends State<Restaurants> {
                   _onUserInteraction("All restaurants", "Scroll");
                   return true;
                 },
-                child: Container(
+                child: SizedBox(
                   height: screenHeight * 0.338,
                   child: FutureBuilder<List<Restaurant>>(
                     future: RestaurantViewModel().getRestaurants(),
@@ -246,7 +244,7 @@ class _RestaurantsState extends State<Restaurants> {
                   _onUserInteraction("Nearby restaurants", "Scroll");
                   return true;
                 },
-                child: Container(
+                child: SizedBox(
                   height: screenHeight * 0.338,
                   child: FutureBuilder<List<Restaurant>>(
                     future: RestaurantViewModel().getRestaurantsNearby(),

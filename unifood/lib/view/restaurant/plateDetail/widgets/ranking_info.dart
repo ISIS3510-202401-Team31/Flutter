@@ -5,7 +5,7 @@ import 'package:unifood/view/widgets/custom_circled_button.dart';
 class RankingInfo extends StatefulWidget {
   final Map<String, dynamic> characteristics;
 
-  RankingInfo({required this.characteristics});
+  const RankingInfo({super.key, required this.characteristics});
 
   @override
   _RankingInfoState createState() => _RankingInfoState();
@@ -109,7 +109,7 @@ class _RankingInfoState extends State<RankingInfo> {
         children: [
           Text(
             '$characteristic: ',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -124,10 +124,10 @@ class _RankingInfoState extends State<RankingInfo> {
     double remainder = rating - fullStars;
     List<Widget> starWidgets = [];
     for (int i = 0; i < fullStars; i++) {
-      starWidgets.add(Icon(Icons.star, color: Colors.yellow));
+      starWidgets.add(const Icon(Icons.star, color: Colors.yellow));
     }
     if (remainder > 0) {
-      starWidgets.add(Icon(Icons.star_half, color: Colors.yellow));
+      starWidgets.add(const Icon(Icons.star_half, color: Colors.yellow));
     }
     return Row(children: starWidgets);
   }

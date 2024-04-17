@@ -45,8 +45,8 @@ class PreferencesRepository {
         if (querySnapshot.docs.isNotEmpty) {
           final docSnapshot = querySnapshot.docs.first;
 
-          if (docSnapshot.exists && docSnapshot.data() != null) {
-            return PreferencesEntity.fromMap(docSnapshot.data()!,
+          if (docSnapshot.exists) {
+            return PreferencesEntity.fromMap(docSnapshot.data(),
                 isUserPreferences: true);
           } else {
             print(

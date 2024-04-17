@@ -17,7 +17,7 @@ class CustomCategoryButton extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final Color buttonColor = isSelected ? Color(0xFFE2D2B4) : Colors.white;
+    final Color buttonColor = isSelected ? const Color(0xFFE2D2B4) : Colors.white;
 
     return SizedBox(
       width: screenWidth * 0.27,

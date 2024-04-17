@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -233,8 +234,9 @@ class _ProfileState extends State<Profile> {
                                   child: CircleAvatar(
                                     radius: screenHeight * 0.05,
                                     backgroundImage: _image == null
-                                        ? NetworkImage(
-                                            userData.profileImageUrl!)
+                                        ? CachedNetworkImageProvider(
+                                            userData.profileImageUrl!
+                                          )
                                         : FileImage(_image!) as ImageProvider,
                                   ),
                                 ),

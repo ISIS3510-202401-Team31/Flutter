@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:unifood/view/profile/preferences/widgets/custom_settings_options_preferences.dart';
 import 'package:unifood/view/profile/preferences/widgets/custom_app_bar.dart';
 import 'package:unifood/view/profile/preferences/widgets/price_range_selector.dart';
 import 'package:unifood/view/profile/preferences/widgets/section_header.dart';
@@ -24,8 +23,8 @@ class _PreferencesState extends State<Preferences> {
   List<PreferenceItem> _tastes = [];
   bool _isEditingRestrictions = false;
   bool _isEditingTastes = false;
-  Set<int> _markedForDeletionRestrictions = Set<int>();
-  Set<int> _markedForDeletionTastes = Set<int>();
+  final Set<int> _markedForDeletionRestrictions = <int>{};
+  final Set<int> _markedForDeletionTastes = <int>{};
 
   final String userId = 'dummy_user_id';
   late PreferencesEntity _updatedPreferences;
@@ -272,12 +271,12 @@ class _PreferencesState extends State<Preferences> {
                   try {
                     await _viewModel.updateUserPreferences(_updatedPreferences);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                           content: Text('Preferences updated successfully')),
                     );
                   } catch (error) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to update preferences')),
+                      const SnackBar(content: Text('Failed to update preferences')),
                     );
                   }
                 },

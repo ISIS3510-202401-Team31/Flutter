@@ -132,7 +132,7 @@ class _PlateDetailState extends State<PlateDetail> {
               ),
             );
           } else {
-            return Center(
+            return const Center(
               child: Text('No data available.'),
             );
           }

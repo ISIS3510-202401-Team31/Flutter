@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/plate_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
@@ -41,11 +42,12 @@ class _PlateInfoState extends State<PlateInfo> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              child: Image.network(
-                widget.plate.imagePath,
+              child: CachedNetworkImage(
+                imageUrl: widget.plate.imagePath,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 height:screenHeight * 0.3,
+                errorWidget: (context, url, error) => const SizedBox.shrink(),
               ),
             ),
             SizedBox(height:screenHeight * 0.01),

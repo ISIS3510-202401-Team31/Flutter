@@ -19,7 +19,7 @@ class SaveChangesButton extends StatelessWidget {
       child: Container(
         width: buttonWidth,
         height: buttonHeight,
-        margin: EdgeInsets
+        margin: const EdgeInsets
             .symmetric(), // Centers the button in the middle of the page
         child: ElevatedButton.icon(
           onPressed: onPressed, // Use the named parameter here
