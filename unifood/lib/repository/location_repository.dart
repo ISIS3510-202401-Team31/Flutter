@@ -9,15 +9,20 @@ class LocationRepository {
 
       return userLocation;
     } catch (e, stackTrace) {
-      // Guardar la información del error en la base de datos
+      // Instantiating AnalyticsRepository internally
+      final analyticsRepository = AnalyticsRepository();
+
+      // Saving error information using AnalyticsRepository
       final errorInfo = {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
         'timestamp': DateTime.now(),
         'function': 'getUserLocation',
       };
-      AnalyticsRepository().saveError(errorInfo);
-      print("Error getting users location: $e");
+      analyticsRepository.saveError(errorInfo);
+
+      // Re-throwing the caught error
+      print("Error getting user's location: $e");
       rethrow;
     }
   }

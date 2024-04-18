@@ -5,9 +5,9 @@ import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.da
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view_model/plate_view_model.dart';
-import 'package:unifood/view_model/restaurant_view_model.dart';
-import 'package:unifood/view_model/review_view_model.dart';
+import 'package:unifood/view_model/plate_controller.dart';
+import 'package:unifood/view_model/restaurant_controller.dart';
+import 'package:unifood/view_model/review_controller.dart';
 
 class RestaurantDetail extends StatefulWidget {
   final String restaurantId;
@@ -29,11 +29,11 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
   Future<List<dynamic>> fetchData() async {
     final restaurantInfoData =
-        await RestaurantViewModel().getRestaurantById(widget.restaurantId);
+        await RestaurantController().getRestaurantById(widget.restaurantId);
     final menuItemsData =
-        await PlateViewModel().getPlatesByRestaurantId(widget.restaurantId);
+        await PlateController().getPlatesByRestaurantId(widget.restaurantId);
     final reviewsData =
-        await ReviewViewModel().getReviewsByRestaurantId(widget.restaurantId);
+        await ReviewController().getReviewsByRestaurantId(widget.restaurantId);
 
     return [restaurantInfoData, menuItemsData, reviewsData];
   }

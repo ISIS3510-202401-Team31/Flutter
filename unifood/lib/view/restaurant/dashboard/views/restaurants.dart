@@ -5,7 +5,7 @@ import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
-import 'package:unifood/view_model/restaurant_view_model.dart';
+import 'package:unifood/view_model/restaurant_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Restaurants extends StatefulWidget {
@@ -140,7 +140,7 @@ class _RestaurantsState extends State<Restaurants> {
                 child: SizedBox(
                   height: screenHeight * 0.338,
                   child: FutureBuilder<List<Restaurant>>(
-                    future: RestaurantViewModel().getRestaurants(),
+                    future: RestaurantController().getRestaurants(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -247,7 +247,7 @@ class _RestaurantsState extends State<Restaurants> {
                 child: SizedBox(
                   height: screenHeight * 0.338,
                   child: FutureBuilder<List<Restaurant>>(
-                    future: RestaurantViewModel().getRestaurantsNearby(),
+                    future: RestaurantController().getRestaurantsNearby(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(

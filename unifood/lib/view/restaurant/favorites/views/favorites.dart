@@ -8,7 +8,7 @@ import 'package:unifood/view/restaurant/favorites/widgets/suggestions_list.dart'
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
-import 'package:unifood/view_model/restaurant_view_model.dart';
+import 'package:unifood/view_model/restaurant_controller.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({Key? key}) : super(key: key);
@@ -27,7 +27,7 @@ class _FavoritesState extends State<Favorites> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final restaurantInfoData = await RestaurantViewModel().getRestaurants();
+    final restaurantInfoData = await RestaurantController().getRestaurants();
     final user = await UserRepository().getUserSession();
 
     return [restaurantInfoData, user];

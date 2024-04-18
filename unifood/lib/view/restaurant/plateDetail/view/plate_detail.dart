@@ -7,8 +7,8 @@ import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_li
 import 'package:unifood/view/restaurant/plateDetail/widgets/plate_info.dart';
 import 'package:unifood/view/restaurant/plateDetail/widgets/ranking_info.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view_model/plate_view_model.dart';
-import 'package:unifood/view_model/review_view_model.dart';
+import 'package:unifood/view_model/plate_controller.dart';
+import 'package:unifood/view_model/review_controller.dart';
 
 class PlateDetail extends StatefulWidget {
   final String plateId;
@@ -31,9 +31,9 @@ class _PlateDetailState extends State<PlateDetail> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final plateInfoData = await PlateViewModel()
+    final plateInfoData = await PlateController()
         .getPlateById(widget.plateId, widget.restaurantId);
-    final reviewsData = await ReviewViewModel()
+    final reviewsData = await ReviewController()
         .getReviewsByPlateId(widget.plateId, widget.restaurantId);
     return [plateInfoData, reviewsData];
   }

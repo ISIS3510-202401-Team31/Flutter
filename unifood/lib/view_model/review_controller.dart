@@ -2,7 +2,7 @@ import 'package:unifood/model/review_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/review_repository.dart';
 
-class ReviewViewModel {
+class ReviewController {
   final ReviewRepository _reviewRepository = ReviewRepository();
 
   Future<List<Review>> getReviewsByRestaurantId(String restaurantId) async {
