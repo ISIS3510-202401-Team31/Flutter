@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 
 class RestaurantRepository {
   FirebaseFirestore databaseInstance = FirebaseService().database;
@@ -28,7 +28,7 @@ class RestaurantRepository {
         'timestamp': DateTime.now(),
         'function': 'getRestaurants',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching restaurants in repository: $e');
       rethrow;
     }
@@ -57,7 +57,7 @@ class RestaurantRepository {
         'timestamp': DateTime.now(),
         'function': 'getRestaurantById',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching restaurant by id in repository: $e');
       rethrow;
     }
@@ -92,7 +92,7 @@ class RestaurantRepository {
         'timestamp': DateTime.now(),
         'function': 'fetchRecommendedRestaurants',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       throw('Timeout while fetching recommended restaurants: $e');
     } catch (e, stackTrace) {
       final errorInfo = {
@@ -101,7 +101,7 @@ class RestaurantRepository {
         'timestamp': DateTime.now(),
         'function': 'fetchRecommendedRestaurants',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching recommended restaurants in repository: $e');
       rethrow;
     }

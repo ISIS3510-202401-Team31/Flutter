@@ -1,7 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/utils/string_utils.dart';
+import 'package:unifood/view/restaurant/plateDetail/view/plate_detail.dart';
 
 class PlateCard extends StatelessWidget {
+  final String id;
+  final String restaurantId;
   final String imagePath;
   final String name;
   final String description;
@@ -9,11 +14,21 @@ class PlateCard extends StatelessWidget {
 
   const PlateCard({
     Key? key,
+    required this.id,
+    required this.restaurantId,
     required this.imagePath,
     required this.name,
     required this.description,
     required this.price,
   }) : super(key: key);
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +37,10 @@ class PlateCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        print('PlateCard $name tapped');
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) =>
+                PlateDetail(plateId: id, restaurantId: restaurantId)));
+        _onUserInteraction("Plate Detail", "Tap");
       },
       child: Card(
         elevation: 2,
@@ -34,12 +52,14 @@ class PlateCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(screenWidth * 0.02)),
-                child: Image.network(
-                  imagePath,
+                borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(screenWidth * 0.02)),
+                child: CachedNetworkImage(
+                  imageUrl: imagePath,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   height: screenHeight * 0.109,
+                  errorWidget: (context, url, error) => const SizedBox.shrink(),
                 ),
               ),
               Padding(
@@ -73,7 +93,7 @@ class PlateCard extends StatelessWidget {
                     const SizedBox(width: 8.0),
                     Text(
                       formatNumberWithCommas(price),
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontSize: screenWidth * 0.025,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,

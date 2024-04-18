@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unifood/data/firebase_service.dart';
 import 'package:unifood/model/preferences_entity.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
 
 class PreferencesRepository {
@@ -45,8 +45,8 @@ class PreferencesRepository {
         if (querySnapshot.docs.isNotEmpty) {
           final docSnapshot = querySnapshot.docs.first;
 
-          if (docSnapshot.exists && docSnapshot.data() != null) {
-            return PreferencesEntity.fromMap(docSnapshot.data()!,
+          if (docSnapshot.exists) {
+            return PreferencesEntity.fromMap(docSnapshot.data(),
                 isUserPreferences: true);
           } else {
             print(
@@ -115,7 +115,7 @@ class PreferencesRepository {
       'function': functionContext,
     };
 
-    ErrorRepository().saveError(errorInfo);
+    AnalyticsRepository().saveError(errorInfo);
     print('Error in PreferencesRepository - $functionContext: $e');
   }
 }

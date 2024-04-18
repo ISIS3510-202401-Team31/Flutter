@@ -34,7 +34,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
                   CustomCircledButton(
                     onPressed: onBackButtonPressed,
                     diameter: screenWidth * 0.07,
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.chevron_left_sharp,
                       color: Colors.black,
                     ),
@@ -63,7 +63,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
                         decoration: InputDecoration(
                           labelText: 'What do you want to eat?',
                           labelStyle: TextStyle(
-                            color: Color.fromARGB(255, 128, 126, 126),
+                            color: const Color.fromARGB(255, 128, 126, 126),
                             fontSize: screenWidth * 0.0325,
                           ),
                           border: InputBorder.none,
@@ -73,7 +73,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           suffixIcon: searchController.text.isNotEmpty
                               ? IconButton(
-                                  icon: Icon(Icons.clear),
+                                  icon: const Icon(Icons.clear),
                                   onPressed: () {
                                     searchController.clear();
                                     onSearchChanged('');
@@ -94,5 +94,5 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 34);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 34);
 }

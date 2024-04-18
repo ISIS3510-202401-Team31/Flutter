@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/view/restaurant/favorites/widgets/suggestions_list.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
@@ -107,6 +108,15 @@ class _FavoritesWidget extends StatefulWidget {
 }
 
 class _FavoritesWidgetState extends State<_FavoritesWidget> {
+  
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -148,7 +158,13 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
             right: screenWidth * 0.04),
         child: Column(
           children: [
-            SuggestedRestaurantsSection(userId: widget.currentUser.uid),
+            NotificationListener<ScrollUpdateNotification>(
+                onNotification: (notification) {
+                  _onUserInteraction("Suggested Restaurants", "Scroll");
+                  return true;
+                },
+                child: SuggestedRestaurantsSection(
+                    userId: widget.currentUser.uid)),
             SizedBox(height: screenHeight * 0.025),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -161,6 +177,7 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
                 IconButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/restaurant_search');
+                    _onUserInteraction("Restaurants Search", "Tap");
                   },
                   icon: Icon(
                     Icons.search_rounded,
@@ -176,23 +193,29 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
               color: const Color(0xFF965E4E),
             ),
             SizedBox(height: screenHeight * 0.02),
-            Container(
-              color: const Color(0xFF965E4E).withOpacity(0.15),
-              height: screenHeight * 0.4,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: widget.favoriteRestaurants.map((restaurant) {
-                    return CustomRestaurant(
-                      id: restaurant.id,
-                      imageUrl: restaurant.imageUrl,
-                      logoUrl: restaurant.logoUrl,
-                      name: restaurant.name,
-                      isOpen: restaurant.isOpen,
-                      distance: restaurant.distance,
-                      rating: restaurant.rating,
-                      avgPrice: restaurant.avgPrice,
-                    );
-                  }).toList(),
+            NotificationListener<ScrollUpdateNotification>(
+              onNotification: (notification) {
+                _onUserInteraction("Favorite Restaurants", "Scroll");
+                return true;
+              },
+              child: Container(
+                color: const Color(0xFF965E4E).withOpacity(0.15),
+                height: screenHeight * 0.4,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: widget.favoriteRestaurants.map((restaurant) {
+                      return CustomRestaurant(
+                        id: restaurant.id,
+                        imageUrl: restaurant.imageUrl,
+                        logoUrl: restaurant.logoUrl,
+                        name: restaurant.name,
+                        isOpen: restaurant.isOpen,
+                        distance: restaurant.distance,
+                        rating: restaurant.rating,
+                        avgPrice: restaurant.avgPrice,
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ),

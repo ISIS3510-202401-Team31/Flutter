@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/utils/string_utils.dart';
 import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
 
@@ -24,6 +25,14 @@ class CustomRestaurant extends StatelessWidget {
     required this.id,
   });
 
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -34,7 +43,8 @@ class CustomRestaurant extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id )));
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
+        _onUserInteraction("Restaurant Detail", "Tap");
       },
       child: Card(
         child: SizedBox(

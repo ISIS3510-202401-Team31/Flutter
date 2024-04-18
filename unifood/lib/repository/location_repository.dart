@@ -1,5 +1,5 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 
 class LocationRepository {
   Future<Position> getUserLocation() async {
@@ -16,7 +16,7 @@ class LocationRepository {
         'timestamp': DateTime.now(),
         'function': 'getUserLocation',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print("Error getting users location: $e");
       rethrow;
     }

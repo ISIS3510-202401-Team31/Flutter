@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/location_repository.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/utils/distance_calculator.dart';
 
@@ -27,7 +27,7 @@ class UserViewModel extends ChangeNotifier {
         'timestamp': DateTime.now(),
         'function': 'getUser',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching user in view model: $e');
     }
   }
@@ -43,7 +43,7 @@ class UserViewModel extends ChangeNotifier {
         'timestamp': DateTime.now(),
         'function': 'updateUserProfileImage',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when updating user profile image in view model: $e');
       rethrow;
     }
@@ -60,7 +60,7 @@ class UserViewModel extends ChangeNotifier {
         'timestamp': DateTime.now(),
         'function': 'updateUserProfileImage',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when getting user location repository: $e');
       rethrow;
     }

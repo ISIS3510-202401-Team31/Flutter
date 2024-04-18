@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/detail/widgets/details_bar.dart';
 import 'package:unifood/view/restaurant/detail/widgets/location_details.dart';
 import 'package:unifood/view/restaurant/detail/widgets/rating_stars.dart';
@@ -15,6 +17,14 @@ class RestaurantInfo extends StatefulWidget {
 
 class _RestaurantInfoState extends State<RestaurantInfo> {
   bool _isLiked = false;
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +45,12 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                       top: screenHeight * 0.04,
                       left: screenWidth * 0.08,
                       right: screenWidth * 0.08),
-                  child: Image.network(
-                    widget.restaurant.imageUrl,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.restaurant.imageUrl,
                     height: screenHeight * 0.12,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => const SizedBox.shrink(),
                   ),
                 ),
                 Padding(
@@ -52,7 +63,7 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                       CircleAvatar(
                         radius: screenHeight * 0.028,
                         backgroundImage:
-                            NetworkImage(widget.restaurant.logoUrl),
+                            CachedNetworkImageProvider(widget.restaurant.logoUrl),
                       ),
                       SizedBox(width: screenWidth * 0.04),
                       Expanded(
@@ -78,6 +89,7 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                           setState(() {
                             _isLiked = !_isLiked;
                           });
+                          _onUserInteraction("Like Restaurant", "Tap");
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,

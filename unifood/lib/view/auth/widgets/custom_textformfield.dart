@@ -49,7 +49,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     // Define el tamaño personalizado de la línea
-    final double lineWidth = 2.0;
+    const double lineWidth = 2.0;
 
     // Define el borde personalizado con el ancho de línea personalizado
     final InputBorder border = UnderlineInputBorder(

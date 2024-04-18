@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_card.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_logo.dart';
 import 'package:unifood/view/restaurant/search/widgets/search_app_bar.dart';
@@ -19,6 +19,14 @@ class _SearchViewState extends State<SearchView> {
   List<Restaurant> _restaurantList = [];
 
   final TextEditingController _searchController = TextEditingController();
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,17 +91,23 @@ class _SearchViewState extends State<SearchView> {
                 children: [
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (var restaurant in restaurants)
-                          Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.037),
-                            child: RestaurantLogo(
-                              logo: restaurant.logoUrl,
-                              id: restaurant.id,
+                    child: NotificationListener<ScrollUpdateNotification>(
+                      onNotification: (notification) {
+                        _onUserInteraction("Restaurants Search", "Scroll");
+                        return true;
+                      },
+                      child: Row(
+                        children: [
+                          for (var restaurant in restaurants)
+                            Padding(
+                              padding: EdgeInsets.all(screenWidth * 0.037),
+                              child: RestaurantLogo(
+                                logo: restaurant.logoUrl,
+                                id: restaurant.id,
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.02),
@@ -102,8 +116,14 @@ class _SearchViewState extends State<SearchView> {
                     color: Colors.grey,
                   ),
                   SizedBox(height: screenHeight * 0.02),
-                  Expanded(
-                    child: _buildRestaurantCards(restaurants),
+                  NotificationListener<ScrollUpdateNotification>(
+                    onNotification: (notification) {
+                      _onUserInteraction("Restaurants Search", "Scroll");
+                      return true;
+                    },
+                    child: Expanded(
+                      child: _buildRestaurantCards(restaurants),
+                    ),
                   ),
                 ],
               );

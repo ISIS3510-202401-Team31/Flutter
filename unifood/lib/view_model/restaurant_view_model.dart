@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/restaurant_entity.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/location_repository.dart';
 import 'package:unifood/repository/restaurant_repository.dart';
 import 'package:unifood/utils/distance_calculator.dart';
@@ -41,7 +41,7 @@ class RestaurantViewModel {
         'timestamp': DateTime.now(),
         'function': 'getRecommendedRestaurants',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       throw ('Timeout while fetching recommended restaurants: $e');
     } catch (e, stackTrace) {
       final errorInfo = {
@@ -50,7 +50,7 @@ class RestaurantViewModel {
         'timestamp': DateTime.now(),
         'function': 'getRecommendedRestaurants',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching recommended restaurants in ViewModel: $e');
       rethrow;
     }
@@ -67,7 +67,7 @@ class RestaurantViewModel {
         'timestamp': DateTime.now(),
         'function': 'getUserLocation',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print("Error getting users location: $e");
       rethrow;
     }
@@ -85,7 +85,7 @@ class RestaurantViewModel {
         'timestamp': DateTime.now(),
         'function': 'getRestaurantData',
       };
-      ErrorRepository().saveError(errorInfo);
+      AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching restaurants in view model: $e');
       rethrow;
     }
@@ -144,6 +144,6 @@ class RestaurantViewModel {
         userLocation.longitude,
         restaurantLat,
         restaurantLong);
-    return distance <= 10.5;
+    return distance <= 1.5;
   }
 }

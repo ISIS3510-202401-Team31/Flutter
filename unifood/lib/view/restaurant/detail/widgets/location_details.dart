@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,6 +18,14 @@ class LocationDetails extends StatelessWidget {
     required this.latitude,
     required this.longitude,
   }) : super(key: key);
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +90,7 @@ class LocationDetails extends StatelessWidget {
                           text: 'Open in Map',
                           onPressed: () {
                             _launchMaps(latitude, longitude);
+                            _onUserInteraction('Open in Map', 'Tap');
                           },
                           height: screenHeight * 0.025,
                           width: screenWidth * 0.015,

@@ -1,6 +1,6 @@
 import 'package:unifood/model/preferences_entity.dart';
 import 'package:unifood/repository/preferences_repository.dart';
-import 'package:unifood/repository/error_repository.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
 
 class PreferencesViewModel {
@@ -32,7 +32,7 @@ class PreferencesViewModel {
       'timestamp': DateTime.now().toIso8601String(),
       'function': functionContext,
     };
-    ErrorRepository().saveError(errorInfo);
+    AnalyticsRepository().saveError(errorInfo);
     print('Error in PreferencesViewModel - $functionContext: $e');
   }
 
