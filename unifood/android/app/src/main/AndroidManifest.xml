@@ -16,9 +16,14 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
+              android:name="firebase_performance_logcat_enabled"
+              android:value="true" />
+            <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+              <meta-data android:name="com.google.android.geo.AIzaSyCx_7kTuFpdOvaoP3acQlOb85L6ua5luH0"
+               android:value="AIzaSyCx_7kTuFpdOvaoP3acQlOb85L6ua5luH0"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -30,4 +35,13 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <!-- Agregar estos permisos para acceder a la ubicación del dispositivo -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
 </manifest>

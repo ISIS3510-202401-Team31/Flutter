@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 
 class TotalPointsWidget extends StatelessWidget {
   final int totalPoints;
-  final String assetImagePath = 'assets/images/star.png'; // Use your own asset image path
+  final String assetImagePath = 'assets/images/star.png'; 
 
-  const TotalPointsWidget({required this.totalPoints, Key? key})
-      : super(key: key);
+  const TotalPointsWidget({required this.totalPoints, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final double imageSize = screenWidth * 0.08; 
+    final double fontSize = screenWidth * 0.04; 
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       child: Column(
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor, // Match the background color of the scaffold
+              color: Theme.of(context).scaffoldBackgroundColor,
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
@@ -26,32 +30,32 @@ class TotalPointsWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(10.0), // Padding inside the container
+              padding: const EdgeInsets.all(10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset(
                     assetImagePath,
-                    width: 36,
-                    height: 36,
+                    width: imageSize, 
+                    height: imageSize, 
                   ),
-                  const SizedBox(width: 20), // Space between the image and the text
+                  const SizedBox(width: 20), 
                   Expanded(
-                    child: const Text(
+                    child: Text(
                       'Total points available',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold), 
                     ),
                   ),
                   Container(
-                    height: 40, // Height of the vertical line
+                    height: 40, 
                     width: 1,
                     color: Colors.grey,
-                    margin: const EdgeInsets.only(left: 10, right: 20), // Adjusted margins to move the line to the left
+                    margin: const EdgeInsets.only(left: 10, right: 20),
                   ),
                   Text(
                     '$totalPoints',
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: fontSize, 
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -60,7 +64,7 @@ class TotalPointsWidget extends StatelessWidget {
               ),
             ),
           ),
-          const Divider(height: 1, thickness: 1), // Line separation
+          const Divider(height: 1, thickness: 1),
         ],
       ),
     );

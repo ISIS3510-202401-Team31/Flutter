@@ -18,58 +18,72 @@ class OfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use MediaQuery to adjust sizes dynamically
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Adjust font sizes based on screen width
+    double titleFontSize = screenWidth < 350 ? 14 : 16;
+    double subtitleFontSize = screenWidth < 350 ? 10 : 12;
+    double pointsFontSize = screenWidth < 350 ? 12 : 14;
+    double buttonFontSize = screenWidth < 350 ? 10 : 12;
+
+    // Adjust padding based on screen width
+    EdgeInsets padding = screenWidth < 350 ? const EdgeInsets.all(8.0) : const EdgeInsets.all(12.0);
+    EdgeInsets buttonPadding = screenWidth < 350 ? const EdgeInsets.symmetric(horizontal: 12, vertical: 6) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+
     return Card(
       elevation: 4.0,
       margin: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Image is now expanded to fit the content better vertically
           Expanded(
             child: Image.asset(
               imagePath,
-              fit: BoxFit.cover, // Cover the area of the card
+              fit: BoxFit.cover,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: padding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   mainText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16, // Smaller font size
+                    fontSize: titleFontSize,
                   ),
                 ),
-                const SizedBox(height: 2), // Reduced space
+                SizedBox(height: screenWidth < 350 ? 2 : 4),
                 Text(
                   subText,
                   style: TextStyle(
-                    fontSize: 12, // Smaller font size
+                    fontSize: subtitleFontSize,
                     color: Colors.grey.shade600,
                   ),
                 ),
-                const SizedBox(height: 4), // Reduced space
+                SizedBox(height: screenWidth < 350 ? 4 : 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       '$points points',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14, // Smaller font size
+                        fontSize: pointsFontSize,
+                        color: Colors.grey[600]
                       ),
                     ),
                     ElevatedButton(
                       onPressed: onRedeem,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Smaller padding for the button
+                        padding: buttonPadding,
                       ),
-                      child: const Text(
+                      child: Text(
                         'Redeem',
-                        style: TextStyle(fontSize: 12), // Smaller text in the button
+                        style: TextStyle(fontSize: buttonFontSize, color: Colors.black),
+
                       ),
                     ),
                   ],

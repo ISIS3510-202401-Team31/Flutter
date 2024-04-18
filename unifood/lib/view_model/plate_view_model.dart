@@ -1,27 +1,66 @@
 import 'package:unifood/model/plate_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/plate_repository.dart';
 
 class PlateViewModel {
   final PlateRepository _plateRepository = PlateRepository();
 
-  Future<List<Plate>> getMenuItems() async {
+  Future<List<Plate>> getPlatesByRestaurantId(String restaurantId) async {
     try {
-      final List<Map<String, dynamic>> data =
-          await _plateRepository.getMenuItems();
+      final data = await _plateRepository.getPlatesByRestaurantId(restaurantId);
 
       return data
           .map(
             (item) => Plate(
-              imagePath: item['imagePath'],
-              name: item['nombre'],
-              description: item['descripcion'],
-              price: item['precio'],
+              id: item['id'] ?? "",
+              restaurantId: item['restaurantId'] ?? "",
+              imagePath: item['imageURL'] ?? "",
+              name: item['name'] ?? "",
+              description: item['description'] ?? "",
+              price: item['price'].toDouble() ?? 0.0, 
+              ranking: item['ranking'] ?? {},
             ),
           )
           .toList();
-    } catch (error) {
-      print('Error fetching menu items in view model: $error');
-      throw error;
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getPlatesByRestaurantId',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when fetching plates by id in view model: $e');
+      rethrow;
+    }
+  }
+
+  Future<Plate?> getPlateById(String plateId, String restaurantId) async {
+    try {
+      final data = await _plateRepository.getPlateById(plateId, restaurantId);
+
+      if (data == null) return null;
+      return Plate(
+        id: data['id'] ?? "",
+        restaurantId: data['restaurantId'] ?? "",
+        ranking: data['ranking'] ?? {},
+        imagePath: data['imageURL'] ?? "",
+        name: data['name'] ?? "",
+        description: data['description'] ?? "",
+        price: data['price'].toDouble() ?? 0.0,
+      );
+
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getPlateById',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when fetching plate by id in view model: $e');
+      rethrow;
     }
   }
 }

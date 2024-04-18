@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:unifood/view/widgets/custom_circled_button.dart';
-import 'package:unifood/view/profile/preferences/widgets/custom_settings_options_preferences.dart';
+import 'package:unifood/view/profile/preferences/widgets/custom_app_bar.dart';
+import 'package:unifood/view/profile/preferences/widgets/price_range_selector.dart';
+import 'package:unifood/view/profile/preferences/widgets/section_header.dart';
+import 'package:unifood/view/profile/preferences/widgets/save_changes_boton.dart';
+import 'package:unifood/view/profile/preferences/widgets/reset_button.dart';
+import 'package:unifood/model/preferences_entity.dart';
+import 'package:unifood/view_model/preferences_view_model.dart';
+import 'package:unifood/view/widgets/custom_setting_option_builder.dart';
 
 class Preferences extends StatefulWidget {
   const Preferences({Key? key}) : super(key: key);
@@ -11,186 +17,273 @@ class Preferences extends StatefulWidget {
 
 class _PreferencesState extends State<Preferences> {
   RangeValues _currentRangeValues = const RangeValues(10000, 80000);
+  final PreferencesViewModel _viewModel = PreferencesViewModel();
 
-  final List<String> _checkboxTitles = [
-    "Recommend Restaurants with Daily Discounts",
-    "Only Recommend Healthy Restaurants",
-    "Notify Me When I Have Enough Redeemable Points",
-    "Show Restaurants Slightly out of my Price Range",
-    "Enable Location while not using the app",
-  ];
+  List<PreferenceItem> _restrictions = [];
+  List<PreferenceItem> _tastes = [];
+  bool _isEditingRestrictions = false;
+  bool _isEditingTastes = false;
+  final Set<int> _markedForDeletionRestrictions = <int>{};
+  final Set<int> _markedForDeletionTastes = <int>{};
 
-  final List<bool> _isChecked = List<bool>.filled(5, false);
+  final String userId = 'dummy_user_id';
+  late PreferencesEntity _updatedPreferences;
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
 
-PreferredSizeWidget _buildCustomAppBar(BuildContext context) {
-  return AppBar(
-    automaticallyImplyLeading: false,
-    elevation: 0,
-    flexibleSpace: Container(
-      alignment: Alignment.centerLeft,
-      margin: const EdgeInsets.only(left: 16, top: 50), // Ajusta el margen según sea necesario
-      child: CustomCircledButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/profile');
-        },
-        diameter: 28, 
-        icon: const Icon(
-          Icons.chevron_left_sharp,
-          color: Colors.black,
-          size: 24, // Reducir el tamaño del icono si es necesario
-        ),
-        buttonColor: Colors.white,
+  Future<void> _loadPreferences() async {
+    // Attempt to load the common (general) preferences.
+    PreferencesEntity? commonPreferences =
+        await _viewModel.loadCommonPreferences();
+
+    // Attempt to load the user-specific preferences.
+    PreferencesEntity? userPreferences = await _viewModel.loadUserPreferences();
+
+    // Use common preferences as a fallback if specific user preferences are not found.
+    // This ensures that preferences are always available, even for new users.
+    setState(() {
+      // Display restrictions: Use user preferences if available; otherwise, use common preferences.
+      _restrictions = userPreferences?.restrictions.isNotEmpty ?? false
+          ? _mergePreferencesWithImages(commonPreferences?.restrictions ?? [],
+              userPreferences?.restrictions ?? [])
+          : commonPreferences?.restrictions ?? [];
+
+      // Display tastes: Use user preferences if available; otherwise, use common preferences.
+      _tastes = userPreferences?.tastes.isNotEmpty ?? false
+          ? _mergePreferencesWithImages(
+              commonPreferences?.tastes ?? [], userPreferences?.tastes ?? [])
+          : commonPreferences?.tastes ?? [];
+
+      // Display price range: Use user preferences if available; otherwise, use common preferences.
+      _currentRangeValues = userPreferences != null
+          ? RangeValues(
+              userPreferences.priceRange.minPrice.toDouble(),
+              userPreferences.priceRange.maxPrice.toDouble(),
+            )
+          : commonPreferences != null
+              ? RangeValues(
+                  commonPreferences.priceRange.minPrice.toDouble(),
+                  commonPreferences.priceRange.maxPrice.toDouble(),
+                )
+              : const RangeValues(0,
+                  0); // Fallback to a default range if neither are available.
+
+      // Set the updated preferences model: Use user preferences if available; otherwise, use common preferences.
+      _updatedPreferences = userPreferences ??
+          commonPreferences ??
+          PreferencesEntity(
+            restrictions: [],
+            tastes: [],
+            priceRange: PriceRange(minPrice: 0, maxPrice: 0),
+          );
+    });
+
+    // If common preferences failed to load, handle the error appropriately.
+    if (commonPreferences == null) {
+      print("Failed to load common preferences.");
+      // Consider implementing additional error handling or user notifications here.
+    }
+  }
+
+  List<PreferenceItem> _mergePreferencesWithImages(
+      List<PreferenceItem> generalPrefs, List<PreferenceItem> userPrefs) {
+    Set<String> userPrefsTextSet = userPrefs.map((e) => e.text).toSet();
+    return generalPrefs
+        .where((item) => userPrefsTextSet.contains(item.text))
+        .toList();
+  }
+
+  void handleRestoreItem(int index, String type) {
+    setState(() {
+      if (type == 'restrictions') {
+        _markedForDeletionRestrictions.remove(index);
+      } else if (type == 'tastes') {
+        _markedForDeletionTastes.remove(index);
+      }
+      _updatePreferencesEntity();
+    });
+  }
+
+  void _reloadGeneralPreferences() async {
+    // Load general (common) preferences without changing the _currentRangeValues
+    PreferencesEntity? commonPreferences =
+        await _viewModel.loadCommonPreferences();
+
+    if (commonPreferences != null) {
+      setState(() {
+        _restrictions = commonPreferences.restrictions;
+        _tastes = commonPreferences.tastes;
+        // Do not update _currentRangeValues here, keeping the user's selected price range
+        // _currentRangeValues remains unchanged
+
+        // Optionally reset _updatedPreferences if you want to discard user changes but keep the price range
+        _updatedPreferences = PreferencesEntity(
+          restrictions: commonPreferences.restrictions,
+          tastes: commonPreferences.tastes,
+          priceRange: PriceRange(
+            minPrice: _currentRangeValues.start.round(),
+            maxPrice: _currentRangeValues.end.round(),
+          ),
+        );
+      });
+    }
+  }
+
+  void handleDeleteItem(int index, String type) {
+    setState(() {
+      if (type == 'restrictions') {
+        _markedForDeletionRestrictions.add(index);
+      } else if (type == 'tastes') {
+        _markedForDeletionTastes.add(index);
+      }
+      _updatePreferencesEntity();
+    });
+  }
+
+  void _updatePreferencesEntity() {
+    List<PreferenceItem> updatedRestrictions = [];
+    for (int i = 0; i < _restrictions.length; i++) {
+      if (!_markedForDeletionRestrictions.contains(i)) {
+        updatedRestrictions.add(_restrictions[i]);
+      }
+    }
+    List<PreferenceItem> updatedTastes = [];
+    for (int i = 0; i < _tastes.length; i++) {
+      if (!_markedForDeletionTastes.contains(i)) {
+        updatedTastes.add(_tastes[i]);
+      }
+    }
+    _updatedPreferences = PreferencesEntity(
+      restrictions: updatedRestrictions,
+      tastes: updatedTastes,
+      priceRange: PriceRange(
+        minPrice: _currentRangeValues.start.round(),
+        maxPrice: _currentRangeValues.end.round(),
       ),
-    ),
-    title: const Text(
-      'Preferences',
-      style: TextStyle(color: Colors.black),
-    ),
-    centerTitle: true,
-    backgroundColor: Colors.transparent,
-  );
-}
-
-
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: _buildCustomAppBar(context),
+      appBar: const CustomAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              sectionHeader(context, 'Dietary Restrictions', 'Modify Restrictions'),
-              CustomSettingOptionWithIcons(
-                imagePath1: 'assets/images/vegan.png',
-                imagePath2: 'assets/images/GlutenFree.png',
-                imagePath3: 'assets/images/NutFree.png',
-                imagePath4: 'assets/images/SugarFree.png',
-                onPressed: () {},
+              SectionHeader(
+                title: 'Dietary Restrictions',
+                actionText:
+                    _isEditingRestrictions ? 'Done' : 'Modify Restrictions',
+                onTap: () {
+                  setState(() {
+                    _isEditingRestrictions = !_isEditingRestrictions;
+                  });
+                },
               ),
-              sectionHeader(context, 'Tastes', 'Modify Tastes'),
-              CustomSettingOptionWithIcons(
-                imagePath1: 'assets/images/Burgers.png',
-                imagePath2: 'assets/images/Tacos.png',
-                imagePath3: 'assets/images/Pasta.png',
-                imagePath4: 'assets/images/Nuggets.png',
-                onPressed: () {},
+              CustomSettingOptionWithIconsBuilder()
+                  .setItems(_restrictions)
+                  .setIsEditing(_isEditingRestrictions)
+                  .setUserId(userId)
+                  .setType('restrictions')
+                  .setMarkedForDeletion(_markedForDeletionRestrictions)
+                  .setOnPressed(() {
+                // Your onPressed logic here, if any.
+              }).setOnDeleteItem((index, type) {
+                if (_isEditingRestrictions) {
+                  handleDeleteItem(index, 'restrictions');
+                }
+              }).setOnRestoreItem((index, type) {
+                if (_isEditingRestrictions) {
+                  handleRestoreItem(index, 'restrictions');
+                }
+              }).build(),
+              SectionHeader(
+                title: 'Tastes',
+                actionText: _isEditingTastes ? 'Done' : 'Modify Tastes',
+                onTap: () {
+                  setState(() {
+                    _isEditingTastes = !_isEditingTastes;
+                  });
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-      
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center( // Centrar el texto
-                          child: Text(
-                            'Price Range for Restaurants',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(height: 16), // Espacio debajo del texto, ajusta la altura según necesites
-                        // ...resto de tus widgets...
-                      ],
-                    ),
-                    const Divider(),
-                    Text(
-                      'COP ${_currentRangeValues.start.round()} - COP ${_currentRangeValues.end.round()}',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                        activeTrackColor: Colors.grey, // Color de la barra activa
-                        inactiveTrackColor: Colors.grey[300], // Color de la barra inactiva
-                        trackHeight: 10.0, // Altura de la barra del slider
-                        thumbColor: Colors.brown[700], // Color del thumb
-                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 20.0), // Forma y tamaño del thumb
-                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 30.0), // Tamaño del overlay del thumb
-                      ),
-                      child: RangeSlider(
-                        values: _currentRangeValues,
-                        min: 10000,
-                        max: 80000,
-                        divisions: 20,
-                        labels: RangeLabels(
-                          'COP ${_currentRangeValues.start.round()}',
-                          'COP ${_currentRangeValues.end.round()}',
-                        ),
-                        onChanged: (values) {
-                          setState(() {
-                            _currentRangeValues = values;
-                          });
-                        },
-                      ),
-                    ),
-                    const Divider(),
-                  ],
+              CustomSettingOptionWithIconsBuilder()
+                  .setItems(_tastes)
+                  .setIsEditing(_isEditingTastes)
+                  .setUserId(userId)
+                  .setType('tastes')
+                  .setMarkedForDeletion(_markedForDeletionTastes)
+                  .setOnPressed(() {
+                // Your onPressed logic here, if any.
+              }).setOnDeleteItem((index, type) {
+                if (_isEditingTastes) {
+                  handleDeleteItem(index, 'tastes');
+                }
+              }).setOnRestoreItem((index, type) {
+                if (_isEditingTastes) {
+                  handleRestoreItem(index, 'tastes');
+                }
+              }).build(),
+              ResetWidget(
+                onReset: () {
+                  _reloadGeneralPreferences();
+                },
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Price Range for Restaurants',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
+              const SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ...List.generate(_checkboxTitles.length, (index) => CheckboxListTile(
-                          title: Text(_checkboxTitles[index]),
-                          value: _isChecked[index],
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isChecked[index] = value!;
-                            });
-                          },
-                        )),
-                  ],
-                ),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                child: const Divider(color: Colors.grey),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: PriceRangeSelector(
+                    currentRangeValues: _currentRangeValues,
+                    onChanged: (values) {
+                      setState(() {
+                        _currentRangeValues = values;
+                      });
+                      _updatePreferencesEntity();
+                    }),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                child: const Divider(color: Colors.grey),
+              ),
+              const SizedBox(height: 20),
+              SaveChangesButton(
+                onPressed: () async {
+                  try {
+                    await _viewModel.updateUserPreferences(_updatedPreferences);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Preferences updated successfully')),
+                    );
+                  } catch (error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to update preferences')),
+                    );
+                  }
+                },
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget sectionHeader(BuildContext context, String title, String actionText) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 16.0, right: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              // Acción definida para modificar restricciones/gustos
-            },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                actionText,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

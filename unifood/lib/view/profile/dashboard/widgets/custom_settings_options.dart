@@ -14,8 +14,11 @@ class CustomSettingOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return GestureDetector(
-      onTap: onPressed, // Aquí usamos el callback onPressed cuando el widget es tocado.
+      onTap: onPressed, 
       child: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -29,25 +32,25 @@ class CustomSettingOption extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
         ),
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        margin:  EdgeInsets.symmetric(vertical: screenHeight * 0.0095 ),
+        padding:  EdgeInsets.symmetric(vertical: screenHeight * 0.0225 , horizontal: screenWidth * 0.04),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Row(
               children: <Widget>[
-                Icon(icon, color: const Color.fromARGB(255, 128, 126, 126)),
-                const SizedBox(width: 20),
+               Icon(icon, color: const Color.fromARGB(255, 128, 126, 126), size: screenHeight * 0.0225,),
+               SizedBox(width: screenWidth * 0.035),
                 Text(
                   text,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: Color.fromARGB(255, 128, 126, 126),
+                  style: TextStyle(
+                    fontSize: screenHeight * 0.0215,
+                    color: const Color.fromARGB(255, 128, 126, 126),
                   ),
                 ),
               ],
             ),
-            const Icon(Icons.chevron_right, color: Colors.black),
+            Icon(Icons.chevron_right, color: Colors.black, size: screenHeight * 0.025),
           ],
         ),
       ),

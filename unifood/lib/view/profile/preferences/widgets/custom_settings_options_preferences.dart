@@ -1,48 +1,148 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/model/preferences_entity.dart'; // Ensure the path is correct
+
+typedef OnDeleteItem = void Function(int index, String type);
+typedef OnRestoreItem = void Function(int index, String type);
 
 class CustomSettingOptionWithIcons extends StatelessWidget {
-  final String imagePath1, imagePath2, imagePath3, imagePath4;
+  final List<PreferenceItem> items;
+  final String userId;
   final VoidCallback onPressed;
-  final double imageSize; // Nuevo parámetro para el tamaño de las imágenes
+  final Set<int> markedForDeletion;
+  final OnDeleteItem onDeleteItem;
+  final OnRestoreItem onRestoreItem; // Callback to restore the item
+  final bool isEditing;
+  final String type;
 
   const CustomSettingOptionWithIcons({
-    required this.imagePath1,
-    required this.imagePath2,
-    required this.imagePath3,
-    required this.imagePath4,
+    required this.items,
+    required this.userId,
     required this.onPressed,
-    this.imageSize = 80, // Valor por defecto de 80, ajusta según necesidad
+    required this.markedForDeletion,
+    required this.onDeleteItem,
+    required this.onRestoreItem,
+    required this.type,
+    this.isEditing = false, // Default value is false
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), // Añadir margen
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
+    double screenWidth = MediaQuery.of(context).size.width;
+    double imageSize = screenWidth * 0.2; // Adjusted to use MediaQuery
+    double itemWidth =
+        imageSize + 20; // Additional space for padding and separation
+    double fontSize = screenWidth * 0.030; // Dynamically adjust the font size
+
+    // Create a filtered list of items based on edit mode and marked for deletion
+    List<PreferenceItem> filteredItems = isEditing
+        ? items
+        : items
+            .asMap()
+            .entries
+            .where((entry) => !markedForDeletion.contains(entry.key))
+            .map((entry) => entry.value)
+            .toList();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+      ),
+      height: imageSize + 40,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length, // Use the full length of items
+        itemBuilder: (context, index) {
+          final item = items[index];
+          final bool isMarkedForDeletion = markedForDeletion.contains(index);
+
+          // Only render the item if not marked for deletion, or if in editing mode
+          if (isMarkedForDeletion && !isEditing) {
+            return Container(); // Skip rendering this item entirely
+          }
+
+          double opacity = isMarkedForDeletion
+              ? 0.5
+              : 1.0; // Apply opacity if marked for deletion
+
+          return Opacity(
+            opacity: opacity,
+            child: Stack(
+              children: [
+                GestureDetector(
+                  onTap: onPressed,
+                  child: Container(
+                    width: itemWidth,
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          item.imageUrl,
+                          width: imageSize,
+                          height: imageSize,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Icon(Icons.broken_image, size: imageSize),
+                        ),
+                        Text(
+                          item.text,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: fontSize),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (isEditing && !isMarkedForDeletion)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: InkWell(
+                      onTap: () => onDeleteItem(index, type),
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.remove,
+                            color: Colors.white, size: 20),
+                      ),
+                    ),
+                  ),
+                if (isEditing && isMarkedForDeletion)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: InkWell(
+                      onTap: () => onRestoreItem(index, type),
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.add,
+                            color: Colors.white, size: 20),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          ],
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround, // Distribuir espacio uniformemente
-          children: <Widget>[
-            Image.asset(imagePath1, width: imageSize),
-            Image.asset(imagePath2, width: imageSize),
-            Image.asset(imagePath3, width: imageSize),
-            Image.asset(imagePath4, width: imageSize),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
