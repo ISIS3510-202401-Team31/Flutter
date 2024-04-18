@@ -5,7 +5,7 @@ import 'package:unifood/view/profile/preferences/widgets/section_header.dart';
 import 'package:unifood/view/profile/preferences/widgets/save_changes_boton.dart';
 import 'package:unifood/view/profile/preferences/widgets/reset_button.dart';
 import 'package:unifood/model/preferences_entity.dart';
-import 'package:unifood/view_model/preferences_view_model.dart';
+import 'package:unifood/view_model/preferences_controller.dart';
 import 'package:unifood/view/widgets/custom_setting_option_builder.dart';
 
 class Preferences extends StatefulWidget {
@@ -17,7 +17,7 @@ class Preferences extends StatefulWidget {
 
 class _PreferencesState extends State<Preferences> {
   RangeValues _currentRangeValues = const RangeValues(10000, 80000);
-  final PreferencesViewModel _viewModel = PreferencesViewModel();
+  final Preferencescontroller _viewModel = Preferencescontroller();
 
   List<PreferenceItem> _restrictions = [];
   List<PreferenceItem> _tastes = [];

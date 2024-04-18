@@ -3,7 +3,7 @@ import 'package:unifood/repository/preferences_repository.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
 
-class PreferencesViewModel {
+class Preferencescontroller {
   final PreferencesRepository _preferencesRepository = PreferencesRepository();
 
   Future<PreferencesEntity?> loadCommonPreferences() async {

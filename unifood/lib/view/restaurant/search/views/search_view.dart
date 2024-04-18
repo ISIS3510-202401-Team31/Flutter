@@ -5,7 +5,7 @@ import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_card.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_logo.dart';
 import 'package:unifood/view/restaurant/search/widgets/search_app_bar.dart';
-import 'package:unifood/view_model/restaurant_view_model.dart';
+import 'package:unifood/view_model/restaurant_controller.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);
@@ -44,7 +44,7 @@ class _SearchViewState extends State<SearchView> {
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.04),
         child: FutureBuilder<List<Restaurant>>(
-          future: RestaurantViewModel().getRestaurants(),
+          future: RestaurantController().getRestaurants(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(

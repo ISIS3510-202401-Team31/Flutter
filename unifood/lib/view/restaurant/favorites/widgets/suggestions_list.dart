@@ -4,7 +4,7 @@ import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/view/restaurant/favorites/widgets/custom_category_button.dart';
 import 'package:unifood/view/restaurant/favorites/widgets/custom_suggested_restaurant.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
-import 'package:unifood/view_model/restaurant_view_model.dart';
+import 'package:unifood/view_model/restaurant_controller.dart';
 
 class SuggestedRestaurantsSection extends StatefulWidget {
   final String userId;
@@ -100,7 +100,7 @@ class _SuggestedRestaurantsSectionState
           ),
           SizedBox(height: screenHeight * 0.02),
           FutureBuilder<List<Restaurant>>(
-            future: RestaurantViewModel()
+            future: RestaurantController()
                 .getRecommendedRestaurants(widget.userId, filter),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {

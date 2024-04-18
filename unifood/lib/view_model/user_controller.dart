@@ -8,7 +8,8 @@ import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/utils/distance_calculator.dart';
 
-class UserViewModel extends ChangeNotifier {
+class UserController extends ChangeNotifier {
+
   final UserRepository _repository = UserRepository();
   final LocationRepository _locationRepository = LocationRepository();
   late Users _user;
@@ -20,7 +21,6 @@ class UserViewModel extends ChangeNotifier {
       _user = await _repository.getUser(userId);
       notifyListeners();
     }  catch (e, stackTrace) {
-      // Guardar la información del error en la base de datos
       final errorInfo = {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),

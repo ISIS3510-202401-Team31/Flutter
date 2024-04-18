@@ -1,25 +1,23 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:unifood/data/firebase_service_adapter.dart';
 
 class AnalyticsRepository {
-  final CollectionReference _errorsCollection =
-      FirebaseFirestore.instance.collection('errors');
+  final FirestoreServiceAdapter _firestoreServiceAdapter;
 
-  final CollectionReference _featuresCollection =
-      FirebaseFirestore.instance.collection('features');
+  AnalyticsRepository() : _firestoreServiceAdapter = FirestoreServiceAdapter();
 
   Future<void> saveError(Map<String, dynamic> errorInfo) async {
     try {
-      await _errorsCollection.add(errorInfo);
+      await _firestoreServiceAdapter.addDocument('errors', errorInfo);
     } catch (e) {
-      throw Exception('Error al guardar el error en la base de datos: $e');
+      throw Exception('Error saving error to the database: $e');
     }
   }
 
   Future<void> saveEvent(Map<String, dynamic> eventInfo) async {
     try {
-      await _featuresCollection.add(eventInfo);
+      await _firestoreServiceAdapter.addDocument('features', eventInfo);
     } catch (e) {
-      throw Exception('Error al guardar el evento en la base de datos: $e');
+      throw Exception('Error saving event to the database: $e');
     }
   }
 }

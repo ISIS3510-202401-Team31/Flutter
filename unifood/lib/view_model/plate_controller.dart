@@ -2,7 +2,7 @@ import 'package:unifood/model/plate_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/plate_repository.dart';
 
-class PlateViewModel {
+class PlateController {
   final PlateRepository _plateRepository = PlateRepository();
 
   Future<List<Plate>> getPlatesByRestaurantId(String restaurantId) async {

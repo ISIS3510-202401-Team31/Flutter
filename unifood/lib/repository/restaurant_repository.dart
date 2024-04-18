@@ -1,27 +1,27 @@
 import 'dart:convert';
 import 'dart:async';
-import 'package:unifood/data/firebase_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:unifood/repository/analytics_repository.dart';
+import 'package:unifood/data/firebase_service_adapter.dart';
+
 
 class RestaurantRepository {
-  FirebaseFirestore databaseInstance = FirebaseService().database;
+  final FirestoreServiceAdapter _firestoreServiceAdapter;
+
+  RestaurantRepository() : _firestoreServiceAdapter = FirestoreServiceAdapter();
 
   Future<List<Map<String, dynamic>>> getRestaurants() async {
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await databaseInstance.collection('restaurants').get();
+      final querySnapshot = await _firestoreServiceAdapter.getCollectionDocuments('restaurants');
 
       List<Map<String, dynamic>> restaurants = querySnapshot.docs.map((doc) {
         Map<String, dynamic> restaurantData = doc.data();
-        restaurantData['docId'] =doc.id; 
+        restaurantData['docId'] = doc.id; 
         return restaurantData;
       }).toList();
 
       return restaurants;
     } catch (e, stackTrace) {
-      // Guardar la información del error en la base de datos
       final errorInfo = {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
@@ -36,12 +36,7 @@ class RestaurantRepository {
 
   Future<Map<String, dynamic>?> getRestaurantById(String restaurantId) async {
     try {
-      print(restaurantId);
-      DocumentSnapshot<Map<String, dynamic>?> docSnapshot =
-          await databaseInstance
-              .collection('restaurants')
-              .doc(restaurantId)
-              .get();
+      final docSnapshot = await _firestoreServiceAdapter.getDocumentById('restaurants', restaurantId);
 
       if (docSnapshot.exists) {
         return docSnapshot.data();
@@ -50,7 +45,6 @@ class RestaurantRepository {
         return null;
       }
     } catch (e, stackTrace) {
-      // Guardar la información del error en la base de datos
       final errorInfo = {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),

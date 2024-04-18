@@ -10,7 +10,7 @@ import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_options.dart';
-import 'package:unifood/view_model/user_view_model.dart';
+import 'package:unifood/view_model/user_controller.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -178,7 +178,7 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         SizedBox(height: screenHeight * 0.008),
                                         FutureBuilder<String>(
-                                          future: UserViewModel()
+                                          future: UserController()
                                               .getDistanceFromCampus(),
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==

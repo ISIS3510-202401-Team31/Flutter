@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
@@ -7,7 +6,7 @@ import 'package:unifood/repository/location_repository.dart';
 import 'package:unifood/repository/restaurant_repository.dart';
 import 'package:unifood/utils/distance_calculator.dart';
 
-class RestaurantViewModel {
+class RestaurantController {
   final RestaurantRepository _restaurantRepository = RestaurantRepository();
   final LocationRepository _locationRepository = LocationRepository();
 
