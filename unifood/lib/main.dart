@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:connectivity/connectivity.dart'; // Import connectivity package
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/services.dart';
@@ -12,21 +12,21 @@ import 'package:unifood/utils/routes.dart';
 List<Map<String, dynamic>> errores = [];
 
 void main() async {
-  //Firebase connection
+  // Firebase connection
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //Device orientation
+  // Device orientation
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
-  //SharedPreferences
+  // SharedPreferences
   await SharedPreferencesService.getInstance();
 
-  //Error handling
+  // Error handling
   FlutterError.onError = (errorDetails) {
     final errorInfo = {
       'error': errorDetails.toString(),
@@ -62,7 +62,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ConnectivityWrapper( 
+        child: const MyHomePage(title: 'Flutter Demo Home Page'),
+      ),
     );
   }
 }
@@ -73,9 +75,45 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       initialRoute: '/',
       onGenerateRoute: Routes.generateRoute,
     );
+  }
+}
+
+class ConnectivityWrapper extends StatefulWidget {
+  final Widget child;
+
+  const ConnectivityWrapper({Key? key, required this.child}) : super(key: key);
+
+  @override
+  _ConnectivityWrapperState createState() => _ConnectivityWrapperState();
+}
+
+class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
+  late ConnectivityResult _connectivityResult;
+
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+  }
+
+  Future<void> initConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = result;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
