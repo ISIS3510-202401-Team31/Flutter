@@ -1,14 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:unifood/data/firebase_service_adapter.dart';
 import 'package:unifood/model/preferences_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
+import 'package:unifood/data/firebase_service_adapter.dart';
 
 class PreferencesRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
 
   PreferencesRepository()
       : _firestoreServiceAdapter = FirestoreServiceAdapter();
+
+  Future<PreferencesEntity?> getCommonPreferences() async {
+    try {
+      // Assuming 'common_preferences' is the ID of the document
+      DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await _firestoreServiceAdapter.getDocumentById(
+              'preferences', 'oqwTeOFRkxL6VPPrO9vH');
+
+      if (docSnapshot.exists && docSnapshot.data() != null) {
+        // Directly parse the document's data into a PreferencesEntity
+        return PreferencesEntity.fromMap(docSnapshot.data()!);
+      } else {
+        print("Document 'common_preferences' not found or is empty.");
+        return null;
+      }
+    } catch (e, stackTrace) {
+      _handleError(e, stackTrace, 'getCommonPreferences');
+      rethrow;
+    }
+  }
 
   Future<PreferencesEntity?> getUserPreferences() async {
     try {
