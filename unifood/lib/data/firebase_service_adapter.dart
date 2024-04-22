@@ -36,6 +36,15 @@ class FirestoreServiceAdapter {
     }
   }
 
+  Future<void> addUser(
+      Map<String, dynamic> data, String id) async {
+    try {
+      await _firestore.collection("users").doc(id).set(data);
+    } catch (e) {
+      throw Exception('Error adding document to users: $e');
+    }
+  }
+
   Future<void> updateDocumentData(String collectionPath, String documentId,
       Map<String, dynamic> data) {
     return _firestore.collection(collectionPath).doc(documentId).update(data);
