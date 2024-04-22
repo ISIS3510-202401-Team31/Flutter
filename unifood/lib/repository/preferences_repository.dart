@@ -1,21 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:unifood/data/firebase_service.dart';
 import 'package:unifood/model/preferences_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
+import 'package:unifood/data/firebase_service_adapter.dart';
 
 class PreferencesRepository {
-  final FirebaseFirestore databaseInstance = FirebaseService().database;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirestoreServiceAdapter _firestoreServiceAdapter;
+
+  PreferencesRepository()
+      : _firestoreServiceAdapter = FirestoreServiceAdapter();
 
   Future<PreferencesEntity?> getCommonPreferences() async {
     try {
-      // Assuming 'common_preferences' is your document ID or use the first document's ID.
+      // Assuming 'common_preferences' is the ID of the document
       DocumentSnapshot<Map<String, dynamic>> docSnapshot =
-          await databaseInstance
-              .collection('preferences')
-              .doc('oqwTeOFRkxL6VPPrO9vH')
-              .get();
+          await _firestoreServiceAdapter.getDocumentById(
+              'preferences', 'oqwTeOFRkxL6VPPrO9vH');
 
       if (docSnapshot.exists && docSnapshot.data() != null) {
         // Directly parse the document's data into a PreferencesEntity
@@ -34,13 +34,8 @@ class PreferencesRepository {
     try {
       final user = await UserRepository().getUserSession();
       if (user != null) {
-
-        final preferencesCollection = _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('preferences');
-
-        final querySnapshot = await preferencesCollection.limit(1).get();
+        final querySnapshot = await _firestoreServiceAdapter
+            .getCollectionDocuments('users/${user.uid}/preferences', limit: 1);
 
         if (querySnapshot.docs.isNotEmpty) {
           final docSnapshot = querySnapshot.docs.first;
@@ -69,40 +64,22 @@ class PreferencesRepository {
     try {
       final user = await UserRepository().getUserSession();
       if (user != null) {
-        // Reference to the user's preferences document
-        DocumentReference preferencesDocRef = _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('preferences')
-            .doc(
-                'preferences'); // Assuming a single document called 'preferences'
-
-        // Check if the document already exists
-        DocumentSnapshot docSnapshot = await preferencesDocRef.get();
-        if (!docSnapshot.exists) {
-          // Document does not exist, create a new one with the provided preferences
-          await preferencesDocRef.set({
-            'tastes': preferences.tastes.map((item) => item.text).toList(),
-            'restrictions':
-                preferences.restrictions.map((item) => item.text).toList(),
-            'priceRange': preferences.priceRange.toMap(),
-          });
-          print('New preferences document created for user id: ${user.uid}');
-        } else {
-          // Document exists, update it with the provided preferences
-          await preferencesDocRef.update({
-            'tastes': preferences.tastes.map((item) => item.text).toList(),
-            'restrictions':
-                preferences.restrictions.map((item) => item.text).toList(),
-            'priceRange': preferences.priceRange.toMap(),
-          });
-          print('Preferences updated for user id: ${user.uid}');
-        }
+        await _firestoreServiceAdapter.setOrUpdateDocument(
+            'users/${user.uid}/preferences',
+            'preferences',
+            {
+              'tastes': preferences.tastes.map((item) => item.text).toList(),
+              'restrictions':
+                  preferences.restrictions.map((item) => item.text).toList(),
+              'priceRange': preferences.priceRange.toMap(),
+            },
+            createIfMissing: true);
+        print('Preferences updated for user id: ${user.uid}');
       } else {
         throw Exception('User session not found');
       }
     } catch (e, stackTrace) {
-      _handleError(e, stackTrace, 'updatePreferencesByUserId');
+      _handleError(e, stackTrace, 'updateUserPreferences');
       rethrow;
     }
   }
