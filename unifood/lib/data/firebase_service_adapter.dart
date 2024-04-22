@@ -18,8 +18,28 @@ class FirestoreServiceAdapter {
       : _firestore = firebaseService.database;
 
   Future<QuerySnapshot<Map<String, dynamic>>> getCollectionDocuments(
-      String collectionPath) async {
-    return await _firestore.collection(collectionPath).get();
+      String collectionPath,
+      {int? limit}) async {
+    Query query = _firestore.collection(collectionPath);
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+    return await query
+        .get()
+        .then((snapshot) => snapshot as QuerySnapshot<Map<String, dynamic>>);
+  }
+
+  Future<void> setOrUpdateDocument(
+      String collectionPath, String documentId, Map<String, dynamic> data,
+      {bool createIfMissing = false}) async {
+    DocumentReference docRef =
+        _firestore.collection(collectionPath).doc(documentId);
+    DocumentSnapshot snapshot = await docRef.get();
+    if (!snapshot.exists && createIfMissing) {
+      await docRef.set(data);
+    } else if (snapshot.exists) {
+      await docRef.update(data);
+    }
   }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getDocumentById(
@@ -36,8 +56,8 @@ class FirestoreServiceAdapter {
     }
   }
 
-  Future<void> updateDocumentData(String collectionPath, String documentId,
-      Map<String, dynamic> data) {
+  Future<void> updateDocumentData(
+      String collectionPath, String documentId, Map<String, dynamic> data) {
     return _firestore.collection(collectionPath).doc(documentId).update(data);
   }
 
