@@ -88,37 +88,7 @@ class _PlateDetailState extends State<PlateDetail> {
                     ),
                   );
                 } else if (snapshot.hasError) {
-                  return Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.03),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Oops! Something went wrong.\nPlease try again later.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          IconButton(
-                            icon: Icon(
-                              Icons.refresh,
-                              size: screenWidth * 0.08,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                dataFuture = fetchData();
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  return _buildNoInternetWidget(screenWidth, screenHeight);
                 } else if (snapshot.hasData) {
                   final data = snapshot.data!;
                   final Plate plate = data[0];
@@ -148,29 +118,49 @@ class _PlateDetailState extends State<PlateDetail> {
                 }
               },
             )
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'No Internet Connection',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _checkConnectivity();
-                      });
-                    },
-                    child: Text('Refresh'),
-                  ),
-                ],
+          : _buildNoInternetWidget(screenWidth, screenHeight),
+    );
+  }
+
+  Widget _buildNoInternetWidget(double screenWidth, double screenHeight) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 100,
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: 20.0),
+          Text(
+            'Oops! No Internet Connection',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600], 
+            ),
+          ),
+          SizedBox(height: 20.0),
+          ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                _checkConnectivity();
+              });
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[200]), 
+            ),
+            icon: Icon(Icons.refresh, color: Colors.grey[600]), 
+            label: Text(
+              'Refresh',
+              style: TextStyle(
+                color: Colors.grey[600], 
               ),
             ),
+          ),
+        ],
+      ),
     );
   }
 }
