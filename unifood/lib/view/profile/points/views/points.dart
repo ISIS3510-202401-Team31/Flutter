@@ -9,9 +9,9 @@ import 'package:unifood/model/points_entity.dart';
 
 
 class PointsView extends StatelessWidget {
-  PointsView({Key? key}) : super(key: key);
+  const PointsView({Key? key}) : super(key: key);
 
-  final Future<List<Points>> pointsFuture = PointsController().fetchPoints();
+
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +19,7 @@ class PointsView extends StatelessWidget {
     final fontSize = screenWidth * 0.045;
     final paddingHorizontal = screenWidth * 0.04;
 
+    final Future<List<Points>> pointsFuture = PointsController().fetchPoints();
     return Scaffold(
       appBar: AppBar(
         title: const Text('UniFood Points'),
