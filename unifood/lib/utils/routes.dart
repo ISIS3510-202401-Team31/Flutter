@@ -42,9 +42,12 @@ class Routes {
       case '/restaurants': // Define la ruta para los restaurantes
         return MaterialPageRoute(builder: (_) => const Restaurants());
       case '/points': // Define la ruta para los puntos
-        return MaterialPageRoute(builder: (_) => const Points());
+        return MaterialPageRoute(builder: (_) => const PointsView());
       case '/offers': // Define la ruta para las ofertas
-        return MaterialPageRoute(builder: (_) => const OffersPage());
+        return MaterialPageRoute(
+            builder: (_) => const OffersPage(
+                  restaurantId: "",
+                ));
       case '/filtermenu': // Define la ruta para filtrar el menu
         return MaterialPageRoute(builder: (_) => const FilterMenu());
       case '/favorites': // Define la ruta dirijirse a favoritos
