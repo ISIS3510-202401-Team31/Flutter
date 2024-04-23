@@ -9,13 +9,13 @@ import 'package:unifood/view/restaurant/plateDetail/widgets/ranking_info.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view_model/plate_controller.dart';
 import 'package:unifood/view_model/review_controller.dart';
+import 'package:connectivity/connectivity.dart';
 
 class PlateDetail extends StatefulWidget {
   final String plateId;
   final String restaurantId;
-  const PlateDetail(
-      {Key? key, required this.plateId, required this.restaurantId})
-      : super(key: key);
+
+  const PlateDetail({Key? key, required this.plateId, required this.restaurantId}) : super(key: key);
 
   @override
   _PlateDetailState createState() => _PlateDetailState();
@@ -23,18 +23,25 @@ class PlateDetail extends StatefulWidget {
 
 class _PlateDetailState extends State<PlateDetail> {
   late Future<List<dynamic>> dataFuture;
+  late bool _isConnected;
 
   @override
   void initState() {
     super.initState();
+    _checkConnectivity();
     dataFuture = fetchData();
   }
 
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
   Future<List<dynamic>> fetchData() async {
-    final plateInfoData = await PlateController()
-        .getPlateById(widget.plateId, widget.restaurantId);
-    final reviewsData = await ReviewController()
-        .getReviewsByPlateId(widget.plateId, widget.restaurantId);
+    final plateInfoData = await PlateController().getPlateById(widget.plateId, widget.restaurantId);
+    final reviewsData = await ReviewController().getReviewsByPlateId(widget.plateId, widget.restaurantId);
     return [plateInfoData, reviewsData];
   }
 
@@ -69,74 +76,90 @@ class _PlateDetailState extends State<PlateDetail> {
             )
             .build(context),
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: dataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: SpinKitThreeBounce(
-                color: Colors.black,
-                size: 30.0,
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Padding(
-              padding: EdgeInsets.all(screenWidth * 0.03),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Oops! Something went wrong.\nPlease try again later.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: screenWidth * 0.04,
-                        fontWeight: FontWeight.bold,
+      body: _isConnected
+          ? FutureBuilder<List<dynamic>>(
+              future: dataFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: SpinKitThreeBounce(
+                      color: Colors.black,
+                      size: 30.0,
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return _buildNoInternetWidget(screenWidth, screenHeight);
+                } else if (snapshot.hasData) {
+                  final data = snapshot.data!;
+                  final Plate plate = data[0];
+                  final List<Review> reviews = data[1];
+                  return NotificationListener<ScrollUpdateNotification>(
+                    onNotification: (notification) {
+                      _onUserInteraction("Plate Detail", "Scroll");
+                      return true;
+                    },
+                    child: Container(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            PlateInfo(plate: plate),
+                            RankingInfo(characteristics: plate.ranking),
+                            ReviewList(reviews: reviews),
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.02),
-                    IconButton(
-                      icon: Icon(
-                        Icons.refresh,
-                        size: screenWidth * 0.08,
-                      ),
-                      onPressed: () {
-                        setState(() {});
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            final data = snapshot.data!;
-            final Plate plate = data[0];
-            final List<Review> reviews = data[1];
-            return NotificationListener<ScrollUpdateNotification>(
-              onNotification: (notification) {
-                _onUserInteraction("Plate Detail", "Scroll");
-                return true;
+                  );
+                } else {
+                  return const Center(
+                    child: Text('No data available.'),
+                  );
+                }
               },
-              child: Container(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      PlateInfo(plate: plate),
-                      RankingInfo(characteristics: plate.ranking),
-                      ReviewList(reviews: reviews),
-                    ],
-                  ),
-                ),
+            )
+          : _buildNoInternetWidget(screenWidth, screenHeight),
+    );
+  }
+
+  Widget _buildNoInternetWidget(double screenWidth, double screenHeight) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 100,
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: 20.0),
+          Text(
+            'Oops! No Internet Connection',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600], 
+            ),
+          ),
+          SizedBox(height: 20.0),
+          ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                _checkConnectivity();
+              });
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[200]), 
+            ),
+            icon: Icon(Icons.refresh, color: Colors.grey[600]), 
+            label: Text(
+              'Refresh',
+              style: TextStyle(
+                color: Colors.grey[600], 
               ),
-            );
-          } else {
-            return const Center(
-              child: Text('No data available.'),
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

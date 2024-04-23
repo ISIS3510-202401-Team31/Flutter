@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -22,6 +23,20 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
+  late bool _isConnected;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
 
   Future<void> _getImage(String userId) async {
     final pickedFile = await showDialog<XFile?>(
@@ -177,52 +192,69 @@ class _ProfileState extends State<Profile> {
                                           ),
                                         ),
                                         SizedBox(height: screenHeight * 0.008),
-                                        FutureBuilder<String>(
-                                          future: UserController()
-                                              .getDistanceFromCampus(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              // Muestra un indicador de carga mientras se espera el resultado
-                                              return Center(
-                                                child: SpinKitThreeBounce(
-                                                  color: Colors.black,
-                                                  size: screenHeight * 0.03,
-                                                ),
-                                              );
-                                            } else if (snapshot.hasError) {
-                                              // Muestra un mensaje de error si ocurre algún error
-                                              return Text(
-                                                  'Error: ${snapshot.error}');
-                                            } else {
-                                              // Muestra el texto devuelto por la función
-                                              final distance = snapshot.data;
-                                              return Row(
-                                                children: [
-                                                  Text(
-                                                    '$distance',
-                                                    style: TextStyle(
+                                        _isConnected
+                                            ? FutureBuilder<String>(
+                                                future: UserController()
+                                                    .getDistanceFromCampus(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    // Muestra un indicador de carga mientras se espera el resultado
+                                                    return Center(
+                                                      child: SpinKitThreeBounce(
                                                         color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: screenHeight *
-                                                            0.015),
-                                                  ),
-                                                  SizedBox(
-                                                      width:
-                                                          screenWidth * 0.01),
-                                                  Text(
-                                                    'km away from campus.',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: screenHeight *
-                                                            0.015),
-                                                  )
-                                                ],
-                                              );
-                                            }
-                                          },
-                                        )
+                                                        size:
+                                                            screenHeight * 0.03,
+                                                      ),
+                                                    );
+                                                  } else if (snapshot
+                                                      .hasError) {
+                                                    // Muestra un mensaje de error si ocurre algún error
+                                                    return Text(
+                                                        'Error: ${snapshot.error}');
+                                                  } else {
+                                                    // Muestra el texto devuelto por la función
+                                                    final distance =
+                                                        snapshot.data;
+                                                    return Row(
+                                                      children: [
+                                                        Text(
+                                                          '$distance',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize:
+                                                                  screenHeight *
+                                                                      0.015),
+                                                        ),
+                                                        SizedBox(
+                                                            width: screenWidth *
+                                                                0.01),
+                                                        Text(
+                                                          'km away from campus.',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize:
+                                                                  screenHeight *
+                                                                      0.015),
+                                                        )
+                                                      ],
+                                                    );
+                                                  }
+                                                },
+                                              )
+                                            : Text(
+                                                'Distance from campus not available.',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize:
+                                                        screenHeight * 0.015),
+                                              ),
                                       ],
                                     ),
                                   ),
@@ -235,8 +267,7 @@ class _ProfileState extends State<Profile> {
                                     radius: screenHeight * 0.05,
                                     backgroundImage: _image == null
                                         ? CachedNetworkImageProvider(
-                                            userData.profileImageUrl!
-                                          )
+                                            userData.profileImageUrl!)
                                         : FileImage(_image!) as ImageProvider,
                                   ),
                                 ),
@@ -317,16 +348,38 @@ class _ProfileState extends State<Profile> {
                                       icon: Icons.logout,
                                       text: 'Log Out',
                                       onPressed: () async {
-                                        try {
-                                          await FirebaseAuth.instance.signOut();
-                                          // Navegar a la pantalla de inicio de sesión o a otra pantalla según sea necesario
-                                          Navigator.pushNamedAndRemoveUntil(
+                                        if (!_isConnected) {
+                                          // No hay conexión a Internet, mostrar un diálogo
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: Text('No Internet'),
+                                              content: Text(
+                                                  'This function is not available without internet connection.'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          try {
+                                            await FirebaseAuth.instance
+                                                .signOut();
+                                            // Navegar a la pantalla de inicio de sesión o a otra pantalla según sea necesario
+                                            Navigator.pushNamedAndRemoveUntil(
                                               context,
                                               '/login',
-                                              (route) => false);
-                                        } catch (error) {
-                                          print('Error signing out: $error');
-                                          // Manejar el error según sea necesario
+                                              (route) => false,
+                                            );
+                                          } catch (error) {
+                                            print('Error signing out: $error');
+                                            // Manejar el error según sea necesario
+                                          }
                                         }
                                       },
                                     ),

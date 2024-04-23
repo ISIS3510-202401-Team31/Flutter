@@ -3,20 +3,28 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:unifood/data/firebase_service_adapter.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unifood/repository/shared_preferences.dart';
 
 class UserRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
-
   UserRepository() : _firestoreServiceAdapter = FirestoreServiceAdapter();
+  final SharedPreferencesService _prefsService = SharedPreferencesService();
 
   Future<Users?> getUserSession() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? uid = prefs.getString('uid');
-    if (uid != null) {
-      return getUser(uid);
+    try {
+      final user = await _prefsService.getUser();
+      return user;
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getUserSession',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when fetching user session in repository: $e');
+      rethrow;
     }
-    return null;
   }
 
   Future<Users> getUser(String userId) async {

@@ -42,6 +42,8 @@ class Auth {
   Future<Users?> signUpWithEmailPassword(
       String name, String email, String password) async {
     try {
+      print(email);
+      print(password);
       if (!email.endsWith('@uniandes.edu.co')) {
         print('El correo debe ser de dominio @uniandes.edu.co');
         return null;
@@ -59,12 +61,12 @@ class Auth {
         profileImageUrl: '',
       );
 
-      await _firestoreServiceAdapter.addDocument('users', {
+      await _firestoreServiceAdapter.addUser({
         'uid': authResult.user!.uid,
         'email': email,
         'name': name,
         'profileImageUrl': '',
-      });
+      }, authResult.user!.uid);
 
       print('Cuenta creada exitosamente!');
       return newUser;
