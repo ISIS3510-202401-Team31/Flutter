@@ -37,12 +37,26 @@ class OfferCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-            ),
-          ),
+      Expanded(
+        child: Image.network(
+          imagePath,
+          fit: BoxFit.cover,
+          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null 
+                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                      : null,
+              ),
+            );
+          },
+          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+            return const Text('Unable to load image');
+          },
+        ),
+      ),
+
           Padding(
             padding: padding,
             child: Column(
