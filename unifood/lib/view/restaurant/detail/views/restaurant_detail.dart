@@ -12,6 +12,7 @@ import 'package:connectivity/connectivity.dart';
 
 class RestaurantDetail extends StatefulWidget {
   final String restaurantId;
+
   const RestaurantDetail({Key? key, required this.restaurantId})
       : super(key: key);
 
@@ -20,14 +21,13 @@ class RestaurantDetail extends StatefulWidget {
 }
 
 class _RestaurantDetailState extends State<RestaurantDetail> {
-  late Future<List<dynamic>> dataFuture;
+  late Future<List<dynamic>> dataFuture = fetchData();
   late bool _isConnected;
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
-    dataFuture = fetchData();
   }
 
   Future<void> _checkConnectivity() async {
@@ -35,17 +35,23 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     setState(() {
       _isConnected = connectivityResult != ConnectivityResult.none;
     });
+    fetchData();
   }
 
   Future<List<dynamic>> fetchData() async {
     final restaurantInfoData =
         await RestaurantController().getRestaurantById(widget.restaurantId);
-    final menuItemsData =
-        await PlateController().getPlatesByRestaurantId(widget.restaurantId);
-    final reviewsData =
-        await ReviewController().getReviewsByRestaurantId(widget.restaurantId);
 
-    return [restaurantInfoData, menuItemsData, reviewsData];
+    if (_isConnected) {
+      final menuItemsData =
+          await PlateController().getPlatesByRestaurantId(widget.restaurantId);
+      final reviewsData = await ReviewController()
+          .getReviewsByRestaurantId(widget.restaurantId);
+
+      return [restaurantInfoData, menuItemsData, reviewsData];
+    }
+
+    return [restaurantInfoData];
   }
 
   void _onUserInteraction(String feature, String action) {
@@ -94,9 +100,21 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             return _buildErrorWidget(screenWidth, screenHeight);
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             final data = snapshot.data!;
+            
             final restaurantInfo = RestaurantInfo(restaurant: data[0]);
-            final menuItemsData = data[1];
-            final reviewsData = data[2];
+            Widget? menuWidget;
+            Widget? reviewWidget;
+
+            if (data.length > 1 && _isConnected) {
+              menuWidget = MenuGrid(
+                menuItems: data[1],
+                restaurantId: widget.restaurantId,
+              );
+            }
+
+            if (data.length > 2) {
+              reviewWidget = ReviewList(reviews: data[data.length - 1]);
+            }
 
             return NotificationListener<ScrollUpdateNotification>(
               onNotification: (notification) {
@@ -108,11 +126,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     restaurantInfo,
-                    if (_isConnected)
-                      MenuGrid(
-                          menuItems: menuItemsData,
-                          restaurantId: widget.restaurantId),
-                    if (_isConnected) ReviewList(reviews: reviewsData),
+                    if (menuWidget != null) menuWidget,
+                    if (reviewWidget != null) reviewWidget,
                     if (!_isConnected)
                       _buildNoInternetWidget(screenWidth, screenHeight),
                   ],
@@ -142,7 +157,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               style: TextStyle(
                 color: Colors.red,
                 fontSize: MediaQuery.of(context).size.width * 0.04,
-                fontWeight: FontWeight.bold, // Letra en negrita
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: screenHeight * 0.02),

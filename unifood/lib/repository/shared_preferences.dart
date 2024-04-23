@@ -27,4 +27,17 @@ class SharedPreferencesService {
   Future<void> clearUser() async {
     await _prefs!.clear();
   }
+
+  Future<Users?> getUser() async {
+    String? uid = _prefs!.getString('uid');
+    if (uid != null) {
+      return Users(
+        uid: uid,
+        email: _prefs!.getString('email')!,
+        name: _prefs!.getString('name')!,
+        profileImageUrl: _prefs!.getString('profileImageUrl'),
+      );
+    }
+    return null;
+  }
 }

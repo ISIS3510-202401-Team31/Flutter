@@ -55,6 +55,7 @@ dependencies:
   flutter_isolate: ^2.0.5-pre
   sqflite: ^2.3.3
   path_provider: ^2.1.3
+  fluttertoast: ^8.2.5
 
 dev_dependencies:
   flutter_test:
