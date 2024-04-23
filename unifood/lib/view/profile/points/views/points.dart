@@ -85,7 +85,10 @@ class PointsView extends StatelessWidget {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.hasData) {
-                  return Column(
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+                    child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: snapshot.data!.map((restaurant) {
                       return CustomRestaurant(
                         id: restaurant.id,
@@ -98,6 +101,7 @@ class PointsView extends StatelessWidget {
                         avgPrice: restaurant.avgPrice,
                       );
                     }).toList(),
+                  ),
                   );
                 } else {
                   return Center(child: Text('No data available.'));

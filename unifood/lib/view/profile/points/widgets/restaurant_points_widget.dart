@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:unifood/view/profile/points/widgets/build_header_points.dart';
 import 'package:unifood/model/points_entity.dart';
 
 class RestaurantPoints {
