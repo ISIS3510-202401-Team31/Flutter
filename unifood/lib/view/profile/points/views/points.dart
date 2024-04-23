@@ -99,6 +99,7 @@ class PointsView extends StatelessWidget {
                         distance: restaurant.distance,
                         rating: restaurant.rating,
                         avgPrice: restaurant.avgPrice,
+                        fromPointsView: true
                       );
                     }).toList(),
                   ),

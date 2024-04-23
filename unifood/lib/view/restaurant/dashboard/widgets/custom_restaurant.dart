@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/utils/string_utils.dart';
 import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
+import 'package:unifood/view/restaurant/offers/views/offers.dart';
 
 class CustomRestaurant extends StatelessWidget {
   final String imageUrl;
@@ -12,6 +13,7 @@ class CustomRestaurant extends StatelessWidget {
   final double rating;
   final double avgPrice;
   final String id;
+  final bool fromPointsView; // Flag to determine navigation
 
   const CustomRestaurant({
     super.key,
@@ -23,6 +25,8 @@ class CustomRestaurant extends StatelessWidget {
     required this.rating,
     required this.avgPrice,
     required this.id,
+    this.fromPointsView = false, // Default to false
+
   });
 
   void _onUserInteraction(String feature, String action) {
@@ -43,8 +47,14 @@ class CustomRestaurant extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
-        _onUserInteraction("Restaurant Detail", "Tap");
+        // Check if the tap is from the Points view
+        if (fromPointsView) {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => OffersPage(restaurantId: id)));
+          _onUserInteraction("Offers Page", "Tap");
+        } else {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
+          _onUserInteraction("Restaurant Detail", "Tap");
+        }
       },
       child: Card(
         child: SizedBox(
