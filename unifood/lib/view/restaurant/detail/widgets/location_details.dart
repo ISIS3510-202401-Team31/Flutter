@@ -1,9 +1,10 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LocationDetails extends StatelessWidget {
+class LocationDetails extends StatefulWidget {
   final String address;
   final String addressDetail;
   final double distance;
@@ -19,12 +20,32 @@ class LocationDetails extends StatelessWidget {
     required this.longitude,
   }) : super(key: key);
 
+  @override
+  _LocationDetailsState createState() => _LocationDetailsState();
+}
+
+class _LocationDetailsState extends State<LocationDetails> {
+  late bool _isConnected;
+
   void _onUserInteraction(String feature, String action) {
     final event = {
       'feature': feature,
       'action': action,
     };
     AnalyticsRepository().saveEvent(event);
+  }
+
+  void _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
   }
 
   @override
@@ -36,11 +57,14 @@ class LocationDetails extends StatelessWidget {
       width: screenWidth * 0.9,
       height: screenHeight * 0.11,
       child: Padding(
-        padding:  EdgeInsets.only(top: screenWidth*0.03, left:  screenWidth*0.03, right:  screenWidth*0.03),
+        padding: EdgeInsets.only(
+            top: screenWidth * 0.03,
+            left: screenWidth * 0.03,
+            right: screenWidth * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             Text(
+            Text(
               'Location',
               style: TextStyle(
                 fontSize: screenHeight * 0.0225,
@@ -58,12 +82,12 @@ class LocationDetails extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          address,
-                          style:  TextStyle(fontSize: screenHeight * 0.016),
+                          widget.address,
+                          style: TextStyle(fontSize: screenHeight * 0.016),
                         ),
                         Text(
-                          addressDetail,
-                          style:  TextStyle(fontSize: screenHeight * 0.016),
+                          widget.addressDetail,
+                          style: TextStyle(fontSize: screenHeight * 0.016),
                         ),
                       ],
                     ),
@@ -73,12 +97,16 @@ class LocationDetails extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            '${distance.toStringAsFixed(1)} km away',
-                            style:  TextStyle(fontSize: screenHeight * 0.015)
-                          ),
+                          _isConnected
+                              ? Text(
+                                  '${widget.distance.toStringAsFixed(1)} km away',
+                                  style:
+                                      TextStyle(fontSize: screenHeight * 0.015))
+                              : Text('Distance is not available',
+                                  style: TextStyle(
+                                      fontSize: screenHeight * 0.015)),
                           SizedBox(width: screenWidth * 0.01),
-                           Icon(
+                          Icon(
                             Icons.location_on,
                             color: const Color.fromARGB(255, 129, 128, 128),
                             size: screenHeight * 0.02,
@@ -89,7 +117,26 @@ class LocationDetails extends StatelessWidget {
                         child: CustomButton(
                           text: 'Open in Map',
                           onPressed: () {
-                            _launchMaps(latitude, longitude);
+                            if (!_isConnected) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('No Internet'),
+                                  content: Text(
+                                      'This function is not available without internet connection.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              _launchMaps(widget.latitude, widget.longitude);
+                            }
                             _onUserInteraction('Open in Map', 'Tap');
                           },
                           height: screenHeight * 0.025,
@@ -110,16 +157,14 @@ class LocationDetails extends StatelessWidget {
   }
 
   _launchMaps(latitude, longitude) async {
+    // The URL scheme for launching Google Maps with a specific location
+    final url =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
 
-  // The URL scheme for launching Google Maps with a specific location
-  final url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-
-  final uri = Uri.parse(url);
+    final uri = Uri.parse(url);
 
     if (!await launchUrl(uri, mode: LaunchMode.inAppWebView)) {
       throw Exception('Could not launch $url');
     }
   }
 }
-
-
