@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/utils/string_utils.dart';
@@ -26,7 +27,6 @@ class CustomRestaurant extends StatelessWidget {
     required this.avgPrice,
     required this.id,
     this.fromPointsView = false, // Default to false
-
   });
 
   void _onUserInteraction(String feature, String action) {
@@ -49,10 +49,12 @@ class CustomRestaurant extends StatelessWidget {
       onTap: () {
         // Check if the tap is from the Points view
         if (fromPointsView) {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => OffersPage(restaurantId: id)));
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => OffersPage(restaurantId: id)));
           _onUserInteraction("Offers Page", "Tap");
         } else {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => RestaurantDetail(restaurantId: id)));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => RestaurantDetail(restaurantId: id)));
           _onUserInteraction("Restaurant Detail", "Tap");
         }
       },
@@ -64,10 +66,11 @@ class CustomRestaurant extends StatelessWidget {
             children: [
               Expanded(
                 flex: 2, // Asigna más espacio a la imagen
-                child: Image.network(
-                  imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => const SizedBox.shrink(),
                 ),
               ),
               Expanded(
@@ -83,7 +86,8 @@ class CustomRestaurant extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: avatarRadius,
-                              backgroundImage: NetworkImage(logoUrl),
+                              backgroundImage:
+                                  CachedNetworkImageProvider(logoUrl),
                             ),
                             SizedBox(width: screenWidth * 0.02),
                             Column(
