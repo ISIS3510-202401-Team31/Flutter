@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:unifood/model/plate_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/plate_repository.dart';
@@ -5,11 +7,21 @@ import 'package:unifood/repository/plate_repository.dart';
 class PlateController {
   final PlateRepository _plateRepository = PlateRepository();
 
-  Future<List<Plate>> getPlatesByRestaurantId(String restaurantId) async {
+  final StreamController<List<Plate?>> _platesByIdController =
+      StreamController<List<Plate?>>.broadcast();
+
+  Stream<List<Plate?>> get platesByRestaurantId => _platesByIdController.stream;
+
+  void dispose() {
+    _platesByIdController.close();
+  }
+
+
+  Future<void> getPlatesByRestaurantId(String restaurantId) async {
     try {
       final data = await _plateRepository.getPlatesByRestaurantId(restaurantId);
 
-      return data
+      final plates = data
           .map(
             (item) => Plate(
               id: item['id'] ?? "",
@@ -17,11 +29,14 @@ class PlateController {
               imagePath: item['imageURL'] ?? "",
               name: item['name'] ?? "",
               description: item['description'] ?? "",
-              price: item['price'].toDouble() ?? 0.0, 
+              price: item['price'].toDouble() ?? 0.0,
               ranking: item['ranking'] ?? {},
             ),
           )
           .toList();
+      
+      _platesByIdController.sink.add(plates);
+
     } catch (e, stackTrace) {
       // Guardar la información del error en la base de datos
       final errorInfo = {
@@ -50,7 +65,6 @@ class PlateController {
         description: data['description'] ?? "",
         price: data['price'].toDouble() ?? 0.0,
       );
-
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
