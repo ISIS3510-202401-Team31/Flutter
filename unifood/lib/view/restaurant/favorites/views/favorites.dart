@@ -8,7 +8,7 @@ import 'package:unifood/view/restaurant/favorites/widgets/suggestions_list.dart'
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
-import 'package:unifood/view_model/restaurant_controller.dart';
+import 'package:unifood/controller/restaurant_controller.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({Key? key}) : super(key: key);

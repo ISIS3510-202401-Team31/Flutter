@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unifood/model/offer_entity.dart';  
 import 'package:unifood/model/restaurant_entity.dart'; // Assuming you have this file
 import 'package:unifood/view/restaurant/offers/widgets/offer_card.dart';
-import 'package:unifood/view_model/offers_controller.dart';  
+import 'package:unifood/controller/offers_controller.dart';  
 
 class OffersPage extends StatelessWidget {
   final String restaurantId;  // Identifier for the restaurant

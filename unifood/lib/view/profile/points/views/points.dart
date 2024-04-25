@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:unifood/view/profile/points/widgets/restaurant_points_widget.dart';
 import 'package:unifood/view/profile/points/widgets/total_points_widget.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
-import 'package:unifood/view_model/restaurant_controller.dart'; 
+import 'package:unifood/controller/restaurant_controller.dart'; 
 import 'package:unifood/model/restaurant_entity.dart';
-import 'package:unifood/view_model/points_controller.dart';
+import 'package:unifood/controller/points_controller.dart';
 import 'package:unifood/model/points_entity.dart';
 
 

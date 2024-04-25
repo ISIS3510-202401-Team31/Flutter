@@ -72,11 +72,15 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
+  
 
   @override
   Widget build(BuildContext context) {
+
+    final bool isLoggedIn = SharedPreferencesService().getUser() != null;
+
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: isLoggedIn ? "/restaurants" : "/",
       onGenerateRoute: Routes.generateRoute,
     );
   }

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
@@ -17,6 +18,7 @@ class RestaurantInfo extends StatefulWidget {
 
 class _RestaurantInfoState extends State<RestaurantInfo> {
   bool _isLiked = false;
+  late bool _isConnected;
 
   void _onUserInteraction(String feature, String action) {
     final event = {
@@ -24,6 +26,19 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
       'action': action,
     };
     AnalyticsRepository().saveEvent(event);
+  }
+
+  void _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
   }
 
   @override
@@ -40,9 +55,32 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
             height: screenHeight * 0.25,
             child: Column(
               children: [
+                _isConnected
+                    ? Container()
+                    : Container(
+                        padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.warning,
+                              color: Colors.grey,
+                              size: screenWidth * 0.05,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'No Connection. Data might not be updated',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                 Padding(
                   padding: EdgeInsets.only(
-                      top: screenHeight * 0.04,
+                      top: screenHeight * 0.02,
                       left: screenWidth * 0.08,
                       right: screenWidth * 0.08),
                   child: CachedNetworkImage(
@@ -50,20 +88,21 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                     height: screenHeight * 0.12,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => const SizedBox.shrink(),
+                    errorWidget: (context, url, error) =>
+                        const SizedBox.shrink(),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                      top: screenHeight * 0.02,
+                      top: screenHeight * 0.01,
                       left: screenWidth * 0.08,
                       right: screenWidth * 0.08),
                   child: Row(
                     children: [
                       CircleAvatar(
                         radius: screenHeight * 0.028,
-                        backgroundImage:
-                            CachedNetworkImageProvider(widget.restaurant.logoUrl),
+                        backgroundImage: CachedNetworkImageProvider(
+                            widget.restaurant.logoUrl),
                       ),
                       SizedBox(width: screenWidth * 0.04),
                       Expanded(

@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
@@ -5,7 +6,7 @@ import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_card.dart';
 import 'package:unifood/view/restaurant/search/widgets/restaurant_logo.dart';
 import 'package:unifood/view/restaurant/search/widgets/search_app_bar.dart';
-import 'package:unifood/view_model/restaurant_controller.dart';
+import 'package:unifood/controller/restaurant_controller.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   final List<Restaurant> _searchResults = [];
   List<Restaurant> _restaurantList = [];
+  late bool _isConnected;
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -26,6 +28,19 @@ class _SearchViewState extends State<SearchView> {
       'action': action,
     };
     AnalyticsRepository().saveEvent(event);
+  }
+
+  void _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
   }
 
   @override
@@ -89,6 +104,29 @@ class _SearchViewState extends State<SearchView> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  _isConnected
+                      ? Container()
+                      : Container(
+                          padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.warning,
+                                color: Colors.grey,
+                                size: screenWidth * 0.05,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'No Connection. Data might not be updated',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: NotificationListener<ScrollUpdateNotification>(

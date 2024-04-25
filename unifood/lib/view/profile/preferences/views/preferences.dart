@@ -5,7 +5,7 @@ import 'package:unifood/view/profile/preferences/widgets/section_header.dart';
 import 'package:unifood/view/profile/preferences/widgets/save_changes_boton.dart';
 import 'package:unifood/view/profile/preferences/widgets/reset_button.dart';
 import 'package:unifood/model/preferences_entity.dart';
-import 'package:unifood/view_model/preferences_controller.dart';
+import 'package:unifood/controller/preferences_controller.dart';
 import 'package:unifood/view/widgets/custom_setting_option_builder.dart';
 
 class Preferences extends StatefulWidget {

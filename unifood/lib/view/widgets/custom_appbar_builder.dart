@@ -35,7 +35,7 @@ class CustomAppBarBuilder {
 
   CustomAppBar build(BuildContext context) {
     return CustomAppBar(
-      rightWidget: rightWidget!,
+      rightWidget: rightWidget,
       screenHeight: screenHeight!,
       screenWidth: screenWidth!,
       showBackButton: showBackButton,
@@ -44,14 +44,14 @@ class CustomAppBarBuilder {
 }
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final Widget rightWidget;
+  final Widget? rightWidget;
   final double screenHeight;
   final double screenWidth;
   final bool showBackButton;
 
   const CustomAppBar({
     Key? key,
-    required this.rightWidget,
+    this.rightWidget,
     required this.screenHeight,
     required this.screenWidth,
     this.showBackButton = false,
@@ -59,36 +59,39 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> actions = [];
+
+    if (showBackButton) {
+      actions.add(
+        CustomCircledButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          diameter: screenHeight * 0.0335,
+          icon: Icon(
+            Icons.chevron_left_sharp,
+            color: Colors.black,
+            size: screenHeight * 0.0335,
+          ),
+          buttonColor: Colors.white,
+        ),
+      );
+      actions.add(
+        Spacer()
+      );
+    }
+
+    if (rightWidget != null) {
+      actions.add(
+        rightWidget!,
+      );
+    }
+
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
       elevation: 0,
-      actions: [
-        if (showBackButton)
-          CustomCircledButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            diameter: screenHeight * 0.0335,
-            icon: Icon(
-              Icons.chevron_left_sharp,
-              color: Colors.black,
-              size: screenHeight * 0.0335,
-            ),
-            buttonColor: Colors.white,
-          ),
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(right: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                rightWidget,
-              ],
-            ),
-          ),
-        ),
-      ],
+      actions: actions,
     );
   }
 

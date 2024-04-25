@@ -5,7 +5,7 @@ import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
-import 'package:unifood/view_model/restaurant_controller.dart';
+import 'package:unifood/controller/restaurant_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Restaurants extends StatefulWidget {

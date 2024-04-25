@@ -5,9 +5,9 @@ import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.da
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view_model/plate_controller.dart';
-import 'package:unifood/view_model/restaurant_controller.dart';
-import 'package:unifood/view_model/review_controller.dart';
+import 'package:unifood/controller/plate_controller.dart';
+import 'package:unifood/controller/restaurant_controller.dart';
+import 'package:unifood/controller/review_controller.dart';
 import 'package:connectivity/connectivity.dart';
 
 class RestaurantDetail extends StatefulWidget {
