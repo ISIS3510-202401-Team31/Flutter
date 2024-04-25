@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/utils/string_utils.dart';
 import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
@@ -6,7 +7,7 @@ class CustomSuggestedRestaurant extends StatelessWidget {
   final String id;
   final String restaurantName;
   final String restaurantImage;
-  final double? restaurantPrice; 
+  final double? restaurantPrice;
   final String? restaurantFoodType;
 
   const CustomSuggestedRestaurant({
@@ -39,10 +40,11 @@ class CustomSuggestedRestaurant extends StatelessWidget {
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(12), bottom: Radius.circular(12)),
-                child: Image.network(
-                  restaurantImage,
+                child: CachedNetworkImage(
+                  imageUrl: restaurantImage,
                   height: screenHeight * 0.13,
                   fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => const SizedBox.shrink(),
                 ),
               ),
               Padding(
@@ -53,9 +55,8 @@ class CustomSuggestedRestaurant extends StatelessWidget {
                     Text(
                       restaurantName,
                       style: TextStyle(
-                        fontSize: screenHeight *
-                            0.015, 
-                        fontWeight: FontWeight.bold, 
+                        fontSize: screenHeight * 0.015,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
