@@ -7,8 +7,8 @@ import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_li
 import 'package:unifood/view/restaurant/plateDetail/widgets/plate_info.dart';
 import 'package:unifood/view/restaurant/plateDetail/widgets/ranking_info.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view_model/plate_controller.dart';
-import 'package:unifood/view_model/review_controller.dart';
+import 'package:unifood/controller/plate_controller.dart';
+import 'package:unifood/controller/review_controller.dart';
 import 'package:connectivity/connectivity.dart';
 
 class PlateDetail extends StatefulWidget {

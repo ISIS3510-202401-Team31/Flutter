@@ -11,7 +11,7 @@ import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_button.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_options.dart';
-import 'package:unifood/view_model/user_controller.dart';
+import 'package:unifood/controller/user_controller.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
