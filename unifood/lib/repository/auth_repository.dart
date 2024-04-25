@@ -29,7 +29,8 @@ class Auth {
   }
 
   Future<Users> _fetchUserFromFirestore(String uid) async {
-    final snapshot = await _firestoreServiceAdapter.getDocumentById('users', uid);
+    final snapshot =
+        await _firestoreServiceAdapter.getDocumentById('users', uid);
     final data = snapshot.data() as Map<String, dynamic>;
     return Users(
       uid: uid,

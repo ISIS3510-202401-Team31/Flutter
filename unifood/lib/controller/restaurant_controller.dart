@@ -9,6 +9,7 @@ import 'package:unifood/utils/distance_calculator.dart';
 class RestaurantController {
   final RestaurantRepository _restaurantRepository = RestaurantRepository();
   final LocationRepository _locationRepository = LocationRepository();
+  final Map<String, List<Map<String, dynamic>>> _nearbyRestaurantCache = {};
 
   Future<List<Restaurant>> getRestaurants() async {
     return _getRestaurantData(await _getUserLocation());
@@ -21,9 +22,34 @@ class RestaurantController {
   }
 
   Future<List<Restaurant>> getRestaurantsNearby() async {
-    final userLocation = await _getUserLocation();
-    final data = await _restaurantRepository.getRestaurants();
-    return _filterNearbyRestaurants(data, userLocation);
+    final String cacheKey = 'nearby_restaurants';
+    try {
+      // Intenta obtener los datos de la red
+      final userLocation = await _getUserLocation();
+      final data = await _restaurantRepository.getRestaurants();
+      final nearbyRestaurants =
+          await _filterNearbyRestaurants(data, userLocation);
+      _nearbyRestaurantCache[cacheKey] = data;
+      return nearbyRestaurants;
+    } catch (e, stackTrace) {
+      // Si falla la obtención de datos de la red, intenta obtenerlos de la caché
+      if (_nearbyRestaurantCache.containsKey(cacheKey)) {
+        print('Returning cached response for nearby restaurants: $cacheKey');
+        final userLocation = await _getUserLocation();
+        return _filterNearbyRestaurants(
+            _nearbyRestaurantCache[cacheKey]!, userLocation);
+      } else {
+        final errorInfo = {
+          'error': e.toString(),
+          'stacktrace': stackTrace.toString(),
+          'timestamp': DateTime.now(),
+          'function': 'getRestaurantsNearby',
+        };
+        AnalyticsRepository().saveError(errorInfo);
+        print('Error when fetching nearby restaurants in ViewModel: $e');
+        rethrow;
+      }
+    }
   }
 
   Future<List<Restaurant>> getRecommendedRestaurants(
@@ -123,8 +149,7 @@ class RestaurantController {
         address: item['address'] ?? '',
         addressDetail: item['addressDetail'] ?? '',
         latitude: item['latitud'] ?? '',
-        longitude: item['longitud'] ?? ''
-        );
+        longitude: item['longitud'] ?? '');
   }
 
   List<Restaurant> _filterNearbyRestaurants(
@@ -143,6 +168,6 @@ class RestaurantController {
         userLocation.longitude,
         restaurantLat,
         restaurantLong);
-    return distance <= 1.5;
+    return distance <= 7000;
   }
 }

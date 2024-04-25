@@ -7,6 +7,7 @@ import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:unifood/controller/restaurant_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:connectivity/connectivity.dart';
 
 class Restaurants extends StatefulWidget {
   const Restaurants({Key? key}) : super(key: key);
@@ -17,11 +18,19 @@ class Restaurants extends StatefulWidget {
 
 class _RestaurantsState extends State<Restaurants> {
   bool _locationPermissionGranted = false;
-
+  late bool _isConnected;
   @override
   void initState() {
     super.initState();
+    _checkConnectivity();
     _requestLocationPermission();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
   }
 
   Future<void> _requestLocationPermission() async {
@@ -142,7 +151,65 @@ class _RestaurantsState extends State<Restaurants> {
                   child: FutureBuilder<List<Restaurant>>(
                     future: RestaurantController().getRestaurants(),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                      if (!_isConnected) {
+                        final List<Restaurant> favoriteRestaurants =
+                            snapshot.data!;
+                        // Si no hay conexión, muestra un mensaje de error
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(screenWidth * 0.02),
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      bottom: screenHeight * 0.01),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.warning,
+                                        color: Colors.grey,
+                                        size: screenWidth * 0.05,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Text(
+                                        'No Connection. Data might not be updated',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              color: const Color(0xFF965E4E).withOpacity(0.15),
+                              height: screenHeight * 0.27,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children:
+                                      favoriteRestaurants.map((restaurant) {
+                                    return CustomRestaurant(
+                                      id: restaurant.id,
+                                      imageUrl: restaurant.imageUrl,
+                                      logoUrl: restaurant.logoUrl,
+                                      name: restaurant.name,
+                                      isOpen: restaurant.isOpen,
+                                      distance: restaurant.distance,
+                                      rating: restaurant.rating,
+                                      avgPrice: restaurant.avgPrice,
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
                         return const Center(
                           child: SpinKitThreeBounce(
                             color: Colors.black,
@@ -164,8 +231,7 @@ class _RestaurantsState extends State<Restaurants> {
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.04,
-                                    fontWeight:
-                                        FontWeight.bold, // Letra en negrita
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 SizedBox(height: screenHeight * 0.02),
@@ -249,7 +315,65 @@ class _RestaurantsState extends State<Restaurants> {
                   child: FutureBuilder<List<Restaurant>>(
                     future: RestaurantController().getRestaurantsNearby(),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                      if (!_isConnected) {
+                        final List<Restaurant> favoriteRestaurants =
+                            snapshot.data!;
+                        // Si no hay conexión, muestra un mensaje de error
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(screenWidth * 0.02),
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      bottom: screenHeight * 0.01),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.warning,
+                                        color: Colors.grey,
+                                        size: screenWidth * 0.05,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Text(
+                                        'No Connection. Data might not be updated',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              color: const Color(0xFF965E4E).withOpacity(0.15),
+                              height: screenHeight * 0.27,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children:
+                                      favoriteRestaurants.map((restaurant) {
+                                    return CustomRestaurant(
+                                      id: restaurant.id,
+                                      imageUrl: restaurant.imageUrl,
+                                      logoUrl: restaurant.logoUrl,
+                                      name: restaurant.name,
+                                      isOpen: restaurant.isOpen,
+                                      distance: restaurant.distance,
+                                      rating: restaurant.rating,
+                                      avgPrice: restaurant.avgPrice,
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
                         return const Center(
                           child: SpinKitThreeBounce(
                             color: Colors.black,
@@ -270,13 +394,13 @@ class _RestaurantsState extends State<Restaurants> {
                               children: nearbyRestaurants.map((restaurant) {
                                 return CustomRestaurant(
                                   id: restaurant.id,
-                                  imageUrl: restaurant.imageUrl,
-                                  logoUrl: restaurant.logoUrl,
-                                  name: restaurant.name,
-                                  isOpen: restaurant.isOpen,
-                                  distance: restaurant.distance,
-                                  rating: restaurant.rating,
-                                  avgPrice: restaurant.avgPrice,
+                                      imageUrl: restaurant.imageUrl,
+                                      logoUrl: restaurant.logoUrl,
+                                      name: restaurant.name,
+                                      isOpen: restaurant.isOpen,
+                                      distance: restaurant.distance,
+                                      rating: restaurant.rating,
+                                      avgPrice: restaurant.avgPrice,
                                 );
                               }).toList(),
                             ),

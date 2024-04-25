@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/auth_repository.dart';
@@ -15,6 +16,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
+  late bool _isConnected;
 
   bool emailError = false;
   bool passwordError = false;
@@ -26,6 +28,14 @@ class _LoginState extends State<Login> {
     super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
+    _checkConnectivity();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
   }
 
   @override
@@ -140,52 +150,73 @@ class _LoginState extends State<Login> {
                     SizedBox(height: screenHeight * 0.04),
                     CustomButton(
                       onPressed: () async {
-                        setState(() {
-                          emailError = false;
-                          passwordError = false;
-                        });
-
-                        bool isValid = true;
-                        if (emailController.text.isEmpty) {
+                        if (_isConnected) {
                           setState(() {
-                            emailError = true;
-                            emailErrorMessage = 'Please enter your email';
+                            emailError = false;
+                            passwordError = false;
                           });
-                          isValid = false;
-                        }
 
-                        if (passwordController.text.isEmpty) {
-                          setState(() {
-                            passwordError = true;
-                            passwordErrorMessage = 'Please enter your password';
-                          });
-                          isValid = false;
-                        }
+                          bool isValid = true;
+                          if (emailController.text.isEmpty) {
+                            setState(() {
+                              emailError = true;
+                              emailErrorMessage = 'Please enter your email';
+                            });
+                            isValid = false;
+                          }
 
-                        if (!isValid) return;
+                          if (passwordController.text.isEmpty) {
+                            setState(() {
+                              passwordError = true;
+                              passwordErrorMessage =
+                                  'Please enter your password';
+                            });
+                            isValid = false;
+                          }
 
-                        Users? user = await Auth().signInWithEmailPassword(
-                          emailController.text,
-                          passwordController.text,
-                        );
-                        if (user != null) {
-                          Navigator.pushNamed(context, '/restaurants');
+                          if (!isValid) return;
+
+                          Users? user = await Auth().signInWithEmailPassword(
+                            emailController.text,
+                            passwordController.text,
+                          );
+                          if (user != null) {
+                            Navigator.pushNamed(context, '/restaurants');
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Error de inicio de sesión'),
+                                content: const Text(
+                                  'Failed to sign in. Please check your credentials.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      emailController.clear();
+                                      passwordController.clear();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Aceptar'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                         } else {
+                          // No hay conexión a Internet, mostrar un diálogo
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Error de inicio de sesión'),
-                              content: const Text(
-                                'Failed to sign in. Please check your credentials.',
-                              ),
+                              title: Text('No Internet'),
+                              content: Text(
+                                  'You cannot log in without internet connection. Please try again later.'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    emailController.clear();
-                                    passwordController.clear();
-                                    Navigator.of(context).pop();
+                                    Navigator.pop(context);
                                   },
-                                  child: const Text('Aceptar'),
+                                  child: Text('OK'),
                                 ),
                               ],
                             ),
