@@ -15,7 +15,9 @@ class PlateDetail extends StatefulWidget {
   final String plateId;
   final String restaurantId;
 
-  const PlateDetail({Key? key, required this.plateId, required this.restaurantId}) : super(key: key);
+  const PlateDetail(
+      {Key? key, required this.plateId, required this.restaurantId})
+      : super(key: key);
 
   @override
   _PlateDetailState createState() => _PlateDetailState();
@@ -39,10 +41,16 @@ class _PlateDetailState extends State<PlateDetail> {
     });
   }
 
-  Future<List<dynamic>> fetchData() async {
-    final plateInfoData = await PlateController().getPlateById(widget.plateId, widget.restaurantId);
-    final reviewsData = await ReviewController().getReviewsByPlateId(widget.plateId, widget.restaurantId);
-    return [plateInfoData, reviewsData];
+  Future<List<dynamic>> fetchData() {
+    return PlateController()
+        .getPlateById(widget.plateId, widget.restaurantId)
+        .then((plateInfoData) {
+      return ReviewController()
+          .getReviewsByPlateId(widget.plateId, widget.restaurantId)
+          .then((reviewsData) {
+        return [plateInfoData, reviewsData];
+      });
+    });
   }
 
   void _onUserInteraction(String feature, String action) {
@@ -65,16 +73,7 @@ class _PlateDetailState extends State<PlateDetail> {
           screenHeight: screenHeight,
           screenWidth: screenWidth,
           showBackButton: true,
-        )
-            .setRightWidget(
-              IconButton(
-                icon: Icon(Icons.search, size: screenWidth * 0.07),
-                onPressed: () {
-                  Navigator.pushNamed(context, "/filtermenu");
-                },
-              ),
-            )
-            .build(context),
+        ).build(context),
       ),
       body: _isConnected
           ? FutureBuilder<List<dynamic>>(
@@ -138,7 +137,7 @@ class _PlateDetailState extends State<PlateDetail> {
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
-              color: Colors.grey[600], 
+              color: Colors.grey[600],
             ),
           ),
           SizedBox(height: 20.0),
@@ -149,13 +148,13 @@ class _PlateDetailState extends State<PlateDetail> {
               });
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.grey[200]), 
+              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
             ),
-            icon: Icon(Icons.refresh, color: Colors.grey[600]), 
+            icon: Icon(Icons.refresh, color: Colors.grey[600]),
             label: Text(
               'Refresh',
               style: TextStyle(
-                color: Colors.grey[600], 
+                color: Colors.grey[600],
               ),
             ),
           ),
