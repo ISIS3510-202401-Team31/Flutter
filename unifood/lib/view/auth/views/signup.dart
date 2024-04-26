@@ -1,3 +1,5 @@
+import 'package:connectivity/connectivity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/auth_repository.dart';
@@ -25,6 +27,7 @@ class _SignupState extends State<Signup> {
     firestore: FirebaseFirestore.instance,
     deviceInfoPlugin: DeviceInfoPlugin(),
   );
+  late bool _isConnected;
 
   bool fullNameError = false;
   String fullNameErrorMessage = '';
@@ -44,6 +47,19 @@ class _SignupState extends State<Signup> {
     if (!password.contains(RegExp(r'[a-z]'))) return false;
     if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) return false;
     return true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
   }
 
   @override
@@ -169,108 +185,129 @@ class _SignupState extends State<Signup> {
                   SizedBox(height: screenHeight * 0.015),
                   CustomButton(
                     onPressed: () async {
-                      String fullName = fullNameController.text;
-                      String email = emailController.text;
-                      String password = passwordController.text;
-                      String confirmPassword = confirmPasswordController.text;
+                      if (_isConnected) {
+                        String fullName = fullNameController.text;
+                        String email = emailController.text;
+                        String password = passwordController.text;
+                        String confirmPassword = confirmPasswordController.text;
 
-                      // Reset errors
-                      setState(() {
-                        fullNameError = false;
-                        emailError = false;
-                        passwordError = false;
-                        confirmPasswordError = false;
-                      });
-
-                      // Validate fields
-                      bool isValid = true;
-                      if (fullName.isEmpty) {
+                        // Reset errors
                         setState(() {
-                          fullNameError = true;
-                          fullNameErrorMessage = 'Please enter your full name';
-
-                          isValid = false;
+                          fullNameError = false;
+                          emailError = false;
+                          passwordError = false;
+                          confirmPasswordError = false;
                         });
-                      }
 
-                      if (email.isEmpty) {
-                        setState(() {
-                          emailError = true;
-                          emailErrorMessage = 'Please enter an email';
-                          isValid = false;
-                        });
-                      } else if (!email.endsWith('@uniandes.edu.co')) {
-                        setState(() {
-                          emailError = true;
-                          emailErrorMessage =
-                              'Email must be of the domain @uniandes.edu.co.';
-                        });
-                      }
+                        // Validate fields
+                        bool isValid = true;
+                        if (fullName.isEmpty) {
+                          setState(() {
+                            fullNameError = true;
+                            fullNameErrorMessage =
+                                'Please enter your full name';
 
-                      if (password.isEmpty) {
-                        setState(() {
-                          passwordError = true;
-                          passwordErrorMessage = 'Please enter your password';
-                          isValid = false;
-                        });
-                      } else if (!_isPasswordValid(password)) {
-                        setState(() {
-                          passwordError = true;
-                          passwordErrorMessage =
-                              'Password must have at least 8 characters, one uppercase, one lowercase, and one special character.';
-                          isValid = false;
-                        });
-                      }
+                            isValid = false;
+                          });
+                        }
 
-                      if (confirmPassword.isEmpty) {
-                        setState(() {
-                          confirmPasswordError = true;
-                          confirmPasswordErrorMessage =
-                              'Please confirm your password';
-                          isValid = false;
-                        });
-                      } else if (confirmPassword != password) {
-                        setState(() {
-                          confirmPasswordError = true;
-                          confirmPasswordErrorMessage =
-                              'Passwords do not match';
-                          isValid = false;
-                        });
-                      }
+                        if (email.isEmpty) {
+                          setState(() {
+                            emailError = true;
+                            emailErrorMessage = 'Please enter an email';
+                            isValid = false;
+                          });
+                        } else if (!email.endsWith('@uniandes.edu.co')) {
+                          setState(() {
+                            emailError = true;
+                            emailErrorMessage =
+                                'Email must be of the domain @uniandes.edu.co.';
+                          });
+                        }
 
-                      if (!isValid) return;
+                        if (password.isEmpty) {
+                          setState(() {
+                            passwordError = true;
+                            passwordErrorMessage = 'Please enter your password';
+                            isValid = false;
+                          });
+                        } else if (!_isPasswordValid(password)) {
+                          setState(() {
+                            passwordError = true;
+                            passwordErrorMessage =
+                                'Password must have at least 8 characters, one uppercase, one lowercase, and one special character.';
+                            isValid = false;
+                          });
+                        }
 
-                      Users? user = await Auth().signUpWithEmailPassword(
-                        fullName,
-                        email,
-                        password,
-                      );
+                        if (confirmPassword.isEmpty) {
+                          setState(() {
+                            confirmPasswordError = true;
+                            confirmPasswordErrorMessage =
+                                'Please confirm your password';
+                            isValid = false;
+                          });
+                        } else if (confirmPassword != password) {
+                          setState(() {
+                            confirmPasswordError = true;
+                            confirmPasswordErrorMessage =
+                                'Passwords do not match';
+                            isValid = false;
+                          });
+                        }
 
-                      if (user != null) {
-                        // Navigate to login page after successful sign up
-                        Navigator.pushReplacementNamed(context, '/login');
-                        await devicesRepository.updateDevicesMap();
+                        if (!isValid) return;
+
+                        Users? user = await Auth().signUpWithEmailPassword(
+                          fullName,
+                          email,
+                          password,
+                        );
+
+                        if (user != null) {
+                          // Navigate to login page after successful sign up
+                          Navigator.pushReplacementNamed(context, '/login');
+                          await devicesRepository.updateDevicesMap();
+                        } else {
+                          // Handle sign up failure
+                          // For example, display an error message
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Sign Up Failed'),
+                              content: const Text(
+                                'Failed to sign up. Please try again later.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    // Clear text fields
+                                    fullNameController.clear();
+                                    emailController.clear();
+                                    passwordController.clear();
+                                    confirmPasswordController.clear();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       } else {
-                        // Handle sign up failure
-                        // For example, display an error message
+                        // No hay conexión a Internet, mostrar un diálogo
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Sign Up Failed'),
-                            content: const Text(
-                              'Failed to sign up. Please try again later.',
-                            ),
+                            title: Text('No Internet'),
+                            content: Text(
+                                'You cannot sign up without internet connection. Please try again later.'),
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  // Clear text fields
-                                  fullNameController.clear();
-                                  emailController.clear();
-                                  passwordController.clear();
-                                  confirmPasswordController.clear();
-                                  Navigator.of(context).pop();
+                                  Navigator.pop(context);
                                 },
-                                child: const Text('OK'),
+                                child: Text('OK'),
                               ),
                             ],
                           ),
