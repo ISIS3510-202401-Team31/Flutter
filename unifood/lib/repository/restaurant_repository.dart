@@ -202,7 +202,6 @@ class RestaurantRepository {
       if (!_cache.containsKey(cacheKey)) {
         rethrow;
       } else {
-        // If there's cached data, return it
         print('Returning cached response for $cacheKey');
         return _cache[cacheKey]!;
       }
