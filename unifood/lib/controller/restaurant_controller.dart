@@ -105,6 +105,35 @@ class RestaurantController {
     }
   }
 
+  Future<List<Restaurant>> getLikedRestaurants() async {
+    try {
+      final userLocation = await _getUserLocation();
+      final data = await _restaurantRepository.fetchLikedRestaurants(
+          userLocation.latitude.toString(), userLocation.longitude.toString());
+
+      return _mapRestaurantData(data, userLocation);
+    } on TimeoutException catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getlikedRestaurants',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      throw ('Timeout while fetching liked restaurants: $e');
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getLikedRestaurants',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when fetching liked restaurants in ViewModel: $e');
+      rethrow;
+    }
+  }
+
   Future<Position> _getUserLocation() async {
     try {
       return await _locationRepository.getUserLocation();
