@@ -6,6 +6,7 @@ import 'package:unifood/view/profile/dashboard/views/profile.dart';
 import 'package:unifood/view/restaurant/detail/views/restaurant_detail.dart';
 import 'package:unifood/view/restaurant/dashboard/views/restaurants.dart';
 import 'package:unifood/view/restaurant/favorites/views/favorites.dart';
+import 'package:unifood/view/restaurant/liked/views/likedRestaurants.dart';
 import 'package:unifood/view/restaurant/plateDetail/view/plate_detail.dart';
 import 'package:unifood/view/restaurant/search/views/search_view.dart';
 import 'package:unifood/view/profile/preferences/views/preferences.dart';
@@ -29,7 +30,7 @@ class Routes {
             builder: (_) => const RestaurantDetail(
                   restaurantId: "",
                 ));
-      case '/plate_detail' :
+      case '/plate_detail':
         return MaterialPageRoute(
             builder: (_) => const PlateDetail(
                   restaurantId: "",
@@ -52,6 +53,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const FilterMenu());
       case '/favorites': // Define la ruta dirijirse a favoritos
         return MaterialPageRoute(builder: (_) => const Favorites());
+      case '/liked': // Define la ruta dirijirse a favoritos
+        return MaterialPageRoute(builder: (_) => const LikedRestaurants());
 
       default:
         return MaterialPageRoute(builder: (_) => const Landing());
