@@ -20,7 +20,6 @@ class LikedRestaurants extends StatefulWidget {
 
 class _LikedRestaurantsState extends State<LikedRestaurants> {
   final RestaurantController _restaurantController = RestaurantController();
-  late StreamSubscription<List<Restaurant>> _restaurantSubscription;
   bool _locationPermissionGranted = false;
   late bool _isConnected;
   // ignore: unused_field
@@ -31,12 +30,6 @@ class _LikedRestaurantsState extends State<LikedRestaurants> {
     super.initState();
     _checkConnectivity();
     _requestLocationPermission();
-    _restaurantController.fetchrestaurants();
-
-    _restaurantSubscription =
-        _restaurantController.restaurants.listen((restaurant) {
-      setState(() {});
-    });
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -45,12 +38,6 @@ class _LikedRestaurantsState extends State<LikedRestaurants> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
-  }
-
-  @override
-  void dispose() {
-    _restaurantSubscription.cancel();
-    super.dispose();
   }
 
   void _onUserInteraction(String feature, String action) {
