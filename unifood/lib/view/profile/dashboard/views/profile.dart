@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/shared_preferences.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/profile/dashboard/widgets/custom_settings_button.dart';
@@ -381,6 +382,7 @@ class _ProfileState extends State<Profile> {
                                           try {
                                             await FirebaseAuth.instance
                                                 .signOut();
+                                            await SharedPreferencesService().clearUser();
                                             // Navegar a la pantalla de inicio de sesión o a otra pantalla según sea necesario
                                             Navigator.pushNamedAndRemoveUntil(
                                               context,
