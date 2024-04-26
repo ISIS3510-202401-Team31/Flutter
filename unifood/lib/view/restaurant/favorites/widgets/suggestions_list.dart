@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
@@ -26,8 +29,33 @@ enum FilterType {
 class _SuggestedRestaurantsSectionState
     extends State<SuggestedRestaurantsSection> {
   late String filter = 'restrictions';
-  FilterType selectedFilter =
-      FilterType.restrictions; // Valor inicial del filtro seleccionado
+  FilterType selectedFilter = FilterType.restrictions; 
+    // ignore: unused_field
+  late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+
+    _connectivitySubscription = Connectivity()
+       .onConnectivityChanged
+       .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result!= ConnectivityResult.none;
+      });
+    });
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +139,10 @@ class _SuggestedRestaurantsSectionState
                   ),
                 );
               } else if (snapshot.hasError) {
+                print(snapshot.error.toString());
+                if (snapshot.error.toString().contains('Connection failed')) {
+                  return _buildNoInternetWidget(screenWidth, screenHeight);
+                } else {
                 return Padding(
                   padding: EdgeInsets.all(screenWidth * 0.03),
                   child: Center(
@@ -139,7 +171,7 @@ class _SuggestedRestaurantsSectionState
                       ],
                     ),
                   ),
-                );
+                );}
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 final List<Restaurant> suggestedRestaurants = snapshot.data!;
                 return SingleChildScrollView(
@@ -192,6 +224,49 @@ class _SuggestedRestaurantsSectionState
                 );
               }
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoInternetWidget(double screenWidth, double screenHeight) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 65,
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: 10.0),
+          Text(
+            'Oops! No Internet Connection',
+            style: TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          SizedBox(height: 2.0),
+          ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                _checkConnectivity();
+              });
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+            ),
+            icon: Icon(Icons.refresh, color: Colors.grey[600], size:10),
+            label: Text(
+              'Refresh',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 9.0,
+              ),
+            ),
           ),
         ],
       ),

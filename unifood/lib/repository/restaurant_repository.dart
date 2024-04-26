@@ -148,7 +148,7 @@ class RestaurantRepository {
       String userId, String categoryFilter) async {
     final String cacheKey = '$userId-$categoryFilter';
     try {
-      // Attempt to fetch data from the network
+      // Try fetching data from the network
       final response = await http
           .get(Uri.parse(
               'http://3.22.0.19:5000//recommend/$userId/$categoryFilter'))
@@ -169,8 +169,7 @@ class RestaurantRepository {
 
         return restaurantsData;
       } else {
-        // If network request fails, check if there is cached data available
-        if (_cache.containsKey(cacheKey)) {
+         if (_cache.containsKey(cacheKey)) {
           print('Returning cached response for $cacheKey');
           return _cache[cacheKey]!;
         } else {
@@ -198,12 +197,11 @@ class RestaurantRepository {
       };
       AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching recommended restaurants in repository: $e');
-      // If network request fails and there's no cached data, rethrow the error
-      if (!_cache.containsKey(cacheKey)) {
-        rethrow;
-      } else {
+      if (_cache.containsKey(cacheKey)) {
         print('Returning cached response for $cacheKey');
         return _cache[cacheKey]!;
+      } else {
+        rethrow;
       }
     }
   }
