@@ -30,6 +30,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   final ReviewController _reviewViewModel = ReviewController();
   late StreamSubscription _subscription;
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
   Restaurant? _restaurant;
   List<Plate> _plates = [];
   List<Review> _reviews = [];
@@ -55,6 +57,14 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
         } else if (data is List<Review>) {
           _reviews = data;
         }
+      });
+    });
+
+    _connectivitySubscription = Connectivity()
+       .onConnectivityChanged
+       .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result!= ConnectivityResult.none;
       });
     });
   }
@@ -108,7 +118,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               ),
             );
           } else if (snapshot.hasError) {
-            return _buildNoInternetWidget(MediaQuery.of(context).size.width,
+            return _buildErrorWidget(MediaQuery.of(context).size.width,
                 MediaQuery.of(context).size.height);
           } else if (snapshot.hasData) {
             return _buildContent(MediaQuery.of(context).size.width,
