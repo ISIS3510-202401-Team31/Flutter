@@ -1,13 +1,15 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:unifood/controller/restaurant_controller.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
-import 'package:unifood/controller/restaurant_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:connectivity/connectivity.dart';
 
 class Restaurants extends StatefulWidget {
   const Restaurants({Key? key}) : super(key: key);
@@ -17,13 +19,33 @@ class Restaurants extends StatefulWidget {
 }
 
 class _RestaurantsState extends State<Restaurants> {
+  final RestaurantController _restaurantController = RestaurantController();
   bool _locationPermissionGranted = false;
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
     _requestLocationPermission();
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
+  }
+
+  void _onUserInteraction(String feature, String action) {
+    final event = {
+      'feature': feature,
+      'action': action,
+    };
+    AnalyticsRepository().saveEvent(event);
   }
 
   Future<void> _checkConnectivity() async {
@@ -42,14 +64,6 @@ class _RestaurantsState extends State<Restaurants> {
     }
   }
 
-  void _onUserInteraction(String feature, String action) {
-    final event = {
-      'feature': feature,
-      'action': action,
-    };
-    AnalyticsRepository().saveEvent(event);
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -57,7 +71,6 @@ class _RestaurantsState extends State<Restaurants> {
     double fontSize = screenWidth * 0.027;
 
     if (!_locationPermissionGranted) {
-      // Si el permiso de ubicación aún no se ha concedido, muestra un indicador de carga
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -80,6 +93,7 @@ class _RestaurantsState extends State<Restaurants> {
                     child: CustomCircledButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/favorites');
+                        _onUserInteraction("Favorites", "Tap");
                       },
                       diameter: 36,
                       icon: const Icon(
@@ -93,6 +107,7 @@ class _RestaurantsState extends State<Restaurants> {
                     child: CustomCircledButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/profile');
+                        _onUserInteraction("Profile", "Tap");
                       },
                       diameter: 36,
                       icon: const Icon(
@@ -137,61 +152,94 @@ class _RestaurantsState extends State<Restaurants> {
               color: const Color(0xFF965E4E),
             ),
             const SizedBox(height: 10),
+            _isConnected
+                ? Container()
+                : Container(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.warning,
+                          color: Colors.grey,
+                          size: screenWidth * 0.05,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'No Connection. Data might not be updated',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
             GestureDetector(
-              onTap: () {
-                _onUserInteraction("All restaurants", "Tap");
-              },
-              child: NotificationListener<ScrollUpdateNotification>(
-                onNotification: (notification) {
-                  _onUserInteraction("All restaurants", "Scroll");
-                  return true;
+                onTap: () {
+                  _onUserInteraction("All restaurants", "Tap");
                 },
-                child: SizedBox(
-                  height: screenHeight * 0.338,
-                  child: FutureBuilder<List<Restaurant>>(
-                    future: RestaurantController().getRestaurants(),
-                    builder: (context, snapshot) {
-                      if (!_isConnected) {
-                        final List<Restaurant> favoriteRestaurants =
-                            snapshot.data!;
-                        // Si no hay conexión, muestra un mensaje de error
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              child: Padding(
-                                padding: EdgeInsets.all(screenWidth * 0.02),
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      bottom: screenHeight * 0.01),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.warning,
-                                        color: Colors.grey,
-                                        size: screenWidth * 0.05,
+                child: NotificationListener<ScrollUpdateNotification>(
+                    onNotification: (notification) {
+                      _onUserInteraction("All restaurants", "Scroll");
+                      return true;
+                    },
+                    child: Container(
+                      height: screenHeight * 0.315,
+                      child: FutureBuilder<List<Restaurant>>(
+                        future: _restaurantController.getRestaurants(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: SpinKitThreeBounce(
+                                color: Colors.black,
+                                size: 30.0,
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Padding(
+                              padding: EdgeInsets.all(screenWidth * 0.03),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Oops! Something went wrong.\nPlease try again later.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        fontWeight:
+                                            FontWeight.bold, // Letra en negrita
                                       ),
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'No Connection. Data might not be updated',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
+                                    ),
+                                    SizedBox(height: screenHeight * 0.02),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.refresh,
+                                        size:
+                                            MediaQuery.of(context).size.width *
+                                                0.08,
                                       ),
-                                    ],
-                                  ),
+                                      onPressed: () {
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            Container(
+                            );
+                          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                            List<Restaurant> favorites = snapshot.data!;
+                            return Container(
                               color: const Color(0xFF965E4E).withOpacity(0.15),
-                              height: screenHeight * 0.27,
+                              height: screenHeight * 0.338,
                               child: SingleChildScrollView(
                                 child: Column(
-                                  children:
-                                      favoriteRestaurants.map((restaurant) {
+                                  children: favorites.map((restaurant) {
                                     return CustomRestaurant(
                                       id: restaurant.id,
                                       imageUrl: restaurant.imageUrl,
@@ -205,82 +253,14 @@ class _RestaurantsState extends State<Restaurants> {
                                   }).toList(),
                                 ),
                               ),
-                            )
-                          ],
-                        );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                          child: SpinKitThreeBounce(
-                            color: Colors.black,
-                            size: 30.0,
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Padding(
-                          padding: EdgeInsets.all(screenWidth * 0.03),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Oops! Something went wrong.\nPlease try again later.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.04,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: screenHeight * 0.02),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.refresh,
-                                    size: MediaQuery.of(context).size.width *
-                                        0.08,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {});
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      } else if (snapshot.hasData &&
-                          snapshot.data!.isNotEmpty) {
-                        final List<Restaurant> favoriteRestaurants =
-                            snapshot.data!;
-                        return Container(
-                          color: const Color(0xFF965E4E).withOpacity(0.15),
-                          height: screenHeight * 0.338,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: favoriteRestaurants.map((restaurant) {
-                                return CustomRestaurant(
-                                  id: restaurant.id,
-                                  imageUrl: restaurant.imageUrl,
-                                  logoUrl: restaurant.logoUrl,
-                                  name: restaurant.name,
-                                  isOpen: restaurant.isOpen,
-                                  distance: restaurant.distance,
-                                  rating: restaurant.rating,
-                                  avgPrice: restaurant.avgPrice,
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return const Center(child: Text('No data available.'));
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
+                            );
+                          } else {
+                            return const Center(
+                                child: Text('No data available.'));
+                          }
+                        },
+                      ),
+                    ))),
             SizedBox(height: screenHeight * 0.015),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -301,61 +281,63 @@ class _RestaurantsState extends State<Restaurants> {
               color: const Color(0xFF965E4E),
             ),
             SizedBox(height: screenHeight * 0.01),
+            _isConnected
+                ? Container()
+                : Container(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.warning,
+                          color: Colors.grey,
+                          size: screenWidth * 0.05,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'No Connection. Data might not be updated',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
             GestureDetector(
-              onTap: () {
-                _onUserInteraction("Nearby restaurants", "Tap");
-              },
-              child: NotificationListener<ScrollUpdateNotification>(
-                onNotification: (notification) {
-                  _onUserInteraction("Nearby restaurants", "Scroll");
-                  return true;
+                onTap: () {
+                  _onUserInteraction("Nearby restaurants", "Tap");
                 },
-                child: SizedBox(
-                  height: screenHeight * 0.338,
-                  child: FutureBuilder<List<Restaurant>>(
-                    future: RestaurantController().getRestaurantsNearby(),
-                    builder: (context, snapshot) {
-                      if (!_isConnected) {
-                        final List<Restaurant> favoriteRestaurants =
-                            snapshot.data!;
-                        // Si no hay conexión, muestra un mensaje de error
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              child: Padding(
-                                padding: EdgeInsets.all(screenWidth * 0.02),
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      bottom: screenHeight * 0.01),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.warning,
-                                        color: Colors.grey,
-                                        size: screenWidth * 0.05,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'No Connection. Data might not be updated',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                child: NotificationListener<ScrollUpdateNotification>(
+                    onNotification: (notification) {
+                      _onUserInteraction("Nearby restaurants", "Scroll");
+                      return true;
+                    },
+                    child: Container(
+                      height: screenHeight * 0.315,
+                      child: FutureBuilder<List<Restaurant>>(
+                        future: RestaurantController().getRestaurantsNearby(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: SpinKitThreeBounce(
+                                color: Colors.black,
+                                size: 30.0,
                               ),
-                            ),
-                            Container(
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.hasData &&
+                              snapshot.data!.isNotEmpty) {
+                            final List<Restaurant> nearbyRestaurants =
+                                snapshot.data!;
+                            return Container(
+                              height: screenHeight * 0.338,
                               color: const Color(0xFF965E4E).withOpacity(0.15),
-                              height: screenHeight * 0.27,
                               child: SingleChildScrollView(
                                 child: Column(
-                                  children:
-                                      favoriteRestaurants.map((restaurant) {
+                                  children: nearbyRestaurants.map((restaurant) {
                                     return CustomRestaurant(
                                       id: restaurant.id,
                                       imageUrl: restaurant.imageUrl,
@@ -369,65 +351,27 @@ class _RestaurantsState extends State<Restaurants> {
                                   }).toList(),
                                 ),
                               ),
-                            )
-                          ],
-                        );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                          child: SpinKitThreeBounce(
-                            color: Colors.black,
-                            size: 30.0,
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (snapshot.hasData &&
-                          snapshot.data!.isNotEmpty) {
-                        final List<Restaurant> nearbyRestaurants =
-                            snapshot.data!;
-                        return Container(
-                          height: screenHeight * 0.338,
-                          color: const Color(0xFF965E4E).withOpacity(0.15),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: nearbyRestaurants.map((restaurant) {
-                                return CustomRestaurant(
-                                  id: restaurant.id,
-                                      imageUrl: restaurant.imageUrl,
-                                      logoUrl: restaurant.logoUrl,
-                                      name: restaurant.name,
-                                      isOpen: restaurant.isOpen,
-                                      distance: restaurant.distance,
-                                      rating: restaurant.rating,
-                                      avgPrice: restaurant.avgPrice,
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Padding(
-                          padding: EdgeInsets.all(screenWidth * 0.05),
-                          child: Center(
-                            child: Text(
-                              'No restaurants available.\nYou are out of service areas',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: screenHeight * 0.02,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.grey[600],
+                            );
+                          } else {
+                            return Padding(
+                              padding: EdgeInsets.all(screenWidth * 0.05),
+                              child: Center(
+                                child: Text(
+                                  'No restaurants available.\nYou are out of service areas',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: screenHeight * 0.02,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
+                            );
+                          }
+                        },
+                      ),
+                    ))),
             SizedBox(height: screenHeight * 0.01),
           ],
         ),

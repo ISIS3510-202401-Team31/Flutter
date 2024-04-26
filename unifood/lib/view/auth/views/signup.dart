@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,9 @@ class _SignupState extends State<Signup> {
   );
   late bool _isConnected;
 
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
+
   bool fullNameError = false;
   String fullNameErrorMessage = '';
 
@@ -53,6 +58,14 @@ class _SignupState extends State<Signup> {
   void initState() {
     super.initState();
     _checkConnectivity();
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
   }
 
   Future<void> _checkConnectivity() async {

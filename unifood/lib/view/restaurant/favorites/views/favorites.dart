@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
@@ -84,7 +87,8 @@ class _FavoritesState extends State<Favorites> {
           final Users? currentUser = snapshot.data![1];
           final List<Restaurant> favoriteRestaurants = snapshot.data![0];
 
-          return _FavoritesWidget(currentUser!, favoriteRestaurants);
+          return _FavoritesWidget(
+              currentUser!, favoriteRestaurants, screenHeight, screenWidth);
         } else {
           return const Scaffold(
             body: Center(
@@ -100,15 +104,42 @@ class _FavoritesState extends State<Favorites> {
 class _FavoritesWidget extends StatefulWidget {
   final Users currentUser;
   final List<Restaurant> favoriteRestaurants;
+  final double screenHeight;
+  final double screenWidth;
 
-  const _FavoritesWidget(this.currentUser, this.favoriteRestaurants);
+  const _FavoritesWidget(this.currentUser, this.favoriteRestaurants,
+      this.screenHeight, this.screenWidth);
 
   @override
   _FavoritesWidgetState createState() => _FavoritesWidgetState();
 }
 
 class _FavoritesWidgetState extends State<_FavoritesWidget> {
-  
+  late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
+
+  void _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
+  }
+
   void _onUserInteraction(String feature, String action) {
     final event = {
       'feature': feature,
@@ -117,6 +148,7 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
     AnalyticsRepository().saveEvent(event);
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -158,6 +190,29 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
             right: screenWidth * 0.04),
         child: Column(
           children: [
+            _isConnected
+                ? Container()
+                : Container(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.warning,
+                          color: Colors.grey,
+                          size: screenWidth * 0.05,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'No Connection. Data might not be updated',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
             NotificationListener<ScrollUpdateNotification>(
                 onNotification: (notification) {
                   _onUserInteraction("Suggested Restaurants", "Scroll");
