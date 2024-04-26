@@ -20,6 +20,7 @@ class Restaurants extends StatefulWidget {
 
 class _RestaurantsState extends State<Restaurants> {
   final RestaurantController _restaurantController = RestaurantController();
+  late StreamSubscription<List<Restaurant>> _restaurantSubscription;
   bool _locationPermissionGranted = false;
   late bool _isConnected;
   // ignore: unused_field
@@ -30,6 +31,12 @@ class _RestaurantsState extends State<Restaurants> {
     super.initState();
     _checkConnectivity();
     _requestLocationPermission();
+    _restaurantController.fetchrestaurants();
+
+    _restaurantSubscription =
+        _restaurantController.restaurants.listen((restaurant) {
+      setState(() {});
+    });
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -38,6 +45,12 @@ class _RestaurantsState extends State<Restaurants> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _restaurantSubscription.cancel();
+    super.dispose();
   }
 
   void _onUserInteraction(String feature, String action) {
@@ -186,8 +199,8 @@ class _RestaurantsState extends State<Restaurants> {
                     },
                     child: Container(
                       height: screenHeight * 0.315,
-                      child: FutureBuilder<List<Restaurant>>(
-                        future: _restaurantController.getRestaurants(),
+                      child: StreamBuilder<List<Restaurant>>(
+                        stream: _restaurantController.restaurants,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -232,7 +245,8 @@ class _RestaurantsState extends State<Restaurants> {
                                 ),
                               ),
                             );
-                          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          } else if (snapshot.hasData &&
+                              snapshot.data!.isNotEmpty) {
                             List<Restaurant> favorites = snapshot.data!;
                             return Container(
                               color: const Color(0xFF965E4E).withOpacity(0.15),
