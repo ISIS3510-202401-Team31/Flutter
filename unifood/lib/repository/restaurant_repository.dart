@@ -205,4 +205,31 @@ class RestaurantRepository {
       }
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchLikedRestaurants(
+      String userLat, String userLong) async {
+    try {
+      final response = await http
+          .get(
+              Uri.parse('http://3.22.0.19:5000//most_liked/$userLat/$userLong'))
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = json.decode(response.body);
+        List<Map<String, dynamic>> restaurantsData =
+            List<Map<String, dynamic>>.from(responseData);
+
+        for (Map<String, dynamic> restaurantData in restaurantsData) {
+          restaurantData['id'] = restaurantData['docId'];
+        }
+
+        return restaurantsData;
+      } else {
+        throw Exception(
+            'Failed to load liked restaurants. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error while fetching liked restaurants: $e');
+    }
+  }
 }

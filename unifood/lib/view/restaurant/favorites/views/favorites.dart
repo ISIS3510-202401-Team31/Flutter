@@ -30,10 +30,11 @@ class _FavoritesState extends State<Favorites> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final restaurantInfoData = await RestaurantController().getRestaurants();
-    final user = await UserRepository().getUserSession();
-
-    return [restaurantInfoData, user];
+    return RestaurantController().getRestaurants().then((restaurantInfoData) {
+      return UserRepository().getUserSession().then((user) {
+        return [restaurantInfoData, user];
+      });
+    });
   }
 
   @override

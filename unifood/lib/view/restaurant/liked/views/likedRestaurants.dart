@@ -11,16 +11,15 @@ import 'package:unifood/view/widgets/custom_circled_button.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class Restaurants extends StatefulWidget {
-  const Restaurants({Key? key}) : super(key: key);
+class LikedRestaurants extends StatefulWidget {
+  const LikedRestaurants({Key? key}) : super(key: key);
 
   @override
-  _RestaurantsState createState() => _RestaurantsState();
+  _LikedRestaurantsState createState() => _LikedRestaurantsState();
 }
 
-class _RestaurantsState extends State<Restaurants> {
+class _LikedRestaurantsState extends State<LikedRestaurants> {
   final RestaurantController _restaurantController = RestaurantController();
-  late StreamSubscription<List<Restaurant>> _restaurantSubscription;
   bool _locationPermissionGranted = false;
   late bool _isConnected;
   // ignore: unused_field
@@ -31,12 +30,6 @@ class _RestaurantsState extends State<Restaurants> {
     super.initState();
     _checkConnectivity();
     _requestLocationPermission();
-    _restaurantController.fetchrestaurants();
-
-    _restaurantSubscription =
-        _restaurantController.restaurants.listen((restaurant) {
-      setState(() {});
-    });
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -45,12 +38,6 @@ class _RestaurantsState extends State<Restaurants> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
-  }
-
-  @override
-  void dispose() {
-    _restaurantSubscription.cancel();
-    super.dispose();
   }
 
   void _onUserInteraction(String feature, String action) {
@@ -97,7 +84,7 @@ class _RestaurantsState extends State<Restaurants> {
         child: CustomAppBarBuilder(
           screenHeight: screenHeight,
           screenWidth: screenWidth,
-          showBackButton: false,
+          showBackButton: true,
         )
             .setRightWidget(
               Row(
@@ -105,12 +92,12 @@ class _RestaurantsState extends State<Restaurants> {
                   Container(
                     child: CustomCircledButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/favorites');
+                        Navigator.pushNamed(context, '/restaurants');
                         _onUserInteraction("Favorites", "Tap");
                       },
                       diameter: 36,
                       icon: const Icon(
-                        Icons.favorite,
+                        Icons.home,
                         color: Colors.black,
                       ),
                       buttonColor: const Color(0xFF965E4E),
@@ -143,24 +130,17 @@ class _RestaurantsState extends State<Restaurants> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'All restaurants',
+                  'Top 5 Restaurants',
                   style: TextStyle(
                       fontFamily: 'KeaniaOne', fontSize: fontSize * 1.8),
                 ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/restaurant_search');
-                    _onUserInteraction("Restaurants Search", "Tap");
-                  },
-                  icon: Icon(
-                    Icons.search_rounded,
-                    size: screenHeight * 0.035,
-                  ),
-                )
               ],
             ),
             Container(
-              padding: const EdgeInsets.only(left: 50, right: 10),
+              padding: const EdgeInsets.only(
+                left: 50,
+                right: 10,
+              ),
               height: 2,
               color: const Color(0xFF965E4E),
             ),
@@ -190,17 +170,17 @@ class _RestaurantsState extends State<Restaurants> {
                   ),
             GestureDetector(
                 onTap: () {
-                  _onUserInteraction("All restaurants", "Tap");
+                  _onUserInteraction("Most liked restaurants", "Tap");
                 },
                 child: NotificationListener<ScrollUpdateNotification>(
                     onNotification: (notification) {
-                      _onUserInteraction("All restaurants", "Scroll");
+                      _onUserInteraction("Most liked restaurants", "Scroll");
                       return true;
                     },
                     child: Container(
-                      height: screenHeight * 0.315,
-                      child: StreamBuilder<List<Restaurant>>(
-                        stream: _restaurantController.restaurants,
+                      height: screenHeight * 0.75,
+                      child: FutureBuilder<List<Restaurant>>(
+                        future: _restaurantController.getLikedRestaurants(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -261,7 +241,7 @@ class _RestaurantsState extends State<Restaurants> {
                                       name: restaurant.name,
                                       isOpen: restaurant.isOpen,
                                       distance: restaurant.distance,
-                                      rating: restaurant.rating,
+                                      rating: restaurant.likes.toDouble(),
                                       avgPrice: restaurant.avgPrice,
                                     );
                                   }).toList(),
@@ -275,118 +255,6 @@ class _RestaurantsState extends State<Restaurants> {
                         },
                       ),
                     ))),
-            SizedBox(height: screenHeight * 0.015),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 7),
-                  child: Text(
-                    'Nearby',
-                    style: TextStyle(
-                        fontFamily: 'KeaniaOne', fontSize: fontSize * 1.8),
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 50, right: 10),
-              height: 2,
-              color: const Color(0xFF965E4E),
-            ),
-            SizedBox(height: screenHeight * 0.01),
-            _isConnected
-                ? Container()
-                : Container(
-                    padding: EdgeInsets.only(bottom: screenHeight * 0.01),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.warning,
-                          color: Colors.grey,
-                          size: screenWidth * 0.05,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'No Connection. Data might not be updated',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-            GestureDetector(
-                onTap: () {
-                  _onUserInteraction("Nearby restaurants", "Tap");
-                },
-                child: NotificationListener<ScrollUpdateNotification>(
-                    onNotification: (notification) {
-                      _onUserInteraction("Nearby restaurants", "Scroll");
-                      return true;
-                    },
-                    child: Container(
-                      height: screenHeight * 0.315,
-                      child: FutureBuilder<List<Restaurant>>(
-                        future: RestaurantController().getRestaurantsNearby(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: SpinKitThreeBounce(
-                                color: Colors.black,
-                                size: 30.0,
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (snapshot.hasData &&
-                              snapshot.data!.isNotEmpty) {
-                            final List<Restaurant> nearbyRestaurants =
-                                snapshot.data!;
-                            return Container(
-                              height: screenHeight * 0.338,
-                              color: const Color(0xFF965E4E).withOpacity(0.15),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: nearbyRestaurants.map((restaurant) {
-                                    return CustomRestaurant(
-                                      id: restaurant.id,
-                                      imageUrl: restaurant.imageUrl,
-                                      logoUrl: restaurant.logoUrl,
-                                      name: restaurant.name,
-                                      isOpen: restaurant.isOpen,
-                                      distance: restaurant.distance,
-                                      rating: restaurant.rating,
-                                      avgPrice: restaurant.avgPrice,
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Padding(
-                              padding: EdgeInsets.all(screenWidth * 0.05),
-                              child: Center(
-                                child: Text(
-                                  'No restaurants available.\nYou are out of service areas',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: screenHeight * 0.02,
-                                    fontWeight: FontWeight.bold,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ))),
-            SizedBox(height: screenHeight * 0.01),
           ],
         ),
       ),

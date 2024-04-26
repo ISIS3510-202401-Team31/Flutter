@@ -302,7 +302,7 @@ class _ProfileState extends State<Profile> {
                                       backgroundColor: const Color.fromARGB(
                                           255, 169, 75, 75),
                                       onPressed: () {
-                                        // Add functionality for the settings button
+                                        Navigator.pushNamed(context, '/liked');
                                       },
                                     ),
                                     CustomSettingsButton(
