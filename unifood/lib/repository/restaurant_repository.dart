@@ -11,7 +11,7 @@ class RestaurantRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
 
   // RestaurantRepository() : _firestoreServiceAdapter = FirestoreServiceAdapter();
-  Map<String, List<Map<String, dynamic>>> _cache = {};
+  static Map<String, List<Map<String, dynamic>>> _cache = {};
 
   late Database _database;
 
@@ -208,6 +208,7 @@ class RestaurantRepository {
 
   Future<List<Map<String, dynamic>>> fetchLikedRestaurants(
       String userLat, String userLong) async {
+    final String cacheKey = '$userLat-$userLong';
     try {
       final response = await http
           .get(
@@ -223,13 +224,44 @@ class RestaurantRepository {
           restaurantData['id'] = restaurantData['docId'];
         }
 
+        _cache[cacheKey] = restaurantsData;
+
         return restaurantsData;
       } else {
-        throw Exception(
-            'Failed to load liked restaurants. Status code: ${response.statusCode}');
+         if (_cache.containsKey(cacheKey)) {
+          print('Returning cached response for $cacheKey');
+          return _cache[cacheKey]!;
+        } else {
+          // If no cached data available, return an empty list
+          print(
+              'Failed to load liked restaurants. Status code: ${response.statusCode}');
+          return [];
+        }
       }
-    } catch (e) {
-      throw Exception('Error while fetching liked restaurants: $e');
+    } on TimeoutException catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'mostLikedRestaurants',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      throw ('Timeout while fetching liked restaurants: $e');
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'mostLikedRestaurants',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when fetching liked restaurants in repository: $e');
+      if (_cache.containsKey(cacheKey)) {
+        print('Returning cached response for $cacheKey');
+        return _cache[cacheKey]!;
+      } else {
+        rethrow;
+      }
     }
   }
 }
