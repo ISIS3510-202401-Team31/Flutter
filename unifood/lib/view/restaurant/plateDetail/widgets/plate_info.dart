@@ -60,6 +60,8 @@ class _PlateInfoState extends State<PlateInfo> {
                     fontSize:screenWidth * 0.05,
                     fontWeight: FontWeight.bold,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
                 IconButton(
                   icon: Icon(
