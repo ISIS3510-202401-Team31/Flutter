@@ -1,14 +1,18 @@
+import 'dart:async';
+import 'package:async/async.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:unifood/repository/analytics_repository.dart';
+import 'package:unifood/controller/plate_controller.dart';
+import 'package:unifood/controller/restaurant_controller.dart';
+import 'package:unifood/controller/review_controller.dart';
+import 'package:unifood/model/plate_entity.dart';
+import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/model/review_entity.dart';
 import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.dart';
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/controller/plate_controller.dart';
-import 'package:unifood/controller/restaurant_controller.dart';
-import 'package:unifood/controller/review_controller.dart';
-import 'package:connectivity/connectivity.dart';
 
 class RestaurantDetail extends StatefulWidget {
   final String restaurantId;
@@ -21,13 +25,48 @@ class RestaurantDetail extends StatefulWidget {
 }
 
 class _RestaurantDetailState extends State<RestaurantDetail> {
-  late Future<List<dynamic>> dataFuture = fetchData();
+  final RestaurantController _restaurantViewModel = RestaurantController();
+  final PlateController _plateViewModel = PlateController();
+  final ReviewController _reviewViewModel = ReviewController();
+  late StreamSubscription _subscription;
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
+  Restaurant? _restaurant;
+  List<Plate> _plates = [];
+  List<Review> _reviews = [];
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
+    _restaurantViewModel.getRestaurantById(widget.restaurantId);
+    _plateViewModel.getPlatesByRestaurantId(widget.restaurantId);
+    _reviewViewModel.getReviewsByRestaurantId(widget.restaurantId);
+
+    _subscription = StreamGroup.merge([
+      _restaurantViewModel.restaurantById,
+      _plateViewModel.platesByRestaurantId,
+      _reviewViewModel.reviewsByRestaurantId,
+    ]).listen((data) {
+      setState(() {
+        if (data is Restaurant) {
+          _restaurant = data;
+        } else if (data is List<Plate>) {
+          _plates = data;
+        } else if (data is List<Review>) {
+          _reviews = data;
+        }
+      });
+    });
+
+    _connectivitySubscription = Connectivity()
+       .onConnectivityChanged
+       .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result!= ConnectivityResult.none;
+      });
+    });
   }
 
   Future<void> _checkConnectivity() async {
@@ -35,59 +74,41 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     setState(() {
       _isConnected = connectivityResult != ConnectivityResult.none;
     });
-    fetchData();
   }
 
-  Future<List<dynamic>> fetchData() async {
-    final restaurantInfoData =
-        await RestaurantController().getRestaurantById(widget.restaurantId);
-
-    if (_isConnected) {
-      final menuItemsData =
-          await PlateController().getPlatesByRestaurantId(widget.restaurantId);
-      final reviewsData = await ReviewController()
-          .getReviewsByRestaurantId(widget.restaurantId);
-
-      return [restaurantInfoData, menuItemsData, reviewsData];
-    }
-
-    return [restaurantInfoData];
-  }
-
-  void _onUserInteraction(String feature, String action) {
-    final event = {
-      'feature': feature,
-      'action': action,
-    };
-    AnalyticsRepository().saveEvent(event);
+  @override
+  void dispose() {
+    _restaurantViewModel.dispose();
+    _plateViewModel.dispose();
+    _reviewViewModel.dispose();
+    _subscription.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight * 0.05),
+        preferredSize:
+            Size.fromHeight(MediaQuery.of(context).size.height * 0.05),
         child: CustomAppBarBuilder(
-          screenHeight: screenHeight,
-          screenWidth: screenWidth,
+          screenHeight: MediaQuery.of(context).size.height,
+          screenWidth: MediaQuery.of(context).size.width,
           showBackButton: true,
         )
             .setRightWidget(
               IconButton(
-                icon: Icon(Icons.search, size: screenWidth * 0.07),
+                icon: Icon(Icons.search,
+                    size: MediaQuery.of(context).size.width * 0.07),
                 onPressed: () {
                   Navigator.pushNamed(context, "/filtermenu");
-                  _onUserInteraction("Menu Search", "Tap");
                 },
               ),
             )
             .build(context),
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: dataFuture,
+      body: StreamBuilder(
+        stream: _restaurantViewModel.restaurantById,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -97,43 +118,11 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               ),
             );
           } else if (snapshot.hasError) {
-            return _buildErrorWidget(screenWidth, screenHeight);
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            final data = snapshot.data!;
-            
-            final restaurantInfo = RestaurantInfo(restaurant: data[0]);
-            Widget? menuWidget;
-            Widget? reviewWidget;
-
-            if (data.length > 1 && _isConnected) {
-              menuWidget = MenuGrid(
-                menuItems: data[1],
-                restaurantId: widget.restaurantId,
-              );
-            }
-
-            if (data.length > 2) {
-              reviewWidget = ReviewList(reviews: data[data.length - 1]);
-            }
-
-            return NotificationListener<ScrollUpdateNotification>(
-              onNotification: (notification) {
-                _onUserInteraction("Restaurant Detail", "Scroll");
-                return true;
-              },
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    restaurantInfo,
-                    if (menuWidget != null) menuWidget,
-                    if (reviewWidget != null) reviewWidget,
-                    if (!_isConnected)
-                      _buildNoInternetWidget(screenWidth, screenHeight),
-                  ],
-                ),
-              ),
-            );
+            return _buildErrorWidget(MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height);
+          } else if (snapshot.hasData) {
+            return _buildContent(MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height);
           } else {
             return const Center(
               child: Text('No data available.'),
@@ -143,6 +132,22 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       ),
     );
   }
+
+  Widget _buildContent(double screenWidth, double screenHeight) {
+  return SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (_restaurant != null) RestaurantInfo(restaurant: _restaurant!),
+        if (_isConnected) MenuGrid(menuItems: _plates, restaurantId: widget.restaurantId),
+        if (_isConnected) ReviewList(reviews: _reviews),
+        if (!_isConnected)
+          _buildNoInternetWidget(screenWidth, screenHeight),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildErrorWidget(double screenWidth, double screenHeight) {
     return Padding(
@@ -168,7 +173,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               ),
               onPressed: () {
                 setState(() {
-                  dataFuture = fetchData();
+                  _checkConnectivity();
+                  _subscription.resume();
                 });
               },
             ),

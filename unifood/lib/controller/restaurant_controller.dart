@@ -11,14 +11,25 @@ class RestaurantController {
   final LocationRepository _locationRepository = LocationRepository();
   final Map<String, List<Map<String, dynamic>>> _nearbyRestaurantCache = {};
 
+  final StreamController<Restaurant?> _restaurantByIdController =
+      StreamController<Restaurant?>.broadcast();
+
+  Stream<Restaurant?> get restaurantById => _restaurantByIdController.stream;
+
+  void dispose() {
+    _restaurantByIdController.close();
+  }
+
   Future<List<Restaurant>> getRestaurants() async {
     return _getRestaurantData(await _getUserLocation());
   }
 
-  Future<Restaurant?> getRestaurantById(String restaurantName) async {
+  Future<void> getRestaurantById(String restaurantName) async {
     final userLocation = await _getUserLocation();
     final data = await _restaurantRepository.getRestaurantById(restaurantName);
-    return data != null ? _mapSingleRestaurantData(data, userLocation) : null;
+    final restaurant =
+        data != null ? _mapSingleRestaurantData(data, userLocation) : null;
+    _restaurantByIdController.sink.add(restaurant);
   }
 
   Future<List<Restaurant>> getRestaurantsNearby() async {

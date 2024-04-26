@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -19,6 +20,8 @@ class _SearchViewState extends State<SearchView> {
   final List<Restaurant> _searchResults = [];
   List<Restaurant> _restaurantList = [];
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -41,6 +44,14 @@ class _SearchViewState extends State<SearchView> {
   void initState() {
     super.initState();
     _checkConnectivity();
+
+     _connectivitySubscription = Connectivity()
+       .onConnectivityChanged
+       .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result!= ConnectivityResult.none;
+      });
+    });
   }
 
   @override

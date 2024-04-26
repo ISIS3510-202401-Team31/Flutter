@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,8 @@ class RestaurantInfo extends StatefulWidget {
 class _RestaurantInfoState extends State<RestaurantInfo> {
   bool _isLiked = false;
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
 
   void _onUserInteraction(String feature, String action) {
     final event = {
@@ -39,6 +43,14 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
   void initState() {
     super.initState();
     _checkConnectivity();
+
+     _connectivitySubscription = Connectivity()
+       .onConnectivityChanged
+       .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result!= ConnectivityResult.none;
+      });
+    });
   }
 
   @override

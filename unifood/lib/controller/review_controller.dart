@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:unifood/model/review_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/review_repository.dart';
@@ -5,13 +7,21 @@ import 'package:unifood/repository/review_repository.dart';
 class ReviewController {
   final ReviewRepository _reviewRepository = ReviewRepository();
 
-  Future<List<Review>> getReviewsByRestaurantId(String restaurantId) async {
+  final StreamController<List<Review?>> _reviewsByIdController =
+      StreamController<List<Review?>>.broadcast();
+
+  Stream<List<Review?>> get reviewsByRestaurantId => _reviewsByIdController.stream;
+
+  void dispose() {
+    _reviewsByIdController.close();
+  }
+
+  Future<void> getReviewsByRestaurantId(String restaurantId) async {
     try {
       final List<Map<String, dynamic>> data =
           await _reviewRepository.getReviewsByRestaurantId(restaurantId);
       
-
-      return data
+      final reviews = data
           .map(
             (item) => Review(
               userImage: item['userImage'],
@@ -21,6 +31,8 @@ class ReviewController {
             ),
           )
           .toList();
+      _reviewsByIdController.sink.add(reviews);
+
     } catch (e, stackTrace) {
       // Guardar la información del error en la base de datos
       final errorInfo = {

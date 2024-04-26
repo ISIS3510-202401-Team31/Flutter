@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -24,11 +25,21 @@ class _ProfileState extends State<Profile> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
   }
 
   Future<void> _checkConnectivity() async {

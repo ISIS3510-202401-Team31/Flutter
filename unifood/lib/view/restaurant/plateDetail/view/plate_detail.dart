@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/plate_entity.dart';
@@ -26,12 +28,22 @@ class PlateDetail extends StatefulWidget {
 class _PlateDetailState extends State<PlateDetail> {
   late Future<List<dynamic>> dataFuture;
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
     dataFuture = fetchData();
+
+    _connectivitySubscription = Connectivity()
+       .onConnectivityChanged
+       .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result!= ConnectivityResult.none;
+      });
+    });
   }
 
   Future<void> _checkConnectivity() async {
@@ -87,7 +99,7 @@ class _PlateDetailState extends State<PlateDetail> {
                     ),
                   );
                 } else if (snapshot.hasError) {
-                  return _buildNoInternetWidget(screenWidth, screenHeight);
+                  return _buildErrorWidget(screenWidth, screenHeight);
                 } else if (snapshot.hasData) {
                   final data = snapshot.data!;
                   final Plate plate = data[0];
@@ -118,6 +130,41 @@ class _PlateDetailState extends State<PlateDetail> {
               },
             )
           : _buildNoInternetWidget(screenWidth, screenHeight),
+    );
+  }
+
+  Widget _buildErrorWidget(double screenWidth, double screenHeight) {
+    return Padding(
+      padding: EdgeInsets.all(screenWidth * 0.03),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Oops! Something went wrong.\nPlease try again later.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: MediaQuery.of(context).size.width * 0.04,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            IconButton(
+              icon: Icon(
+                Icons.refresh,
+                size: MediaQuery.of(context).size.width * 0.08,
+              ),
+              onPressed: () {
+                setState(() {
+                  _checkConnectivity();
+                  dataFuture = fetchData();
+                });
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 

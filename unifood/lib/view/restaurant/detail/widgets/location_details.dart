@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/repository/analytics_repository.dart';
@@ -26,6 +28,8 @@ class LocationDetails extends StatefulWidget {
 
 class _LocationDetailsState extends State<LocationDetails> {
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
 
   void _onUserInteraction(String feature, String action) {
     final event = {
@@ -39,6 +43,14 @@ class _LocationDetailsState extends State<LocationDetails> {
     final connectivityResult = await Connectivity().checkConnectivity();
     setState(() {
       _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+
+    _connectivitySubscription = Connectivity()
+       .onConnectivityChanged
+       .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result!= ConnectivityResult.none;
+      });
     });
   }
 
