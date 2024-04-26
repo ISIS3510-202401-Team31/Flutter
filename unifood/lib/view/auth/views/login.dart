@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
@@ -18,6 +20,9 @@ class _LoginState extends State<Login> {
   late TextEditingController passwordController;
   late bool _isConnected;
 
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
+
   bool emailError = false;
   bool passwordError = false;
   String? emailErrorMessage;
@@ -29,6 +34,14 @@ class _LoginState extends State<Login> {
     emailController = TextEditingController();
     passwordController = TextEditingController();
     _checkConnectivity();
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
   }
 
   Future<void> _checkConnectivity() async {

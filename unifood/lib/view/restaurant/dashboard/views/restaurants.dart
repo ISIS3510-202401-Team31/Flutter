@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/model/restaurant_entity.dart';
@@ -19,11 +21,23 @@ class Restaurants extends StatefulWidget {
 class _RestaurantsState extends State<Restaurants> {
   bool _locationPermissionGranted = false;
   late bool _isConnected;
+
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
     _requestLocationPermission();
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
   }
 
   Future<void> _checkConnectivity() async {
@@ -394,13 +408,13 @@ class _RestaurantsState extends State<Restaurants> {
                               children: nearbyRestaurants.map((restaurant) {
                                 return CustomRestaurant(
                                   id: restaurant.id,
-                                      imageUrl: restaurant.imageUrl,
-                                      logoUrl: restaurant.logoUrl,
-                                      name: restaurant.name,
-                                      isOpen: restaurant.isOpen,
-                                      distance: restaurant.distance,
-                                      rating: restaurant.rating,
-                                      avgPrice: restaurant.avgPrice,
+                                  imageUrl: restaurant.imageUrl,
+                                  logoUrl: restaurant.logoUrl,
+                                  name: restaurant.name,
+                                  isOpen: restaurant.isOpen,
+                                  distance: restaurant.distance,
+                                  rating: restaurant.rating,
+                                  avgPrice: restaurant.avgPrice,
                                 );
                               }).toList(),
                             ),
