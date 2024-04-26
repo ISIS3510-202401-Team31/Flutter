@@ -14,6 +14,7 @@ class CustomSettingOptionWithIconsBuilder {
   OnRestoreItem onRestoreItem = (index, type) {};
   bool isEditing = false;
   String type = '';
+  bool isConnected = false;
 
   CustomSettingOptionWithIconsBuilder setItems(List<PreferenceItem> items) {
     this.items = items;
@@ -53,6 +54,11 @@ class CustomSettingOptionWithIconsBuilder {
     return this;
   }
 
+  CustomSettingOptionWithIconsBuilder setIsConnected(bool isConnected) {
+    this.isConnected = isConnected;
+    return this;
+  }
+
   CustomSettingOptionWithIconsBuilder setType(String type) {
     this.type = type;
     return this;
@@ -68,6 +74,7 @@ class CustomSettingOptionWithIconsBuilder {
       onRestoreItem: onRestoreItem,
       type: type,
       isEditing: isEditing,
+      isConnected: isConnected
     );
   }
 }
