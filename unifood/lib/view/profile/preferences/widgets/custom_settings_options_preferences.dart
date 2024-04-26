@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unifood/model/preferences_entity.dart'; // Ensure the path is correct
+import 'package:unifood/model/preferences_entity.dart'; 
+import 'package:cached_network_image/cached_network_image.dart';
 
 typedef OnDeleteItem = void Function(int index, String type);
 typedef OnRestoreItem = void Function(int index, String type);
@@ -13,6 +14,7 @@ class CustomSettingOptionWithIcons extends StatelessWidget {
   final OnRestoreItem onRestoreItem; // Callback to restore the item
   final bool isEditing;
   final String type;
+  final bool isConnected;
 
   const CustomSettingOptionWithIcons({
     required this.items,
@@ -22,12 +24,17 @@ class CustomSettingOptionWithIcons extends StatelessWidget {
     required this.onDeleteItem,
     required this.onRestoreItem,
     required this.type,
+    required this.isConnected,
     this.isEditing = false, // Default value is false
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (!isConnected && items.isEmpty) {
+      // No connection and no cached items, return the 'No Connection' message widget
+      return _buildNoConnectionWidget(context);
+    } else{
     double screenWidth = MediaQuery.of(context).size.width;
     double imageSize = screenWidth * 0.2; // Adjusted to use MediaQuery
     double itemWidth =
@@ -87,13 +94,13 @@ class CustomSettingOptionWithIcons extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.network(
-                          item.imageUrl,
+                        CachedNetworkImage(
+                          imageUrl: item.imageUrl,
                           width: imageSize,
                           height: imageSize,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Icon(Icons.broken_image, size: imageSize),
+                          placeholder: (context, url) => CircularProgressIndicator(), // Placeholder widget while loading
+                          errorWidget: (context, url, error) => Icon(Icons.broken_image, size: imageSize), // Widget to display in case of error
                         ),
                         Text(
                           item.text,
@@ -143,6 +150,16 @@ class CustomSettingOptionWithIcons extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+  }
+    Widget _buildNoConnectionWidget(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+        child: const Text('No Connection. Try again Later', 
+                     style: TextStyle(fontSize: 16, color: Colors.grey)),
       ),
     );
   }

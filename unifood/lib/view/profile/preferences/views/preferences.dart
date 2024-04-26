@@ -7,6 +7,8 @@ import 'package:unifood/view/profile/preferences/widgets/reset_button.dart';
 import 'package:unifood/model/preferences_entity.dart';
 import 'package:unifood/controller/preferences_controller.dart';
 import 'package:unifood/view/widgets/custom_setting_option_builder.dart';
+import 'package:connectivity/connectivity.dart';
+
 
 class Preferences extends StatefulWidget {
   const Preferences({Key? key}) : super(key: key);
@@ -18,7 +20,7 @@ class Preferences extends StatefulWidget {
 class _PreferencesState extends State<Preferences> {
   RangeValues _currentRangeValues = const RangeValues(10000, 80000);
   final Preferencescontroller _viewModel = Preferencescontroller();
-
+  bool isConnected = false;
   List<PreferenceItem> _restrictions = [];
   List<PreferenceItem> _tastes = [];
   bool _isEditingRestrictions = false;
@@ -31,9 +33,18 @@ class _PreferencesState extends State<Preferences> {
   @override
   void initState() {
     super.initState();
+    _checkConnectivity();
     _loadPreferences();
   }
 
+
+    Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+  
   Future<void> _loadPreferences() async {
     // Attempt to load the common (general) preferences.
     PreferencesEntity? commonPreferences =
@@ -190,6 +201,7 @@ class _PreferencesState extends State<Preferences> {
               CustomSettingOptionWithIconsBuilder()
                   .setItems(_restrictions)
                   .setIsEditing(_isEditingRestrictions)
+                  .setIsConnected(isConnected)
                   .setUserId(userId)
                   .setType('restrictions')
                   .setMarkedForDeletion(_markedForDeletionRestrictions)
@@ -216,6 +228,7 @@ class _PreferencesState extends State<Preferences> {
               CustomSettingOptionWithIconsBuilder()
                   .setItems(_tastes)
                   .setIsEditing(_isEditingTastes)
+                  .setIsConnected(isConnected)
                   .setUserId(userId)
                   .setType('tastes')
                   .setMarkedForDeletion(_markedForDeletionTastes)
@@ -253,13 +266,17 @@ class _PreferencesState extends State<Preferences> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: PriceRangeSelector(
+                  isConnected: isConnected,
                     currentRangeValues: _currentRangeValues,
                     onChanged: (values) {
                       setState(() {
                         _currentRangeValues = values;
+                        
                       });
                       _updatePreferencesEntity();
-                    }),
+                    },
+                    
+                    ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
@@ -268,16 +285,28 @@ class _PreferencesState extends State<Preferences> {
               const SizedBox(height: 20),
               SaveChangesButton(
                 onPressed: () async {
+                  if (!isConnected) {
+                    // Show "No Connection" message only once
+                    final snackBar = const SnackBar(content: Text('No Connection. Try again later'));
+                    Future.delayed(const Duration(milliseconds: 200), () {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar() // Hide any existing SnackBar
+                        ..showSnackBar(snackBar);
+                    });
+                    return; // Exit the function if not connected
+                  }
+
+                  // Save functionality if connected (rest of the code remains the same)
                   try {
                     await _viewModel.updateUserPreferences(_updatedPreferences);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Preferences updated successfully')),
+                    const SnackBar(
+                    content: Text('Preferences updated successfully')),
                     );
                   } catch (error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to update preferences')),
-                    );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Failed to update preferences')),
+                      );
                   }
                 },
               ),
