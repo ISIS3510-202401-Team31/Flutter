@@ -21,7 +21,7 @@ class Restaurants extends StatefulWidget {
 class _RestaurantsState extends State<Restaurants> {
   final RestaurantController _restaurantController = RestaurantController();
   late StreamSubscription<List<Restaurant>> _restaurantSubscription;
-  bool _locationPermissionGranted = false;
+  bool _locationPermissionGranted = true;
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
@@ -31,7 +31,6 @@ class _RestaurantsState extends State<Restaurants> {
     super.initState();
     _requestLocationPermission();
     _checkConnectivity();
-    _restaurantController.fetchrestaurants();
 
     _restaurantSubscription =
         _restaurantController.restaurants.listen((restaurant) {
@@ -75,6 +74,7 @@ class _RestaurantsState extends State<Restaurants> {
         _locationPermissionGranted = true;
       });
     }
+    _restaurantController.fetchRestaurants();
   }
 
   @override
@@ -82,14 +82,6 @@ class _RestaurantsState extends State<Restaurants> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth * 0.027;
-
-    if (!_locationPermissionGranted) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
 
     return Scaffold(
       appBar: PreferredSize(

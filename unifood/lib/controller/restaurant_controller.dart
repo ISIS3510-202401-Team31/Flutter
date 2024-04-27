@@ -38,7 +38,7 @@ class RestaurantController {
     _restaurantByIdController.sink.add(restaurant);
   }
 
-  Future<void> fetchrestaurants() async {
+  Future<void> fetchRestaurants() async {
     final userLocation = await _getUserLocation();
     final data = await _restaurantRepository.getRestaurants();
     final restaurants = _mapRestaurantData(data, userLocation);
