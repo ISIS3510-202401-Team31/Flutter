@@ -21,7 +21,7 @@ class Restaurants extends StatefulWidget {
 class _RestaurantsState extends State<Restaurants> {
   final RestaurantController _restaurantController = RestaurantController();
   late StreamSubscription<List<Restaurant>> _restaurantSubscription;
-  late bool _locationPermissionGranted;
+  bool _locationPermissionGranted = false;
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
@@ -30,6 +30,7 @@ class _RestaurantsState extends State<Restaurants> {
   void initState() {
     super.initState();
     _requestLocationPermission();
+    _checkLocationPermission();
     _checkConnectivity();
     _restaurantController.fetchrestaurants();
 
@@ -68,14 +69,22 @@ class _RestaurantsState extends State<Restaurants> {
     });
   }
 
-  Future<void> _requestLocationPermission() async {
-    final PermissionStatus status = await Permission.location.request();
-    if (status == PermissionStatus.granted) {
-      setState(() {
-        _locationPermissionGranted = true;
-      });
-    }
+  Future<void> _checkLocationPermission() async {
+    final status = await Permission.location.status;
+    setState(() {
+      _locationPermissionGranted = status == PermissionStatus.granted;
+    });
   }
+
+  Future<void> _requestLocationPermission() async {
+  final status = await Permission.location.request();
+  if (status == PermissionStatus.granted) {
+    await _checkLocationPermission();
+    setState(() {
+      _locationPermissionGranted = true;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
