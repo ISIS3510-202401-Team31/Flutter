@@ -13,6 +13,10 @@ class SharedPreferencesService {
     return _instance!;
   }
 
+  bool isUserLoggedIn()  {
+    return _prefs?.getString('uid') != null;
+  }
+
   Future<void> _init() async {
     _prefs = await SharedPreferences.getInstance();
   }
