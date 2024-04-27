@@ -20,27 +20,24 @@ class Restaurants extends StatefulWidget {
 
 class _RestaurantsState extends State<Restaurants> {
   final RestaurantController _restaurantController = RestaurantController();
-  late StreamSubscription<List<Restaurant>> _restaurantSubscription;
-  bool _locationPermissionGranted = true;
+  bool _locationPermissionGranted = false;
   late bool _isConnected;
+  // ignore: unused_field
+  late StreamSubscription _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
-    _requestLocationPermission();
     _checkConnectivity();
+    _requestLocationPermission();
 
-    _restaurantSubscription =
-        _restaurantController.restaurants.listen((restaurant) {
-      setState(() {});
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
     });
-
-  }
-
-  @override
-  void dispose() {
-    _restaurantSubscription.cancel();
-    super.dispose();
   }
 
   void _onUserInteraction(String feature, String action) {
@@ -59,13 +56,12 @@ class _RestaurantsState extends State<Restaurants> {
   }
 
   Future<void> _requestLocationPermission() async {
-    final status = await Permission.location.request();
+    final PermissionStatus status = await Permission.location.request();
     if (status == PermissionStatus.granted) {
       setState(() {
         _locationPermissionGranted = true;
       });
     }
-    _restaurantController.fetchRestaurants();
   }
 
   @override
@@ -73,6 +69,14 @@ class _RestaurantsState extends State<Restaurants> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth * 0.027;
+
+    if (!_locationPermissionGranted) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -182,8 +186,8 @@ class _RestaurantsState extends State<Restaurants> {
                     },
                     child: Container(
                       height: screenHeight * 0.315,
-                      child: StreamBuilder<List<Restaurant>>(
-                        stream: _restaurantController.restaurants,
+                      child: FutureBuilder<List<Restaurant>>(
+                        future: _restaurantController.getRestaurants(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -228,8 +232,7 @@ class _RestaurantsState extends State<Restaurants> {
                                 ),
                               ),
                             );
-                          } else if (snapshot.hasData &&
-                              snapshot.data!.isNotEmpty) {
+                          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                             List<Restaurant> favorites = snapshot.data!;
                             return Container(
                               color: const Color(0xFF965E4E).withOpacity(0.15),
