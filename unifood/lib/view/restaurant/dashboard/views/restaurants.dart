@@ -30,7 +30,6 @@ class _RestaurantsState extends State<Restaurants> {
   void initState() {
     super.initState();
     _requestLocationPermission();
-    _checkLocationPermission();
     _checkConnectivity();
     _restaurantController.fetchrestaurants();
 
@@ -69,17 +68,9 @@ class _RestaurantsState extends State<Restaurants> {
     });
   }
 
-  Future<void> _checkLocationPermission() async {
-    final status = await Permission.location.status;
-    setState(() {
-      _locationPermissionGranted = status == PermissionStatus.granted;
-    });
-  }
-
   Future<void> _requestLocationPermission() async {
     final status = await Permission.location.request();
     if (status == PermissionStatus.granted) {
-      await _checkLocationPermission();
       setState(() {
         _locationPermissionGranted = true;
       });
