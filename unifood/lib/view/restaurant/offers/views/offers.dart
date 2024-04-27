@@ -3,18 +3,49 @@ import 'package:unifood/model/offer_entity.dart';
 import 'package:unifood/model/restaurant_entity.dart'; // Assuming you have this file
 import 'package:unifood/view/restaurant/offers/widgets/offer_card.dart';
 import 'package:unifood/controller/offers_controller.dart';  
+import 'package:connectivity/connectivity.dart';
+import 'dart:async';
 
-class OffersPage extends StatelessWidget {
-  final String restaurantId;  // Identifier for the restaurant
-  const OffersPage({Key? key, required this.restaurantId}) : super(key: key);
+
+class Offers extends StatefulWidget {
+  final String restaurantId;
+  const Offers({Key? key, required this.restaurantId}) : super(key: key);
+
+  @override
+  _OffersState createState() => _OffersState();
+}
+
+class _OffersState extends State<Offers> {
+  late bool _isConnected;
+  late StreamSubscription _connectivitySubscription;
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+    _connectivitySubscription = Connectivity()
+            .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final String restaurantId = widget.restaurantId;
     double screenWidth = MediaQuery.of(context).size.width;
     double titleFontSize = screenWidth < 350 ? 16 : 18;
     double subTitleFontSize = screenWidth < 350 ? 12 : 14;
     double pointsFontSize = screenWidth < 350 ? 20 : 22;
-
+    double screenHeight = MediaQuery.of(context).size.height;
     EdgeInsets padding = screenWidth < 350
         ? const EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 8.0)
         : const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0);
@@ -29,11 +60,15 @@ class OffersPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
+          
         ),
         title: const Text('Offers'),
         centerTitle: true,
       ),
-      body: FutureBuilder<Restaurant>(
+
+      body: _isConnected
+      ?
+      FutureBuilder<Restaurant>(
         future: offersController.getRestaurantInformationById(restaurantId),
         builder: (context, restaurantSnapshot) {
           if (restaurantSnapshot.connectionState == ConnectionState.waiting) {
@@ -122,8 +157,9 @@ class OffersPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Divider(height: 1, thickness: 1, indent: 16, endIndent: 16),
+
                   FutureBuilder<List<Offer>>(
+                    
                     future: offersController.getOffersByRestaurantId(restaurantId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -166,7 +202,16 @@ class OffersPage extends StatelessWidget {
             return const Center(child: Text('No restaurant data available.'));
           }
         },
-      ),
+      ):Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.wifi_off, size: 48),
+              SizedBox(height: 10),
+              Text('No internet connection'),
+            ],
+          ),
+        ),
     );
   }
 }

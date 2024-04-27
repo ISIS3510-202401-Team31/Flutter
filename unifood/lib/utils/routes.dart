@@ -46,7 +46,7 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const PointsView());
       case '/offers': // Define la ruta para las ofertas
         return MaterialPageRoute(
-            builder: (_) => const OffersPage(
+            builder: (_) => const Offers(
                   restaurantId: "",
                 ));
       case '/filtermenu': // Define la ruta para filtrar el menu

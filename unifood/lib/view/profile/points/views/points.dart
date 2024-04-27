@@ -6,10 +6,42 @@ import 'package:unifood/controller/restaurant_controller.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/controller/points_controller.dart';
 import 'package:unifood/model/points_entity.dart';
+import 'package:connectivity/connectivity.dart';
+import 'dart:async';
 
-
-class PointsView extends StatelessWidget {
+class PointsView extends StatefulWidget {
   const PointsView({Key? key}) : super(key: key);
+
+  @override
+  _PointsState createState() => _PointsState();
+}
+
+class _PointsState extends State<PointsView> {
+  late bool _isConnected;
+  late StreamSubscription _connectivitySubscription;
+  List<Points>? _points;
+  List<Restaurant>? _restaurants;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+    _connectivitySubscription = Connectivity()
+            .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
+  }
+
 
 
 
@@ -24,7 +56,9 @@ class PointsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('UniFood Points'),
       ),
-      body: SingleChildScrollView(
+      body: _isConnected
+      ?
+      SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -45,7 +79,9 @@ class PointsView extends StatelessWidget {
               ),
             ),
             SizedBox(height: screenWidth * 0.05),
-            FutureBuilder<List<Points>>(
+            _points != null
+            ?RestaurantPointsWidget(restaurantPointsList: _points!)
+            :FutureBuilder<List<Points>>(
               future: pointsFuture,  // Use the pre-declared future
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -111,7 +147,16 @@ class PointsView extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ):Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.wifi_off, size: 48),
+              SizedBox(height: 10),
+              Text('No internet connection'),
+            ],
+          ),
+        ),
     );
   }
 }

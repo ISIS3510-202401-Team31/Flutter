@@ -50,7 +50,7 @@ class CustomRestaurant extends StatelessWidget {
         // Check if the tap is from the Points view
         if (fromPointsView) {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => OffersPage(restaurantId: id)));
+              MaterialPageRoute(builder: (_) => Offers(restaurantId: id)));
           _onUserInteraction("Offers Page", "Tap");
         } else {
           Navigator.of(context).push(MaterialPageRoute(
