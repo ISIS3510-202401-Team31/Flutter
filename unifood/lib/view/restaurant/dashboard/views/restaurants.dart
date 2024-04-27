@@ -23,8 +23,6 @@ class _RestaurantsState extends State<Restaurants> {
   late StreamSubscription<List<Restaurant>> _restaurantSubscription;
   bool _locationPermissionGranted = true;
   late bool _isConnected;
-  // ignore: unused_field
-  late StreamSubscription _connectivitySubscription;
 
   @override
   void initState() {
@@ -37,13 +35,6 @@ class _RestaurantsState extends State<Restaurants> {
       setState(() {});
     });
 
-    _connectivitySubscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      setState(() {
-        _isConnected = result != ConnectivityResult.none;
-      });
-    });
   }
 
   @override
