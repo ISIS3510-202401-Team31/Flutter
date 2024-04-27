@@ -21,19 +21,28 @@ class Favorites extends StatefulWidget {
 }
 
 class _FavoritesState extends State<Favorites> {
-  late Future<List<dynamic>> dataFuture;
+  late Users? userSession;
+  late Future<Users?> userData;
+  late StreamSubscription<List<Restaurant>> _restaurantSubscription;
+  final RestaurantController _restaurantController = RestaurantController();
 
   @override
   void initState() {
     super.initState();
-    dataFuture = fetchData();
+    userData = fetchUser();
+
+    _restaurantController.fetchRestaurants();
+
+    _restaurantSubscription =
+        _restaurantController.restaurants.listen((restaurant) {
+      setState(() {});
+    });
   }
 
-  Future<List<dynamic>> fetchData() async {
-    return RestaurantController().getRestaurants().then((restaurantInfoData) {
-      return UserRepository().getUserSession().then((user) {
-        return [restaurantInfoData, user];
-      });
+  Future<Users?> fetchUser() async {
+    return UserRepository().getUserSession().then((user) {
+      userSession = user;
+      return userSession;
     });
   }
 
@@ -42,8 +51,8 @@ class _FavoritesState extends State<Favorites> {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return FutureBuilder<List<dynamic>>(
-      future: dataFuture,
+    return StreamBuilder<List<Restaurant>>(
+      stream: _restaurantController.restaurants,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -85,8 +94,8 @@ class _FavoritesState extends State<Favorites> {
             ),
           );
         } else if (snapshot.hasData) {
-          final Users? currentUser = snapshot.data![1];
-          final List<Restaurant> favoriteRestaurants = snapshot.data![0];
+          final Users? currentUser = userSession;
+          final List<Restaurant> favoriteRestaurants = snapshot.data!;
 
           return _FavoritesWidget(
               currentUser!, favoriteRestaurants, screenHeight, screenWidth);

@@ -3,7 +3,6 @@ import 'package:connectivity/connectivity.dart'; // Import connectivity package
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/services.dart';
-import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/shared_preferences.dart';
 import 'firebase_options.dart';
@@ -63,8 +62,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ConnectivityWrapper( 
-        child: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ConnectivityWrapper( 
+        child: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
@@ -73,25 +72,16 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
-
   
 
   @override
   Widget build(BuildContext context) {
 
-    return   FutureBuilder<Users?>(
-      future: SharedPreferencesService().getUser(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else {
-          final bool isLoggedIn = snapshot.data != null;
-          return MaterialApp(
-            initialRoute: isLoggedIn ? "/restaurants" : "/",
-            onGenerateRoute: Routes.generateRoute,
-          );
-        }
-      },
+    final bool isLoggedIn = SharedPreferencesService().getUser() != null;
+
+    return MaterialApp(
+      initialRoute: isLoggedIn ? "/restaurants" : "/",
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }
