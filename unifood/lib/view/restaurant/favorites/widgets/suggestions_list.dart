@@ -139,7 +139,6 @@ class _SuggestedRestaurantsSectionState
                   ),
                 );
               } else if (snapshot.hasError) {
-                print(snapshot.error.toString());
                 if (snapshot.error.toString().contains('Connection failed')) {
                   return _buildNoInternetWidget(screenWidth, screenHeight);
                 } else {

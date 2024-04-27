@@ -191,40 +191,46 @@ class _LikedRestaurantsState extends State<LikedRestaurants> {
                               ),
                             );
                           } else if (snapshot.hasError) {
-                            return Padding(
-                              padding: EdgeInsets.all(screenWidth * 0.03),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Oops! Something went wrong.\nPlease try again later.',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        fontWeight:
-                                            FontWeight.bold, // Letra en negrita
+                            if (snapshot.error
+                                .toString()
+                                .contains('Connection failed')) {
+                              return _buildNoInternetWidget(
+                                  screenWidth, screenHeight);
+                            } else {
+                              return Padding(
+                                padding: EdgeInsets.all(screenWidth * 0.03),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Oops! Something went wrong.\nPlease try again later.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: screenWidth * 0.04,
+                                          fontWeight: FontWeight
+                                              .bold, // Letra en negrita
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: screenHeight * 0.02),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.refresh,
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.08,
+                                      SizedBox(height: screenHeight * 0.02),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.refresh,
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.08,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {});
+                                        },
                                       ),
-                                      onPressed: () {
-                                        setState(() {});
-                                      },
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
                           } else if (snapshot.hasData &&
                               snapshot.data!.isNotEmpty) {
                             List<Restaurant> favorites = snapshot.data!;
@@ -257,6 +263,49 @@ class _LikedRestaurantsState extends State<LikedRestaurants> {
                     ))),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildNoInternetWidget(double screenWidth, double screenHeight) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 65,
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: 10.0),
+          Text(
+            'Oops! No Internet Connection',
+            style: TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          SizedBox(height: 2.0),
+          ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                _checkConnectivity();
+              });
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+            ),
+            icon: Icon(Icons.refresh, color: Colors.grey[600], size:10),
+            label: Text(
+              'Refresh',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 9.0,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
