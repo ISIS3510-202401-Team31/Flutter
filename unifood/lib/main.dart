@@ -8,6 +8,7 @@ import 'package:unifood/repository/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/utils/routes.dart';
+import 'package:unifood/model/user_entity.dart';
 
 List<Map<String, dynamic>> errores = [];
 
@@ -72,18 +73,27 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
+
   
 
   @override
   Widget build(BuildContext context) {
 
-    final bool isLoggedIn = SharedPreferencesService().getUser() != null;
-
-    return MaterialApp(
-      initialRoute: isLoggedIn ? "/restaurants" : "/",
-      onGenerateRoute: Routes.generateRoute,
-    );
-  }
+    return   FutureBuilder<Users?>(
+      future: SharedPreferencesService().getUser(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else {
+          final bool isLoggedIn = snapshot.data != null;
+          return MaterialApp(
+            initialRoute: isLoggedIn ? "/restaurants" : "/",
+            onGenerateRoute: Routes.generateRoute,
+          );
+        }
+},
+);
+}
 }
 
 class ConnectivityWrapper extends StatefulWidget {
