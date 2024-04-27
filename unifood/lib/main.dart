@@ -73,23 +73,12 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
-  
+
   @override
   Widget build(BuildContext context) {
-
-    return   FutureBuilder<Users?>(
-      future: SharedPreferencesService().getUser(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else {
-          final bool isLoggedIn = snapshot.data != null;
-          return MaterialApp(
-            initialRoute: isLoggedIn ? "/restaurants" : "/",
-            onGenerateRoute: Routes.generateRoute,
-          );
-        }
-      },
+    return MaterialApp(
+      initialRoute: "/",
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }
