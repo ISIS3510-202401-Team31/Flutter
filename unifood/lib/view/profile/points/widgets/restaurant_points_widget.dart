@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/points_entity.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class RestaurantPoints {
   final String url;
@@ -15,18 +16,19 @@ class RestaurantPoints {
   });
 }
 
-class RestaurantPointsWidget extends StatefulWidget  {
+class RestaurantPointsWidget extends StatefulWidget {
   final List<Points> restaurantPointsList;
 
-  const RestaurantPointsWidget({Key? key, required this.restaurantPointsList}) : super(key: key);
+  const RestaurantPointsWidget({Key? key, required this.restaurantPointsList})
+      : super(key: key);
 
   @override
   _RestaurantPointsWidgetState createState() => _RestaurantPointsWidgetState();
-
 }
 
 class _RestaurantPointsWidgetState extends State<RestaurantPointsWidget> {
   bool _isExpanded = false;
+  final _cachedImages = <String, String>{}; // Map to store cached image URLs
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +73,11 @@ class _RestaurantPointsWidgetState extends State<RestaurantPointsWidget> {
                       ),
                     ],
                   ),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(point.url),
-                    backgroundColor: Colors.transparent,
-                    onBackgroundImageError: (exception, stackTrace) {
-                      print('Failed to load network image.');
-                    },
+                  child: CachedNetworkImage(
+                    imageUrl: point.url,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    cacheKey: _cachedImages.putIfAbsent(point.url, () => point.url),
                   ),
                 ),
                 _buildPoints(point.earned, fontSize),
@@ -98,8 +99,6 @@ class _RestaurantPointsWidgetState extends State<RestaurantPointsWidget> {
       ),
     );
   }
-
-
 
   Widget _buildPoints(int points, double fontSize) {
     return Expanded(
