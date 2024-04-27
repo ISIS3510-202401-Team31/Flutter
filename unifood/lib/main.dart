@@ -77,6 +77,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isLoggedIn = SharedPreferencesService().isUserLoggedIn();
+    print(isLoggedIn);
+    print("-------------------------------------00");
 
     return MaterialApp(
       initialRoute: isLoggedIn ? "restaurants" : "/",

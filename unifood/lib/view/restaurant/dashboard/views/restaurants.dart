@@ -21,7 +21,7 @@ class Restaurants extends StatefulWidget {
 class _RestaurantsState extends State<Restaurants> {
   final RestaurantController _restaurantController = RestaurantController();
   late StreamSubscription<List<Restaurant>> _restaurantSubscription;
-  bool _locationPermissionGranted = false;
+  bool _locationPermissionGranted = true;
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
