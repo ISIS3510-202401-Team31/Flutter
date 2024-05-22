@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/auth_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view/widgets/custom_button.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
+import 'package:unifood/view/widgets/custom_auth_button.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -161,7 +161,7 @@ class _LoginState extends State<Login> {
                       showCounter: false,
                     ),
                     SizedBox(height: screenHeight * 0.04),
-                    CustomButton(
+                    CustomAuthButton(
                       onPressed: () async {
                         if (_isConnected) {
                           setState(() {
