@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/data/firebase_service_adapter.dart';
 import 'package:path/path.dart';
+import 'package:unifood/repository/shared_preferences.dart';
 
 class RestaurantRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
@@ -73,26 +76,46 @@ class RestaurantRepository {
 
   Future<List<Map<String, dynamic>>> getRestaurants() async {
     try {
-      List<Map<String, dynamic>> localRestaurants = await getLocalRestaurants();
+      bool isConnected = await _checkConnectivity();
 
-      if (localRestaurants.isNotEmpty) {
-        return localRestaurants;
+      DateTime lastUpdate = await _getLastUpdateTimestamp();
+
+      if (!isConnected) {
+        List<Map<String, dynamic>> localRestaurants =
+            await getLocalRestaurants();
+        if (localRestaurants.isNotEmpty) {
+          return localRestaurants;
+        } else {
+          throw Exception('No local restaurants available');
+        }
       }
 
-      final querySnapshot =
-          await _firestoreServiceAdapter.getCollectionDocuments('restaurants');
+      if (DateTime.now().difference(lastUpdate) >= Duration(days: 1)) {
+        final querySnapshot = await _firestoreServiceAdapter
+            .getCollectionDocuments('restaurants');
 
-      List<Map<String, dynamic>> restaurants = querySnapshot.docs.map((doc) {
-        Map<String, dynamic> restaurantData = doc.data();
-        restaurantData['docId'] = doc.id;
-        return restaurantData;
-      }).toList();
+        List<Map<String, dynamic>> restaurants = querySnapshot.docs.map((doc) {
+          Map<String, dynamic> restaurantData = doc.data();
+          restaurantData['docId'] = doc.id;
+          return restaurantData;
+        }).toList();
 
-      for (var restaurant in restaurants) {
-        insertRestaurant(restaurant);
+        for (var restaurant in restaurants) {
+          insertRestaurant(restaurant);
+        }
+
+        await _updateLastUpdateTimestamp();
+
+        return restaurants;
+      } else {
+        List<Map<String, dynamic>> localRestaurants =
+            await getLocalRestaurants();
+        if (localRestaurants.isNotEmpty) {
+          return localRestaurants;
+        } else {
+          throw Exception('No local restaurants available');
+        }
       }
-
-      return restaurants;
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
@@ -103,6 +126,25 @@ class RestaurantRepository {
       AnalyticsRepository().saveError(errorInfo);
       rethrow;
     }
+  }
+
+  Future<bool> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  Future<DateTime> _getLastUpdateTimestamp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final timestamp = prefs.getInt('lastUpdateTimestamp');
+    return timestamp != null
+        ? DateTime.fromMillisecondsSinceEpoch(timestamp)
+        : DateTime(0);
+  }
+
+  Future<void> _updateLastUpdateTimestamp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(
+        'lastUpdateTimestamp', DateTime.now().millisecondsSinceEpoch);
   }
 
   Future<Map<String, dynamic>?> getRestaurantById(String restaurantId) async {
@@ -169,7 +211,7 @@ class RestaurantRepository {
 
         return restaurantsData;
       } else {
-         if (_cache.containsKey(cacheKey)) {
+        if (_cache.containsKey(cacheKey)) {
           print('Returning cached response for $cacheKey');
           return _cache[cacheKey]!;
         } else {
@@ -228,7 +270,7 @@ class RestaurantRepository {
 
         return restaurantsData;
       } else {
-         if (_cache.containsKey(cacheKey)) {
+        if (_cache.containsKey(cacheKey)) {
           print('Returning cached response for $cacheKey');
           return _cache[cacheKey]!;
         } else {
