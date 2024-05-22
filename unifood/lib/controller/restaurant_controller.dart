@@ -9,7 +9,7 @@ import 'package:unifood/utils/distance_calculator.dart';
 class RestaurantController {
   final RestaurantRepository _restaurantRepository = RestaurantRepository();
   final LocationRepository _locationRepository = LocationRepository();
-  static Map<String, List<Map<String, dynamic>>> _nearbyRestaurantCache = {};
+  static final Map<String, List<Map<String, dynamic>>> _nearbyRestaurantCache = {};
 
   final StreamController<Restaurant?> _restaurantByIdController =
       StreamController<Restaurant?>.broadcast();
@@ -46,13 +46,13 @@ class RestaurantController {
   }
 
   Future<List<Restaurant>> getRestaurantsNearby() async {
-    final String cacheKey = 'nearby_restaurants';
+    const String cacheKey = 'nearby_restaurants';
     try {
       // Intenta obtener los datos de la red
       final userLocation = await _getUserLocation();
       final data = await _restaurantRepository.getRestaurants();
       final nearbyRestaurants =
-          await _filterNearbyRestaurants(data, userLocation);
+          _filterNearbyRestaurants(data, userLocation);
       _nearbyRestaurantCache[cacheKey] = data;
       return nearbyRestaurants;
     } catch (e, stackTrace) {

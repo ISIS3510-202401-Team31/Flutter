@@ -133,15 +133,15 @@ class _LocationDetailsState extends State<LocationDetails> {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Text('No Internet'),
-                                  content: Text(
+                                  title: const Text('No Internet'),
+                                  content: const Text(
                                       'This function is not available without internet connection.'),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text('OK'),
+                                      child: const Text('OK'),
                                     ),
                                   ],
                                 ),

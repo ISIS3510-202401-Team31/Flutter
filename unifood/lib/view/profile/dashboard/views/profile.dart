@@ -354,7 +354,9 @@ class _ProfileState extends State<Profile> {
                                     CustomSettingOption(
                                       icon: Icons.help,
                                       text: 'Help',
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.pushNamed(context, '/create_review');
+                                      },
                                     ),
                                     CustomSettingOption(
                                       icon: Icons.logout,
@@ -365,15 +367,15 @@ class _ProfileState extends State<Profile> {
                                           showDialog(
                                             context: context,
                                             builder: (context) => AlertDialog(
-                                              title: Text('No Internet'),
-                                              content: Text(
+                                              title: const Text('No Internet'),
+                                              content: const Text(
                                                   'This function is not available without internet connection.'),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text('OK'),
+                                                  child: const Text('OK'),
                                                 ),
                                               ],
                                             ),

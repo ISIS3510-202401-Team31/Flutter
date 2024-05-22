@@ -202,10 +202,10 @@ class _OffersState extends State<Offers> {
             return const Center(child: Text('No restaurant data available.'));
           }
         },
-      ):Center(
+      ):const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.wifi_off, size: 48),
               SizedBox(height: 10),
               Text('No internet connection'),

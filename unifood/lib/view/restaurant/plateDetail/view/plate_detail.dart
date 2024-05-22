@@ -178,7 +178,7 @@ class _PlateDetailState extends State<PlateDetail> {
             size: 100,
             color: Colors.grey[300],
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Text(
             'Oops! No Internet Connection',
             style: TextStyle(
@@ -187,7 +187,7 @@ class _PlateDetailState extends State<PlateDetail> {
               color: Colors.grey[600],
             ),
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           ElevatedButton.icon(
             onPressed: () {
               setState(() {

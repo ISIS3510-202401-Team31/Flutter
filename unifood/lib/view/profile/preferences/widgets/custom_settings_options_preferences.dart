@@ -99,7 +99,7 @@ class CustomSettingOptionWithIcons extends StatelessWidget {
                           width: imageSize,
                           height: imageSize,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => CircularProgressIndicator(), // Placeholder widget while loading
+                          placeholder: (context, url) => const CircularProgressIndicator(), // Placeholder widget while loading
                           errorWidget: (context, url, error) => Icon(Icons.broken_image, size: imageSize), // Widget to display in case of error
                         ),
                         Text(

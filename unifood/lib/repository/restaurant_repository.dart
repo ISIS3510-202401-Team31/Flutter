@@ -11,7 +11,7 @@ class RestaurantRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
 
   // RestaurantRepository() : _firestoreServiceAdapter = FirestoreServiceAdapter();
-  static Map<String, List<Map<String, dynamic>>> _cache = {};
+  static final Map<String, List<Map<String, dynamic>>> _cache = {};
 
   late Database _database;
 
@@ -88,9 +88,9 @@ class RestaurantRepository {
         return restaurantData;
       }).toList();
 
-      restaurants.forEach((restaurant) {
+      for (var restaurant in restaurants) {
         insertRestaurant(restaurant);
-      });
+      }
 
       return restaurants;
     } catch (e, stackTrace) {

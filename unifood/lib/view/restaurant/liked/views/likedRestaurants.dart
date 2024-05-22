@@ -177,7 +177,7 @@ class _LikedRestaurantsState extends State<LikedRestaurants> {
                       _onUserInteraction("Most liked restaurants", "Scroll");
                       return true;
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: screenHeight * 0.75,
                       child: FutureBuilder<List<Restaurant>>(
                         future: _restaurantController.getLikedRestaurants(),
@@ -277,7 +277,7 @@ class _LikedRestaurantsState extends State<LikedRestaurants> {
             size: 65,
             color: Colors.grey[300],
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Text(
             'Oops! No Internet Connection',
             style: TextStyle(
@@ -286,7 +286,7 @@ class _LikedRestaurantsState extends State<LikedRestaurants> {
               color: Colors.grey[600],
             ),
           ),
-          SizedBox(height: 2.0),
+          const SizedBox(height: 2.0),
           ElevatedButton.icon(
             onPressed: () {
               setState(() {

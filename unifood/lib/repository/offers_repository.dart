@@ -10,7 +10,7 @@ class OffersRepository {
     try {
       final querySnapshot = await _firestoreServiceAdapter.getCollectionDocuments('restaurants/$restaurantId/offers');
       List<Map<String, dynamic>> offers = querySnapshot.docs.map((doc) {
-        Map<String, dynamic> offerData = doc.data() as Map<String, dynamic>;
+        Map<String, dynamic> offerData = doc.data();
         offerData['id'] = doc.id;
         offerData['restaurantId'] = restaurantId;
         return offerData;
@@ -58,5 +58,6 @@ class OffersRepository {
       print('Error when fetching restaurant information by id in repository: $e');
       rethrow;
     }
+    return null;
   }
 }

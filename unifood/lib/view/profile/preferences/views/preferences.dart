@@ -287,7 +287,7 @@ class _PreferencesState extends State<Preferences> {
                 onPressed: () async {
                   if (!isConnected) {
                     // Show "No Connection" message only once
-                    final snackBar = const SnackBar(content: Text('No Connection. Try again later'));
+                    const snackBar = SnackBar(content: Text('No Connection. Try again later'));
                     Future.delayed(const Duration(milliseconds: 200), () {
                       ScaffoldMessenger.of(context)
                         ..hideCurrentSnackBar() // Hide any existing SnackBar
