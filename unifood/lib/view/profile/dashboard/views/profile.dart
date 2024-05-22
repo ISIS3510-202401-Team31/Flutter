@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/shared_preferences.dart';
 import 'package:unifood/repository/user_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
@@ -28,12 +29,13 @@ class _ProfileState extends State<Profile> {
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
-
+    _stopwatch.start();
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -41,6 +43,19 @@ class _ProfileState extends State<Profile> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Profile',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _checkConnectivity() async {

@@ -16,7 +16,7 @@ class CustomRestaurant extends StatelessWidget {
   final String id;
   final bool fromPointsView; // Flag to determine navigation
 
-  const CustomRestaurant({
+  CustomRestaurant({
     super.key,
     required this.imageUrl,
     required this.logoUrl,
@@ -37,6 +37,20 @@ class CustomRestaurant extends StatelessWidget {
     AnalyticsRepository().saveEvent(event);
   }
 
+  final Stopwatch _stopwatch = Stopwatch();
+
+  @override
+  void initState() {
+    _stopwatch.start();
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -47,7 +61,8 @@ class CustomRestaurant extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        // Check if the tap is from the Points view
+        AnalyticsRepository().saveScreenTime(
+            {'screen': 'Restaurants', 'time': _stopwatch.elapsed.inSeconds});
         if (fromPointsView) {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => Offers(restaurantId: id)));

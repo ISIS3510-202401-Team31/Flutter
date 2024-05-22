@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/controller/restaurant_controller.dart';
 import 'package:unifood/controller/review_controller.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/reviews/create/widgets/comment_section.dart';
 import 'package:unifood/view/reviews/create/widgets/restaurant_dropdown.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
@@ -25,22 +25,24 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
   late Restaurant _selectedRestaurant;
   final RestaurantController _restaurantController = RestaurantController();
   late bool _isConnected;
-  // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
+    _stopwatch.start();
+
     _restaurantsFuture = _restaurantController.getRestaurants();
 
     _restaurantsFuture.then((restaurants) {
-    if (restaurants.isNotEmpty) {
-      setState(() {
-        _selectedRestaurant = restaurants.first;
-      });
-    }
-  });
-  
+      if (restaurants.isNotEmpty) {
+        setState(() {
+          _selectedRestaurant = restaurants.first;
+        });
+      }
+    });
+
     _checkConnectivity();
 
     _connectivitySubscription = Connectivity()
@@ -50,6 +52,19 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Add Review',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _checkConnectivity() async {
@@ -110,7 +125,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
         ),
       );
     } catch (e) {
-      print('Error submitting review: $e');
+      debugPrint('Error submitting review: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to submit review. Please try again later.'),
@@ -183,14 +198,14 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
                             );
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
-                          } else {;
+                          } else {
                             return RestaurantDropdown(
                               initialValue: snapshot.data!.first,
                               onChanged: (newValue) {
                                 setState(() {
                                   _selectedRestaurant = newValue!;
                                 });
-                                print(
+                                debugPrint(
                                     'Selected restaurant: ${_selectedRestaurant.name}');
                               },
                               restaurants: snapshot.data!,
@@ -300,23 +315,9 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
                   _checkConnectivity();
                 });
               },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
-              ),
-              icon: Icon(Icons.refresh, color: Colors.grey[600]),
-              label: Text(
-                'Retry',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              height: 1.0,
-              color: Colors.grey[400],
+              icon: Icon(Icons.refresh, size: screenHeight * 0.03),
+              label: Text('Try Again',
+                  style: TextStyle(fontSize: screenHeight * 0.02)),
             ),
           ],
         ),

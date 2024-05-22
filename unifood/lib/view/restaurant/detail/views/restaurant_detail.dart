@@ -9,6 +9,7 @@ import 'package:unifood/controller/review_controller.dart';
 import 'package:unifood/model/plate_entity.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/model/review_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/detail/widgets/menu_section/menu_grid.dart';
 import 'package:unifood/view/restaurant/detail/widgets/restaurant_info.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_list.dart';
@@ -35,10 +36,13 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   Restaurant? _restaurant;
   List<Plate> _plates = [];
   List<Review> _reviews = [];
+  final Stopwatch _stopwatch = Stopwatch();
+
 
   @override
   void initState() {
     super.initState();
+    _stopwatch.start();
     _checkConnectivity();
     _restaurantViewModel.getRestaurantById(widget.restaurantId);
     _plateViewModel.getPlatesByRestaurantId(widget.restaurantId);
@@ -78,10 +82,19 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
   @override
   void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Restaurant Detail',
+      'time': _stopwatch.elapsed.inSeconds
+    });
     _restaurantViewModel.dispose();
     _plateViewModel.dispose();
     _reviewViewModel.dispose();
     _subscription.cancel();
+    _connectivitySubscription.cancel();
+
     super.dispose();
   }
 

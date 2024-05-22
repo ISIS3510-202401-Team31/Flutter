@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/auth_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/auth/widgets/custom_textformfield.dart';
@@ -22,6 +23,7 @@ class _LoginState extends State<Login> {
 
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   bool emailError = false;
   bool passwordError = false;
@@ -31,6 +33,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    _stopwatch.start();
     emailController = TextEditingController();
     passwordController = TextEditingController();
     _checkConnectivity();
@@ -44,18 +47,24 @@ class _LoginState extends State<Login> {
     });
   }
 
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime(
+        {'screen': 'Login', 'time': _stopwatch.elapsed.inSeconds});
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
   Future<void> _checkConnectivity() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     setState(() {
       _isConnected = connectivityResult != ConnectivityResult.none;
     });
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 
   @override

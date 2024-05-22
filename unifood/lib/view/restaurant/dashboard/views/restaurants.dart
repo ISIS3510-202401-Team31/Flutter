@@ -24,12 +24,14 @@ class _RestaurantsState extends State<Restaurants> {
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
     _requestLocationPermission();
+    _stopwatch.start();
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -38,6 +40,17 @@ class _RestaurantsState extends State<Restaurants> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime(
+        {'screen': 'Restaurants', 'time': _stopwatch.elapsed.inSeconds});
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   void _onUserInteraction(String feature, String action) {
@@ -138,6 +151,11 @@ class _RestaurantsState extends State<Restaurants> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/restaurant_search');
                     _onUserInteraction("Restaurants Search", "Tap");
+                    _stopwatch.reset();
+                    AnalyticsRepository().saveScreenTime({
+                      'screen': 'Restaurants',
+                      'time': _stopwatch.elapsed.inSeconds
+                    });
                   },
                   icon: Icon(
                     Icons.search_rounded,
@@ -178,6 +196,11 @@ class _RestaurantsState extends State<Restaurants> {
             GestureDetector(
                 onTap: () {
                   _onUserInteraction("All restaurants", "Tap");
+                  _stopwatch.reset();
+                  AnalyticsRepository().saveScreenTime({
+                    'screen': 'Restaurants',
+                    'time': _stopwatch.elapsed.inSeconds
+                  });
                 },
                 child: NotificationListener<ScrollUpdateNotification>(
                     onNotification: (notification) {
@@ -308,6 +331,11 @@ class _RestaurantsState extends State<Restaurants> {
             GestureDetector(
                 onTap: () {
                   _onUserInteraction("Nearby restaurants", "Tap");
+                  _stopwatch.reset();
+                  AnalyticsRepository().saveScreenTime({
+                    'screen': 'Restaurants',
+                    'time': _stopwatch.elapsed.inSeconds
+                  });
                 },
                 child: NotificationListener<ScrollUpdateNotification>(
                     onNotification: (notification) {

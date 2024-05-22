@@ -13,6 +13,14 @@ class AnalyticsRepository {
     }
   }
 
+  Future<void> saveScreenTime(Map<String, dynamic> errorInfo) async {
+    try {
+      await _firestoreServiceAdapter.addDocument('timer', errorInfo);
+    } catch (e) {
+      throw Exception('Error saving error to the database: $e');
+    }
+  }
+
   Future<void> saveEvent(Map<String, dynamic> eventInfo) async {
     try {
       await _firestoreServiceAdapter.addDocument('features', eventInfo);

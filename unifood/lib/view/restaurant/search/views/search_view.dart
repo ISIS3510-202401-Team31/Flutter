@@ -22,6 +22,7 @@ class _SearchViewState extends State<SearchView> {
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -44,7 +45,7 @@ class _SearchViewState extends State<SearchView> {
   void initState() {
     super.initState();
     _checkConnectivity();
-
+    _stopwatch.start();
      _connectivitySubscription = Connectivity()
        .onConnectivityChanged
        .listen((ConnectivityResult result) {
@@ -52,6 +53,19 @@ class _SearchViewState extends State<SearchView> {
         _isConnected = result!= ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Search View',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -65,6 +79,11 @@ class _SearchViewState extends State<SearchView> {
         onSearchChanged: _performSearch,
         onBackButtonPressed: () {
           Navigator.pushNamed(context, '/restaurants');
+          _stopwatch.reset();
+          AnalyticsRepository().saveScreenTime({
+            'screen': 'Search View',
+            'time': _stopwatch.elapsed.inSeconds
+          });
         },
       ),
       body: Padding(

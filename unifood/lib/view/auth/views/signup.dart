@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/auth_repository.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_button.dart';
@@ -32,6 +33,7 @@ class _SignupState extends State<Signup> {
 
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   bool fullNameError = false;
   String fullNameErrorMessage = '';
@@ -57,6 +59,7 @@ class _SignupState extends State<Signup> {
   void initState() {
     super.initState();
     _checkConnectivity();
+    _stopwatch.start();
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -65,6 +68,19 @@ class _SignupState extends State<Signup> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Add Review',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _checkConnectivity() async {
