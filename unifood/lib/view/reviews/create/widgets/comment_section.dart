@@ -34,6 +34,9 @@ class _CommentSectionState extends State<CommentSection> {
     super.didUpdateWidget(oldWidget);
     if (widget.isSubmitted && !oldWidget.isSubmitted) {
       _commentController.clear();
+      setState(() {
+        _comment = "";
+      });
     }
   }
 
@@ -70,7 +73,9 @@ class _CommentSectionState extends State<CommentSection> {
           color: Colors.black87,
         ),
         decoration: InputDecoration(
-          hintText: _commentController.text.isNotEmpty ? _commentController.text : 'Write your comment here...',
+          hintText: _commentController.text.isNotEmpty
+              ? _commentController.text
+              : 'Write your comment here...',
           hintStyle: const TextStyle(color: Colors.grey),
           filled: true,
           fillColor: Colors.white,

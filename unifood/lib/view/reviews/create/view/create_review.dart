@@ -31,7 +31,16 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    _restaurantsFuture = _restaurantController.getRestaurants();
+
+    _restaurantsFuture.then((restaurants) {
+    if (restaurants.isNotEmpty) {
+      setState(() {
+        _selectedRestaurant = restaurants.first;
+      });
+    }
+  });
+  
     _checkConnectivity();
 
     _connectivitySubscription = Connectivity()
@@ -61,50 +70,55 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
   }
 
   void _submitReview() async {
-  if (_rating == 0) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please select a rating.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return;
-  }
+    if (_rating == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a rating.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-  if (_comment.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please enter a comment.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return; 
-  }
+    if (_comment.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a comment.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-  try {
-    await ReviewController().saveReview(_selectedRestaurant.id, _rating, _comment);
-    setState(() {
-      _rating = 0;
-      _comment = '';
-      isSubmitted = true;
-    });
+    try {
+      await ReviewController().saveReview(
+          _selectedRestaurant.id,
+          _selectedRestaurant.logoUrl,
+          _selectedRestaurant.name,
+          _rating,
+          _comment);
+      setState(() {
+        _rating = 0;
+        _comment = '';
+        isSubmitted = true;
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Review submitted successfully!'),
-        backgroundColor: Colors.green,
-      ),
-    );
-  } catch (e) {
-    print('Error submitting review: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Failed to submit review. Please try again later.'),
-        backgroundColor: Colors.red,
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Review submitted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('Error submitting review: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to submit review. Please try again later.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -169,8 +183,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
                             );
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
-                          } else {
-                            _selectedRestaurant = snapshot.data!.first;
+                          } else {;
                             return RestaurantDropdown(
                               initialValue: snapshot.data!.first,
                               onChanged: (newValue) {

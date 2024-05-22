@@ -352,11 +352,11 @@ class _ProfileState extends State<Profile> {
                                       },
                                     ),
                                     CustomSettingOption(
-                                      icon: Icons.help,
-                                      text: 'Help',
+                                      icon: Icons.reviews,
+                                      text: 'My Reviews',
                                       onPressed: () {
                                         Navigator.pushNamed(
-                                            context, '/create_review');
+                                            context, '/my_reviews');
                                       },
                                     ),
                                     CustomSettingOption(

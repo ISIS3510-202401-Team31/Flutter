@@ -10,7 +10,19 @@ class ReviewController {
   final StreamController<List<Review?>> _reviewsByIdController =
       StreamController<List<Review?>>.broadcast();
 
-  Stream<List<Review?>> get reviewsByRestaurantId => _reviewsByIdController.stream;
+  StreamController<List<Review?>> _reviewsByUserIdController =
+      StreamController<List<Review?>>.broadcast();
+
+  ReviewController() {
+    _reviewsByUserIdController = StreamController<List<Review>>.broadcast();
+    getReviewsByUserId();
+  }
+
+  Stream<List<Review?>> get reviewsByRestaurantId =>
+      _reviewsByIdController.stream;
+
+  Stream<List<Review?>> get reviewsByUserId =>
+      _reviewsByUserIdController.stream;
 
   void dispose() {
     _reviewsByIdController.close();
@@ -20,7 +32,7 @@ class ReviewController {
     try {
       final List<Map<String, dynamic>> data =
           await _reviewRepository.getReviewsByRestaurantId(restaurantId);
-      
+
       final reviews = data
           .map(
             (item) => Review(
@@ -32,7 +44,6 @@ class ReviewController {
           )
           .toList();
       _reviewsByIdController.sink.add(reviews);
-
     } catch (e, stackTrace) {
       // Guardar la información del error en la base de datos
       final errorInfo = {
@@ -47,7 +58,8 @@ class ReviewController {
     }
   }
 
-  Future<List<Review>> getReviewsByPlateId(String plateId, String restaurantId) async {
+  Future<List<Review>> getReviewsByPlateId(
+      String plateId, String restaurantId) async {
     try {
       final List<Map<String, dynamic>> data =
           await _reviewRepository.getReviewsByPlateId(plateId, restaurantId);
@@ -63,7 +75,6 @@ class ReviewController {
           )
           .toList();
     } catch (e, stackTrace) {
-
       final errorInfo = {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
@@ -76,9 +87,10 @@ class ReviewController {
     }
   }
 
-  Future<void> saveReview(String restaurantId, int rating, String review) async {
+  Future<void> saveReview(
+      String restaurantId, String restaurantImage, String restaurantName, int rating, String review) async {
     try {
-      await _reviewRepository.saveReview(restaurantId, rating, review);
+      await _reviewRepository.saveReview(restaurantId, restaurantImage, restaurantName, rating, review);
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
@@ -88,6 +100,36 @@ class ReviewController {
       };
       AnalyticsRepository().saveError(errorInfo);
       print('Error when saving review: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> getReviewsByUserId() async {
+    try {
+      final List<Map<String, dynamic>> data =
+          await _reviewRepository.getReviewsByUserId();
+
+      List<Review> reviews = data
+          .map(
+            (item) => Review(
+              userImage: item['userImage'] ?? "",
+              name: item['name'] ?? "",
+              comment: item['comment'] ?? "",
+              rating: item['rating'].toDouble() ?? 0.0,
+            ),
+          )
+          .toList();
+      _reviewsByUserIdController.sink.add(reviews);
+    } catch (e, stackTrace) {
+      // Guardar la información del error en la base de datos
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'getReviewsByUserId',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when fetching reviews by user id in view model: $e');
       rethrow;
     }
   }
