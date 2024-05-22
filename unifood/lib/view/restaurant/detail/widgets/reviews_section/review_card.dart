@@ -45,7 +45,7 @@ class ReviewCard extends StatelessWidget {
                           children: [
                             Text(
                               name,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: screenWidth * 0.035,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -59,8 +59,8 @@ class ReviewCard extends StatelessWidget {
                                     fontSize: screenWidth * 0.035,
                                   ),
                                 ),
-                                 SizedBox(width: screenWidth * 0.01),
-                                 Icon(
+                                SizedBox(width: screenWidth * 0.01),
+                                Icon(
                                   Icons.star,
                                   color: Colors.yellow,
                                   size: screenWidth * 0.035,
@@ -72,7 +72,7 @@ class ReviewCard extends StatelessWidget {
                         SizedBox(height: screenHeight * 0.005),
                         Text(
                           comment,
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontSize: screenWidth * 0.03,
                           ),
                         ),

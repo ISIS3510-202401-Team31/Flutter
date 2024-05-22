@@ -232,7 +232,8 @@ class _RestaurantsState extends State<Restaurants> {
                                 ),
                               ),
                             );
-                          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          } else if (snapshot.hasData &&
+                              snapshot.data!.isNotEmpty) {
                             List<Restaurant> favorites = snapshot.data!;
                             return Container(
                               color: const Color(0xFF965E4E).withOpacity(0.15),

@@ -14,6 +14,7 @@ import 'package:unifood/view/profile/points/views/points.dart';
 import 'package:unifood/view/restaurant/offers/views/offers.dart';
 import 'package:unifood/view/restaurant/filtermenu/views/filter_menu.dart';
 import 'package:unifood/view/reviews/create/view/create_review.dart';
+import 'package:unifood/view/reviews/dashboard/view/myreviews.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -58,6 +59,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const LikedRestaurants());
       case "/create_review":
         return MaterialPageRoute(builder: (_) => const RestaurantReviewPage());
+      case "/my_reviews":
+        return MaterialPageRoute(builder: (_) => MyReviews());
 
       default:
         return MaterialPageRoute(builder: (_) => const Landing());
