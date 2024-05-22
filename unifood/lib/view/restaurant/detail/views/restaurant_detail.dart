@@ -193,11 +193,11 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           children: [
             Container(
               width: double.infinity,
-              margin: EdgeInsets.symmetric(vertical: 10.0),
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
               height: 1.0,
               color: Colors.grey[400],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               children: [
                 Icon(
@@ -205,7 +205,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   size: screenHeight * 0.05,
                   color: Colors.grey[300],
                 ),
-                SizedBox(width: 20.0),
+                const SizedBox(width: 20.0),
                 Expanded(
                   child: Text(
                     'There is no connection, no plates and reviews are available. Please try again later',
@@ -217,7 +217,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton.icon(
               onPressed: () {
                 setState(() {
@@ -235,10 +235,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Container(
               width: double.infinity,
-              margin: EdgeInsets.symmetric(vertical: 10.0),
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
               height: 1.0,
               color: Colors.grey[400],
             ),

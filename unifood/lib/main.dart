@@ -63,8 +63,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ConnectivityWrapper( 
-        child: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const ConnectivityWrapper( 
+        child: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
@@ -83,7 +83,7 @@ class MyHomePage extends StatelessWidget {
       future: SharedPreferencesService().getUser(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else {
           final bool isLoggedIn = snapshot.data != null;
           return MaterialApp(
@@ -106,6 +106,7 @@ class ConnectivityWrapper extends StatefulWidget {
 }
 
 class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
+  // ignore: unused_field
   late ConnectivityResult _connectivityResult;
 
   @override

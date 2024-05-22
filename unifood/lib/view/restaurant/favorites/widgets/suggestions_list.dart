@@ -239,7 +239,7 @@ class _SuggestedRestaurantsSectionState
             size: 65,
             color: Colors.grey[300],
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Text(
             'Oops! No Internet Connection',
             style: TextStyle(
@@ -248,7 +248,7 @@ class _SuggestedRestaurantsSectionState
               color: Colors.grey[600],
             ),
           ),
-          SizedBox(height: 2.0),
+          const SizedBox(height: 2.0),
           ElevatedButton.icon(
             onPressed: () {
               setState(() {

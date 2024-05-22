@@ -75,4 +75,20 @@ class ReviewController {
       rethrow;
     }
   }
+
+  Future<void> saveReview(String restaurantId, int rating, String review) async {
+    try {
+      await _reviewRepository.saveReview(restaurantId, rating, review);
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'saveReview',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when saving review: $e');
+      rethrow;
+    }
+  }
 }

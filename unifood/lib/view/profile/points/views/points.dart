@@ -85,13 +85,13 @@ class _PointsState extends State<PointsView> {
               future: pointsFuture,  // Use the pre-declared future
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.hasData) {
                   return RestaurantPointsWidget(restaurantPointsList: snapshot.data!);
                 } else {
-                  return Text('No points available.');
+                  return const Text('No points available.');
                 }
               },
             ),
@@ -117,7 +117,7 @@ class _PointsState extends State<PointsView> {
               future: RestaurantController().getRestaurants(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.hasData) {
@@ -141,16 +141,16 @@ class _PointsState extends State<PointsView> {
                   ),
                   );
                 } else {
-                  return Center(child: Text('No data available.'));
+                  return const Center(child: Text('No data available.'));
                 }
               },
             ),
           ],
         ),
-      ):Center(
+      ):const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.wifi_off, size: 48),
               SizedBox(height: 10),
               Text('No internet connection'),

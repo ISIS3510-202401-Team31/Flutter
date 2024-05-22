@@ -1,5 +1,7 @@
 import 'package:unifood/data/firebase_service_adapter.dart';
+import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
+import 'package:unifood/repository/shared_preferences.dart';
 
 class ReviewRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
@@ -36,6 +38,45 @@ class ReviewRepository {
       };
       AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching reviews by plate id in repository: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> saveReview( String restaurantId, int rating, String review) async {
+    try {
+
+      Users? user = await SharedPreferencesService().getUser();
+
+      Map<String, dynamic> reviewData = {
+        'restaurantId': restaurantId,
+        'rating': rating,
+        'review': review,
+      };
+
+      await SharedPreferencesService().saveReview(user!.uid, reviewData);
+
+      await _firestoreServiceAdapter.addDocument('users/${user.uid}/reviews', {
+        'restaurantId': restaurantId,
+        'comment': review,
+        'rating': rating,
+      });
+
+      await _firestoreServiceAdapter.addDocument('restaurants/$restaurantId/reviews', {
+        'name': user.name,
+        'comment': review,
+        'rating': rating,
+        'userImage': user.profileImageUrl,
+      });
+
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'saveReview',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when saving review: $e');
       rethrow;
     }
   }

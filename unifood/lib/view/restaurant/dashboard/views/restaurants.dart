@@ -184,7 +184,7 @@ class _RestaurantsState extends State<Restaurants> {
                       _onUserInteraction("All restaurants", "Scroll");
                       return true;
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: screenHeight * 0.315,
                       child: FutureBuilder<List<Restaurant>>(
                         future: _restaurantController.getRestaurants(),
@@ -313,7 +313,7 @@ class _RestaurantsState extends State<Restaurants> {
                       _onUserInteraction("Nearby restaurants", "Scroll");
                       return true;
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: screenHeight * 0.315,
                       child: FutureBuilder<List<Restaurant>>(
                         future: RestaurantController().getRestaurantsNearby(),

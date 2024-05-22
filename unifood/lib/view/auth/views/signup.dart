@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/auth_repository.dart';
@@ -312,15 +311,15 @@ class _SignupState extends State<Signup> {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('No Internet'),
-                            content: Text(
+                            title: const Text('No Internet'),
+                            content: const Text(
                                 'You cannot sign up without internet connection. Please try again later.'),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text('OK'),
+                                child: const Text('OK'),
                               ),
                             ],
                           ),

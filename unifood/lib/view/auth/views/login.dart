@@ -221,15 +221,15 @@ class _LoginState extends State<Login> {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text('No Internet'),
-                              content: Text(
+                              title: const Text('No Internet'),
+                              content: const Text(
                                   'You cannot log in without internet connection. Please try again later.'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text('OK'),
+                                  child: const Text('OK'),
                                 ),
                               ],
                             ),

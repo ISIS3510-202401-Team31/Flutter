@@ -77,7 +77,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       );
       actions.add(
-        Spacer()
+        const Spacer()
       );
     }
 

@@ -13,7 +13,7 @@ class SharedPreferencesService {
     return _instance!;
   }
 
-  bool isUserLoggedIn()  {
+  bool isUserLoggedIn() {
     return _prefs?.getString('uid') != null;
   }
 
@@ -43,5 +43,9 @@ class SharedPreferencesService {
       );
     }
     return null;
+  }
+
+  Future<void> saveReview(String userId, Map<String, dynamic> reviewData) async {
+    await _prefs!.setStringList('$userId/reviews', [reviewData.toString()]);
   }
 }
