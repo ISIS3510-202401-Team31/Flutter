@@ -106,7 +106,6 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
   }
 }
 
-
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -171,6 +170,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
+                            _selectedRestaurant = snapshot.data!.first;
                             return RestaurantDropdown(
                               initialValue: snapshot.data!.first,
                               onChanged: (newValue) {
