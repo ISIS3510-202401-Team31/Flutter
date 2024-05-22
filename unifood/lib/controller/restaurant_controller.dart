@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:connectivity/connectivity.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
@@ -9,7 +10,8 @@ import 'package:unifood/utils/distance_calculator.dart';
 class RestaurantController {
   final RestaurantRepository _restaurantRepository = RestaurantRepository();
   final LocationRepository _locationRepository = LocationRepository();
-  static final Map<String, List<Map<String, dynamic>>> _nearbyRestaurantCache = {};
+  static final Map<String, List<Map<String, dynamic>>> _nearbyRestaurantCache =
+      {};
 
   final StreamController<Restaurant?> _restaurantByIdController =
       StreamController<Restaurant?>.broadcast();
@@ -51,8 +53,7 @@ class RestaurantController {
       // Intenta obtener los datos de la red
       final userLocation = await _getUserLocation();
       final data = await _restaurantRepository.getRestaurants();
-      final nearbyRestaurants =
-          _filterNearbyRestaurants(data, userLocation);
+      final nearbyRestaurants = _filterNearbyRestaurants(data, userLocation);
       _nearbyRestaurantCache[cacheKey] = data;
       return nearbyRestaurants;
     } catch (e, stackTrace) {
@@ -151,8 +152,28 @@ class RestaurantController {
     }
   }
 
-  Future<List<Restaurant>> _getRestaurantData(Position userLocation) async {
+  Future<bool> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  Future<List<Restaurant>> _getRestaurantData(Position? userLocation) async {
     try {
+      // Verificar si hay conexión a internet
+      bool isConnected = await _checkConnectivity();
+
+      // Si no hay conexión, simplemente devolver los datos almacenados en la base de datos
+      if (!isConnected) {
+        final data = await _restaurantRepository.getRestaurants();
+        return _mapRestaurantData(data, null);
+      }
+
+      // Si hay conexión, entonces buscar la ubicación del usuario
+      if (userLocation == null) {
+        userLocation = await _getUserLocation();
+      }
+
+      // Obtener los datos de los restaurantes y mapearlos
       final data = await _restaurantRepository.getRestaurants();
       return _mapRestaurantData(data, userLocation);
     } catch (e, stackTrace) {
@@ -170,21 +191,22 @@ class RestaurantController {
   }
 
   List<Restaurant> _mapRestaurantData(
-      List<Map<String, dynamic>> data, Position userLocation) {
+      List<Map<String, dynamic>> data, Position? userLocation) {
     return data
         .map((item) => _mapSingleRestaurantData(item, userLocation))
         .toList();
   }
 
   Restaurant _mapSingleRestaurantData(
-      Map<String, dynamic> item, Position userLocation) {
+      Map<String, dynamic> item, Position? userLocation) {
     final restaurantLat = double.parse(item['latitud']);
     final restaurantLong = double.parse(item['longitud']);
-    final distance = DistanceCalculator.calculateDistanceInKm(
-        userLocation.latitude,
-        userLocation.longitude,
-        restaurantLat,
-        restaurantLong);
+
+    double distance = 0.0;
+    if (userLocation != null) {
+      distance = DistanceCalculator.calculateDistanceInKm(userLocation.latitude,
+          userLocation.longitude, restaurantLat, restaurantLong);
+    }
 
     return Restaurant(
         id: item['docId'] ?? '',

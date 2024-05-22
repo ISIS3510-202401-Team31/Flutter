@@ -9,7 +9,7 @@ import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/view/reviews/create/widgets/comment_section.dart';
 import 'package:unifood/view/reviews/create/widgets/restaurant_dropdown.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
-import 'package:unifood/view/widgets/custom_button.dart';
+import 'package:unifood/view/widgets/custom_auth_button.dart';
 
 class RestaurantReviewPage extends StatefulWidget {
   const RestaurantReviewPage({Key? key}) : super(key: key);
@@ -61,31 +61,51 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
   }
 
   void _submitReview() async {
-    try {
-      await ReviewController()
-          .saveReview(_selectedRestaurant.id, _rating, _comment);
-      setState(() {
-        _rating = 0;
-        _comment = '';
-      });
-      isSubmitted = true;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Review submitted successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      print('Error submitting review: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to submit review. Please try again later.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+  if (_rating == 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please select a rating.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
   }
+
+  if (_comment.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please enter a comment.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return; 
+  }
+
+  try {
+    await ReviewController().saveReview(_selectedRestaurant.id, _rating, _comment);
+    setState(() {
+      _rating = 0;
+      _comment = '';
+      isSubmitted = true;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Review submitted successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    print('Error submitting review: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Failed to submit review. Please try again later.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -205,9 +225,14 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
                         isSubmitted: isSubmitted,
                       ),
                       SizedBox(height: screenHeight * 0.02),
-                      CustomButton(
+                      CustomAuthButton(
                         text: 'Submit Review',
-                        onPressed: _submitReview,
+                        onPressed: () {
+                          _submitReview();
+                          setState(() {
+                            isSubmitted = false;
+                          });
+                        },
                         height: screenHeight * 0.05,
                         width: screenWidth * 0.1,
                         fontSize: screenHeight * 0.02,
@@ -246,7 +271,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
                 const SizedBox(width: 20.0),
                 Expanded(
                   child: Text(
-                    'There is no connection, no plates and reviews are available. Please try again later',
+                    'There is no connection, this functionality is not available. Please try again later',
                     style: TextStyle(
                       fontSize: screenHeight * 0.02,
                       color: Colors.grey[600],

@@ -355,36 +355,19 @@ class _ProfileState extends State<Profile> {
                                       icon: Icons.help,
                                       text: 'Help',
                                       onPressed: () {
-                                        Navigator.pushNamed(context, '/create_review');
+                                        Navigator.pushNamed(
+                                            context, '/create_review');
                                       },
                                     ),
                                     CustomSettingOption(
-                                      icon: Icons.logout,
-                                      text: 'Log Out',
-                                      onPressed: () async {
-                                        if (!_isConnected) {
-                                          // No hay conexión a Internet, mostrar un diálogo
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: const Text('No Internet'),
-                                              content: const Text(
-                                                  'This function is not available without internet connection.'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('OK'),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        } else {
+                                        icon: Icons.logout,
+                                        text: 'Log Out',
+                                        onPressed: () async {
                                           try {
                                             await FirebaseAuth.instance
                                                 .signOut();
-                                            await SharedPreferencesService().clearUser();
+                                            await SharedPreferencesService()
+                                                .clearUser();
                                             // Navegar a la pantalla de inicio de sesión o a otra pantalla según sea necesario
                                             Navigator.pushNamedAndRemoveUntil(
                                               context,
@@ -395,9 +378,7 @@ class _ProfileState extends State<Profile> {
                                             print('Error signing out: $error');
                                             // Manejar el error según sea necesario
                                           }
-                                        }
-                                      },
-                                    ),
+                                        }),
                                   ],
                                 ),
                               ],
