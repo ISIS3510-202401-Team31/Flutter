@@ -67,6 +67,18 @@ class _MyReviewsState extends State<MyReviews> {
     return filteredReviews;
   }
 
+  int getTotalReviews() {
+    return _reviews.length;
+  }
+
+  int getGoodReviewsCount() {
+    return _reviews.where((review) => review!.rating! >= 3).length;
+  }
+
+  int getBadReviewsCount() {
+    return _reviews.where((review) => review!.rating! < 3).length;
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -175,41 +187,90 @@ class _MyReviewsState extends State<MyReviews> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: StreamBuilder<List<Review?>>(
-                    stream: _reviewController.reviewsByUserId,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: SpinKitThreeBounce(
-                            color: Colors.black,
-                            size: 30.0,
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text(snapshot.error.toString()));
-                      } else if (snapshot.hasData &&
-                          snapshot.data!.isNotEmpty) {
-                        List<Review?> filteredReviews = getFilteredReviews();
-
-                        return SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: filteredReviews.map((review) {
-                              return Center(
-                                child: ReviewCard(
-                                  userImage: review!.userImage,
-                                  name: review.name,
-                                  rating: review.rating,
-                                  comment: review.comment,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Container(
+                    padding: EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6.0,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              'Total Reviews: ${getTotalReviews()}',
+                              style: TextStyle(
+                                  fontSize: fontSize * 1.5,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.thumb_up, color: Colors.green),
+                                SizedBox(width: 4),
+                                Text(
+                                  '${getGoodReviewsCount()}',
+                                  style: TextStyle(fontSize: fontSize * 1.5),
                                 ),
-                              );
-                            }).toList(),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.thumb_down, color: Colors.red),
+                                SizedBox(width: 4),
+                                Text(
+                                  '${getBadReviewsCount()}',
+                                  style: TextStyle(fontSize: fontSize * 1.5),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: getFilteredReviews().length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: double.infinity,
+                        child: Center(
+                          child: Dismissible(
+                            key: UniqueKey(),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Icon(Icons.delete, color: Colors.white),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                color: Colors.red,
+                              ),
+                            ),
+                            onDismissed: (direction) {
+                              _reviewController.deleteReview(
+                                  getFilteredReviews()[index]!.id);
+                            },
+                            child: ReviewCard(
+                              userImage: getFilteredReviews()[index]!.userImage,
+                              name: getFilteredReviews()[index]!.name,
+                              rating: getFilteredReviews()[index]!.rating,
+                              comment: getFilteredReviews()[index]!.comment,
+                            ),
                           ),
-                        );
-                      } else {
-                        return const Center(child: Text('No data available.'));
-                      }
+                        ),
+                      );
                     },
                   ),
                 ),
