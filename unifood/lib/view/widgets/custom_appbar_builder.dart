@@ -76,9 +76,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           buttonColor: Colors.white,
         ),
       );
-      actions.add(
-        const Spacer()
-      );
+      actions.add(const Spacer());
     }
 
     if (rightWidget != null) {
