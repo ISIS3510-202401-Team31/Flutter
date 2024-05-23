@@ -13,7 +13,14 @@ class ReviewRepository {
     try {
       final querySnapshot = await _firestoreServiceAdapter
           .getCollectionDocuments('restaurants/$restaurantId/reviews');
-      return querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      List<Map<String, dynamic>> reviews = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> reviewsData = doc.data();
+        reviewsData['docId'] = doc.id;
+        return reviewsData;
+      }).toList();
+
+      return reviews;
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
@@ -33,7 +40,13 @@ class ReviewRepository {
       final querySnapshot =
           await _firestoreServiceAdapter.getCollectionDocuments(
               'restaurants/$restaurantId/plates/$plateId/reviews');
-      return querySnapshot.docs.map((doc) => doc.data()).toList();
+      List<Map<String, dynamic>> reviews = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> reviewsData = doc.data();
+        reviewsData['docId'] = doc.id;
+        return reviewsData;
+      }).toList();
+
+      return reviews;
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
@@ -47,8 +60,8 @@ class ReviewRepository {
     }
   }
 
-  Future<void> saveReview(
-      String restaurantId, String restaurantImage, String restaurantName, int rating, String review) async {
+  Future<void> saveReview(String restaurantId, String restaurantImage,
+      String restaurantName, int rating, String review) async {
     try {
       Users? user = await SharedPreferencesService().getUser();
 
@@ -64,8 +77,8 @@ class ReviewRepository {
         'restaurantId': restaurantId,
         'comment': review,
         'rating': rating,
-        'name' : restaurantName,
-        'userImage' : restaurantImage,
+        'name': restaurantName,
+        'userImage': restaurantImage,
       });
 
       await _firestoreServiceAdapter
@@ -88,6 +101,30 @@ class ReviewRepository {
     }
   }
 
+  Future<void> deleteReview(String reviewId) async {
+    try {
+      Users? user = await SharedPreferencesService().getUser();
+      // Eliminar el review de la colección del usuario
+      await _firestoreServiceAdapter
+          .deleteDocument('users/${user!.uid}/reviews/$reviewId');
+      // Eliminar el review de la colección del restaurante (si es aplicable)
+      // Implementa esta parte si tienes una colección separada para los reviews del restaurante
+
+      // Si es necesario, también puedes implementar la eliminación del review de otras colecciones aquí
+    } catch (e, stackTrace) {
+      // Manejar cualquier error que pueda ocurrir durante la eliminación
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'deleteReview',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when deleting review: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getReviewsByUserId() async {
     try {
       Users? user = await SharedPreferencesService().getUser();
@@ -97,7 +134,13 @@ class ReviewRepository {
 
       final querySnapshot = await _firestoreServiceAdapter
           .getCollectionDocuments('users/${user.uid}/reviews');
-      return querySnapshot.docs.map((doc) => doc.data()).toList();
+      List<Map<String, dynamic>> reviews = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> reviewsData = doc.data();
+        reviewsData['docId'] = doc.id;
+        return reviewsData;
+      }).toList();
+
+      return reviews;
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),

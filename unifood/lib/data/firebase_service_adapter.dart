@@ -56,12 +56,19 @@ class FirestoreServiceAdapter {
     }
   }
 
-  Future<void> addUser(
-      Map<String, dynamic> data, String id) async {
+  Future<void> addUser(Map<String, dynamic> data, String id) async {
     try {
       await _firestore.collection("users").doc(id).set(data);
     } catch (e) {
       throw Exception('Error adding document to users: $e');
+    }
+  }
+
+  Future<void> deleteDocument(String documentPath) async {
+    try {
+      await _firestore.doc(documentPath).delete();
+    } catch (e) {
+      throw Exception('Error deleting document: $e');
     }
   }
 

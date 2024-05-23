@@ -36,6 +36,7 @@ class ReviewController {
       final reviews = data
           .map(
             (item) => Review(
+              id: item['docId'],
               userImage: item['userImage'],
               name: item['name'],
               comment: item['comment'],
@@ -67,6 +68,7 @@ class ReviewController {
       return data
           .map(
             (item) => Review(
+              id: item['docId'],
               userImage: item['userImage'],
               name: item['name'],
               comment: item['comment'],
@@ -87,10 +89,11 @@ class ReviewController {
     }
   }
 
-  Future<void> saveReview(
-      String restaurantId, String restaurantImage, String restaurantName, int rating, String review) async {
+  Future<void> saveReview(String restaurantId, String restaurantImage,
+      String restaurantName, int rating, String review) async {
     try {
-      await _reviewRepository.saveReview(restaurantId, restaurantImage, restaurantName, rating, review);
+      await _reviewRepository.saveReview(
+          restaurantId, restaurantImage, restaurantName, rating, review);
     } catch (e, stackTrace) {
       final errorInfo = {
         'error': e.toString(),
@@ -104,6 +107,25 @@ class ReviewController {
     }
   }
 
+  Future<void> deleteReview(String reviewId) async {
+    try {
+      // Lógica para eliminar el review
+      await _reviewRepository.deleteReview(reviewId);
+      // Actualizar la lista de reviews
+      await getReviewsByUserId();
+    } catch (e, stackTrace) {
+      final errorInfo = {
+        'error': e.toString(),
+        'stacktrace': stackTrace.toString(),
+        'timestamp': DateTime.now(),
+        'function': 'deleteReview',
+      };
+      AnalyticsRepository().saveError(errorInfo);
+      print('Error when deleting review: $e');
+      rethrow;
+    }
+  }
+
   Future<void> getReviewsByUserId() async {
     try {
       final List<Map<String, dynamic>> data =
@@ -112,6 +134,7 @@ class ReviewController {
       List<Review> reviews = data
           .map(
             (item) => Review(
+              id: item['docId'],
               userImage: item['userImage'] ?? "",
               name: item['name'] ?? "",
               comment: item['comment'] ?? "",
