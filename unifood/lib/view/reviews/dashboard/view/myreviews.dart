@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:unifood/controller/review_controller.dart';
 import 'package:unifood/model/review_entity.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/detail/widgets/reviews_section/review_card.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 
@@ -22,11 +23,13 @@ class _MyReviewsState extends State<MyReviews> {
   double? _filterRating;
   late bool _isConnected;
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
+    _stopwatch.start();
     _reviewController.getReviewsByUserId();
 
     _reviewSubscription = _reviewController.reviewsByUserId.listen((reviews) {
@@ -42,6 +45,19 @@ class _MyReviewsState extends State<MyReviews> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _reviewSubscription.cancel(); // Cancelar la suscripción al Stream
+    _reviewController.dispose();
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime(
+        {'screen': 'Reviews view', 'time': _stopwatch.elapsed.inSeconds});
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _checkConnectivity() async {
@@ -309,6 +325,11 @@ class _MyReviewsState extends State<MyReviews> {
             right: 16,
             child: FloatingActionButton(
               onPressed: () {
+                _stopwatch.reset();
+                AnalyticsRepository().saveScreenTime({
+                  'screen': 'Reviews view',
+                  'time': _stopwatch.elapsed.inSeconds
+                });
                 Navigator.pushNamed(context, '/create_review');
               },
               child: Icon(Icons.add),
@@ -318,13 +339,5 @@ class _MyReviewsState extends State<MyReviews> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _reviewSubscription.cancel(); // Cancelar la suscripción al Stream
-    _reviewController.dispose();
-    _connectivitySubscription.cancel();
-    super.dispose();
   }
 }
