@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/profile/points/widgets/restaurant_points_widget.dart';
 import 'package:unifood/view/profile/points/widgets/total_points_widget.dart';
 import 'package:unifood/view/restaurant/dashboard/widgets/custom_restaurant.dart';
@@ -21,11 +22,13 @@ class _PointsState extends State<PointsView> {
   late StreamSubscription _connectivitySubscription;
   List<Points>? _points;
   List<Restaurant>? _restaurants;
+  final Stopwatch _stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
+    _stopwatch.start();
     _connectivitySubscription = Connectivity()
             .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -42,7 +45,18 @@ class _PointsState extends State<PointsView> {
     });
   }
 
-
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Points View',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
 
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unifood/model/offer_entity.dart';  
 import 'package:unifood/model/restaurant_entity.dart'; // Assuming you have this file
+import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/view/restaurant/offers/widgets/offer_card.dart';
 import 'package:unifood/controller/offers_controller.dart';  
 import 'package:connectivity/connectivity.dart';
@@ -18,9 +19,13 @@ class Offers extends StatefulWidget {
 class _OffersState extends State<Offers> {
   late bool _isConnected;
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
+
+
   @override
   void initState() {
     super.initState();
+    _stopwatch.start();
     _checkConnectivity();
     _connectivitySubscription = Connectivity()
             .onConnectivityChanged
@@ -29,6 +34,19 @@ class _OffersState extends State<Offers> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Offers',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _checkConnectivity() async {

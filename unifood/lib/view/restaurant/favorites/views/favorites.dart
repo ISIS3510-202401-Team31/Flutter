@@ -128,6 +128,8 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
+
 
   void _checkConnectivity() async {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -140,6 +142,7 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
   void initState() {
     super.initState();
     _checkConnectivity();
+    _stopwatch.start();
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -148,6 +151,19 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
         _isConnected = result != ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Favorites',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   void _onUserInteraction(String feature, String action) {

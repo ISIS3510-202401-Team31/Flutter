@@ -30,11 +30,13 @@ class _PlateDetailState extends State<PlateDetail> {
   late bool _isConnected;
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
+  final Stopwatch _stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
     _checkConnectivity();
+    _stopwatch.start();
     dataFuture = fetchData();
 
     _connectivitySubscription = Connectivity()
@@ -44,6 +46,19 @@ class _PlateDetailState extends State<PlateDetail> {
         _isConnected = result!= ConnectivityResult.none;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    debugPrint(
+        'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
+    AnalyticsRepository().saveScreenTime({
+      'screen': 'Plate Detail',
+      'time': _stopwatch.elapsed.inSeconds
+    });
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _checkConnectivity() async {
