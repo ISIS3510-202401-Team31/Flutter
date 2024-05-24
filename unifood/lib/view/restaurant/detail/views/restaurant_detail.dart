@@ -98,28 +98,32 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(MediaQuery.of(context).size.height * 0.05),
-        child: CustomAppBarBuilder(
-          screenHeight: MediaQuery.of(context).size.height,
-          screenWidth: MediaQuery.of(context).size.width,
-          showBackButton: true,
-        )
-            .setRightWidget(
-              IconButton(
-                icon: Icon(Icons.search,
-                    size: MediaQuery.of(context).size.width * 0.07),
-                onPressed: () {
-                  Navigator.pushNamed(context, "/filtermenu");
-                },
-              ),
-            )
-            .build(context),
-      ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: PreferredSize(
+      preferredSize:
+          Size.fromHeight(MediaQuery.of(context).size.height * 0.05),
+      child: CustomAppBarBuilder(
+        screenHeight: MediaQuery.of(context).size.height,
+        screenWidth: MediaQuery.of(context).size.width,
+        showBackButton: true,
+      )
+          .setRightWidget(
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.search,
+                      size: MediaQuery.of(context).size.width * 0.07),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/filtermenu");
+                  },
+                ),
+              ],
+            ),
+          )
+          .build(context),
+    ),
       body: StreamBuilder(
         stream: _restaurantViewModel.restaurantById,
         builder: (context, snapshot) {
