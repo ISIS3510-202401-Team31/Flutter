@@ -15,6 +15,10 @@ import 'package:unifood/view/restaurant/offers/views/offers.dart';
 import 'package:unifood/view/restaurant/filtermenu/views/filter_menu.dart';
 import 'package:unifood/view/reviews/create/view/create_review.dart';
 import 'package:unifood/view/reviews/dashboard/view/myreviews.dart';
+import 'package:unifood/repository/reservation_repository.dart';
+import 'package:unifood/view/restaurant/reservation/views/restaurant_reservation.dart'; // Import the new view
+import 'package:unifood/controller/reservation_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -61,7 +65,15 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const RestaurantReviewPage());
       case "/my_reviews":
         return MaterialPageRoute(builder: (_) => MyReviews());
-
+      case '/restaurant_reservation': // Add the route for the new reservation view
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (_) => RestaurantReservation(
+                  reservationController: ReservationController(
+                      ReservationRepository(FirebaseFirestore.instance)),
+                  restaurantsFuture: args['restaurantsFuture'],
+                  userId: args['userId'],
+                ));
       default:
         return MaterialPageRoute(builder: (_) => const Landing());
     }
