@@ -83,16 +83,16 @@ class _MyReviewsState extends State<MyReviews> {
     return filteredReviews;
   }
 
-  int getTotalReviews() {
-    return _reviews.length;
+  int getTotalReviews(List<Review?> reviews) {
+    return reviews.length;
   }
 
-  int getGoodReviewsCount() {
-    return _reviews.where((review) => review!.rating! >= 3).length;
+  int getGoodReviewsCount(List<Review?> reviews) {
+    return reviews.where((review) => review!.rating! >= 3).length;
   }
 
-  int getBadReviewsCount() {
-    return _reviews.where((review) => review!.rating! < 3).length;
+  int getBadReviewsCount(List<Review?> reviews) {
+    return reviews.where((review) => review!.rating! < 3).length;
   }
 
   @override
@@ -100,6 +100,8 @@ class _MyReviewsState extends State<MyReviews> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth * 0.027;
+
+    List<Review?> filteredReviews = getFilteredReviews();
 
     return Scaffold(
       appBar: PreferredSize(
@@ -224,7 +226,7 @@ class _MyReviewsState extends State<MyReviews> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              'Total Reviews: ${getTotalReviews()}',
+                              'Total Reviews: ${getTotalReviews(filteredReviews)}',
                               style: TextStyle(
                                   fontSize: fontSize * 1.5,
                                   fontWeight: FontWeight.bold),
@@ -234,7 +236,7 @@ class _MyReviewsState extends State<MyReviews> {
                                 Icon(Icons.thumb_up, color: Colors.green),
                                 SizedBox(width: 4),
                                 Text(
-                                  '${getGoodReviewsCount()}',
+                                  '${getGoodReviewsCount(filteredReviews)}',
                                   style: TextStyle(fontSize: fontSize * 1.5),
                                 ),
                               ],
@@ -244,7 +246,7 @@ class _MyReviewsState extends State<MyReviews> {
                                 Icon(Icons.thumb_down, color: Colors.red),
                                 SizedBox(width: 4),
                                 Text(
-                                  '${getBadReviewsCount()}',
+                                  '${getBadReviewsCount(filteredReviews)}',
                                   style: TextStyle(fontSize: fontSize * 1.5),
                                 ),
                               ],
@@ -257,7 +259,7 @@ class _MyReviewsState extends State<MyReviews> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: getFilteredReviews().length,
+                    itemCount: filteredReviews.length,
                     itemBuilder: (context, index) {
                       return Container(
                         width: double.infinity,
@@ -275,14 +277,14 @@ class _MyReviewsState extends State<MyReviews> {
                               ),
                             ),
                             onDismissed: (direction) {
-                              _reviewController.deleteReview(
-                                  getFilteredReviews()[index]!.id);
+                              _reviewController
+                                  .deleteReview(filteredReviews[index]!.id);
                             },
                             child: ReviewCard(
-                              userImage: getFilteredReviews()[index]!.userImage,
-                              name: getFilteredReviews()[index]!.name,
-                              rating: getFilteredReviews()[index]!.rating,
-                              comment: getFilteredReviews()[index]!.comment,
+                              userImage: filteredReviews[index]!.userImage,
+                              name: filteredReviews[index]!.name,
+                              rating: filteredReviews[index]!.rating,
+                              comment: filteredReviews[index]!.comment,
                             ),
                           ),
                         ),

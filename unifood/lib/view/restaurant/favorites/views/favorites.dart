@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:unifood/controller/plate_controller.dart';
+import 'package:unifood/model/plate_entity.dart';
 import 'package:unifood/model/restaurant_entity.dart';
 import 'package:unifood/model/user_entity.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/repository/user_repository.dart';
+import 'package:unifood/view/restaurant/detail/widgets/menu_section/plate_card.dart';
 import 'package:unifood/view/restaurant/favorites/widgets/suggestions_list.dart';
 import 'package:unifood/view/widgets/custom_appbar_builder.dart';
 import 'package:unifood/view/widgets/custom_circled_button.dart';
@@ -129,7 +132,7 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
   // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
   final Stopwatch _stopwatch = Stopwatch();
-
+  final PlateController _plateController = PlateController();
 
   void _checkConnectivity() async {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -158,10 +161,8 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
     _stopwatch.stop();
     debugPrint(
         'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
-    AnalyticsRepository().saveScreenTime({
-      'screen': 'Favorites',
-      'time': _stopwatch.elapsed.inSeconds
-    });
+    AnalyticsRepository().saveScreenTime(
+        {'screen': 'Favorites', 'time': _stopwatch.elapsed.inSeconds});
     _connectivitySubscription.cancel();
     super.dispose();
   }
@@ -248,23 +249,16 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
                     userId: widget.currentUser.uid)),
             SizedBox(height: screenHeight * 0.025),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  'Favorite Restaurants',
-                  style: TextStyle(
-                      fontFamily: 'KeaniaOne', fontSize: screenWidth * 0.06),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/restaurant_search');
-                    _onUserInteraction("Restaurants Search", "Tap");
-                  },
-                  icon: Icon(
-                    Icons.search_rounded,
-                    size: screenHeight * 0.035,
+                Padding(
+                  padding: EdgeInsets.only(bottom: screenHeight * 0.007),
+                  child: Text(
+                    'Suggested plates',
+                    style: TextStyle(
+                        fontFamily: 'KeaniaOne', fontSize: screenWidth * 0.06),
                   ),
-                )
+                ),
               ],
             ),
             Container(
@@ -273,35 +267,142 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
               height: screenHeight * 0.005,
               color: const Color(0xFF965E4E),
             ),
-            SizedBox(height: screenHeight * 0.02),
-            NotificationListener<ScrollUpdateNotification>(
-              onNotification: (notification) {
-                _onUserInteraction("Favorite Restaurants", "Scroll");
-                return true;
-              },
-              child: Container(
-                color: const Color(0xFF965E4E).withOpacity(0.15),
-                height: screenHeight * 0.4,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: widget.favoriteRestaurants.map((restaurant) {
-                      return CustomRestaurant(
-                        id: restaurant.id,
-                        imageUrl: restaurant.imageUrl,
-                        logoUrl: restaurant.logoUrl,
-                        name: restaurant.name,
-                        isOpen: restaurant.isOpen,
-                        distance: restaurant.distance,
-                        rating: restaurant.rating,
-                        avgPrice: restaurant.avgPrice,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ),
+            GestureDetector(
+                onTap: () {
+                  _onUserInteraction("Most liked restaurants", "Tap");
+                },
+                child: NotificationListener<ScrollUpdateNotification>(
+                    onNotification: (notification) {
+                      _onUserInteraction("Most liked restaurants", "Scroll");
+                      return true;
+                    },
+                    child: SizedBox(
+                      height: screenHeight * 0.425,
+                      child: FutureBuilder<List<Plate>>(
+                        future: _plateController.fetchPlatesByPriceRange(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: SpinKitThreeBounce(
+                                color: Colors.black,
+                                size: 30.0,
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            if (snapshot.error
+                                .toString()
+                                .contains('Connection failed')) {
+                              return _buildNoInternetWidget(
+                                  screenWidth, screenHeight);
+                            } else {
+                              return Padding(
+                                padding: EdgeInsets.all(screenWidth * 0.03),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Oops! Something went wrong.\nPlease try again later.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: screenWidth * 0.04,
+                                          fontWeight: FontWeight
+                                              .bold, // Letra en negrita
+                                        ),
+                                      ),
+                                      SizedBox(height: screenHeight * 0.02),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.refresh,
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.08,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                          } else if (snapshot.hasData &&
+                              snapshot.data!.isNotEmpty) {
+                            List<Plate> favorites = snapshot.data!;
+                            return Container(
+                              color: const Color(0xFF965E4E).withOpacity(0.15),
+                              height: screenHeight * 0.338,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: favorites.map((plate) {
+                                    return PlateCard(
+                                      id: plate.id,
+                                      restaurantId: plate.restaurantId,
+                                      imagePath: plate.imagePath,
+                                      name: plate.name,
+                                      description: plate.description,
+                                      price: plate.price,
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                                child: Text('No data available.'));
+                          }
+                        },
+                      ),
+                    ))),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildNoInternetWidget(double screenWidth, double screenHeight) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 65,
+            color: Colors.grey[300],
+          ),
+          const SizedBox(height: 10.0),
+          Text(
+            'Oops! No Internet Connection',
+            style: TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 2.0),
+          ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                _checkConnectivity();
+              });
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+            ),
+            icon: Icon(Icons.refresh, color: Colors.grey[600], size: 10),
+            label: Text(
+              'Refresh',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 9.0,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

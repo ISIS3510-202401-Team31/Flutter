@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:unifood/model/reservation_entity.dart';
 import 'package:unifood/controller/reservation_controller.dart';
 import 'package:unifood/model/restaurant_entity.dart';
+import 'package:unifood/view/profile/preferences/widgets/custom_app_bar.dart';
 import 'package:unifood/view/reviews/create/widgets/restaurant_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:intl/intl.dart';
+import 'package:unifood/view/widgets/custom_appbar_builder.dart';
+
 class RestaurantReservation extends StatefulWidget {
   final ReservationController reservationController;
   final Future<List<Restaurant>> restaurantsFuture;
@@ -38,8 +41,10 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
     super.initState();
     _checkConnectivity();
     _loadLocalReservations();
-    _reservationsFuture = widget.reservationController.getUserReservations(widget.userId);
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
+    _reservationsFuture =
+        widget.reservationController.getUserReservations(widget.userId);
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
   @override
@@ -66,26 +71,53 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
     final reservationsString = prefs.getString('reservations_${widget.userId}');
     if (reservationsString != null) {
       final List<dynamic> reservationsJson = jsonDecode(reservationsString);
-      _localReservations = reservationsJson.map((json) => Reservation.fromJson(json)).toList();
+      _localReservations =
+          reservationsJson.map((json) => Reservation.fromJson(json)).toList();
     }
   }
 
   Future<void> _saveLocalReservations(List<Reservation> reservations) async {
     final prefs = await SharedPreferences.getInstance();
-    final reservationsString = jsonEncode(reservations.map((reservation) => reservation.toJson()).toList());
+    final reservationsString = jsonEncode(
+        reservations.map((reservation) => reservation.toJson()).toList());
     await prefs.setString('reservations_${widget.userId}', reservationsString);
   }
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth * 0.027;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Make a Reservation'),
-        centerTitle: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(screenHeight * 0.06),
+        child: CustomAppBarBuilder(
+          screenHeight: screenHeight,
+          screenWidth: screenWidth,
+          showBackButton: true,
+        )
+            .setRightWidget(
+              Row(
+                children: [
+                  Center(
+                    child: Text(
+                      'Make a Reservation',
+                      style: TextStyle(
+                          fontSize: fontSize * 1.8,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'KeaniaOne'),
+                    ),
+                  ),
+                  SizedBox(width: screenWidth * 0.28)
+                ],
+              ),
+            )
+            .build(context),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 50.0, 16.0, 16.0), // Adjust the top padding as needed
+          padding: const EdgeInsets.fromLTRB(
+              16.0, 50.0, 16.0, 16.0), // Adjust the top padding as needed
           child: Column(
             children: [
               if (!_isConnected && _localReservations.isEmpty)
@@ -103,7 +135,9 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
-                _isConnected ? _buildCurrentReservations() : _buildLocalReservations(),
+                _isConnected
+                    ? _buildCurrentReservations()
+                    : _buildLocalReservations(),
               ],
             ],
           ),
@@ -123,7 +157,9 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          if (_selectedRestaurant == null && snapshot.data != null && snapshot.data!.isNotEmpty) {
+          if (_selectedRestaurant == null &&
+              snapshot.data != null &&
+              snapshot.data!.isNotEmpty) {
             _selectedRestaurant = snapshot.data!.first;
           }
           return Column(
@@ -146,7 +182,8 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
                       SizedBox(height: 10),
                       ListTile(
                         title: Text('Select Date and Time'),
-                        subtitle: Text('${DateFormat('yyyy-MM-dd').format(_selectedDateTime)} ${DateFormat('hh:mm a').format(_selectedDateTime)}'),
+                        subtitle: Text(
+                            '${DateFormat('yyyy-MM-dd').format(_selectedDateTime)} ${DateFormat('hh:mm a').format(_selectedDateTime)}'),
                         trailing: Icon(Icons.calendar_today),
                         onTap: _pickDateTime,
                       ),
@@ -177,12 +214,13 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
                           ),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 24),
                           child: Text(
                             'Reserve',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -241,7 +279,8 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
             leading: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0), // Adjust the radius as needed
+              borderRadius:
+                  BorderRadius.circular(8.0), // Adjust the radius as needed
               child: Image.network(
                 reservation.logoUrl,
                 width: 50,
@@ -346,7 +385,8 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
       );
       // Refresh the reservations list after making a new reservation
       setState(() {
-        _reservationsFuture = widget.reservationController.getUserReservations(widget.userId);
+        _reservationsFuture =
+            widget.reservationController.getUserReservations(widget.userId);
       });
     } catch (e) {
       print('Error making reservation: $e');
@@ -365,16 +405,20 @@ class _RestaurantReservationState extends State<RestaurantReservation> {
         _saveLocalReservations(_localReservations);
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No internet connection. Reservation deleted locally.')),
+        SnackBar(
+            content:
+                Text('No internet connection. Reservation deleted locally.')),
       );
       return;
     }
 
     try {
-      await widget.reservationController.deleteReservation(widget.userId, reservation.id);
+      await widget.reservationController
+          .deleteReservation(widget.userId, reservation.id);
       setState(() {
         _localReservations.removeWhere((res) => res.id == reservation.id);
-        _reservationsFuture = widget.reservationController.getUserReservations(widget.userId);
+        _reservationsFuture =
+            widget.reservationController.getUserReservations(widget.userId);
         _saveLocalReservations(_localReservations);
       });
       ScaffoldMessenger.of(context).showSnackBar(
