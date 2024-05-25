@@ -59,10 +59,8 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
     _stopwatch.stop();
     debugPrint(
         'Time spent on the page: ${_stopwatch.elapsed.inSeconds} seconds');
-    AnalyticsRepository().saveScreenTime({
-      'screen': 'Add Review',
-      'time': _stopwatch.elapsed.inSeconds
-    });
+    AnalyticsRepository().saveScreenTime(
+        {'screen': 'Add Review', 'time': _stopwatch.elapsed.inSeconds});
     _connectivitySubscription.cancel();
     super.dispose();
   }
@@ -148,17 +146,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
           screenHeight: MediaQuery.of(context).size.height,
           screenWidth: MediaQuery.of(context).size.width,
           showBackButton: true,
-        )
-            .setRightWidget(
-              IconButton(
-                icon: Icon(Icons.search,
-                    size: MediaQuery.of(context).size.width * 0.07),
-                onPressed: () {
-                  Navigator.pushNamed(context, "/filtermenu");
-                },
-              ),
-            )
-            .build(context),
+        ).build(context),
       ),
       backgroundColor: Colors.grey.shade100,
       body: !_isConnected

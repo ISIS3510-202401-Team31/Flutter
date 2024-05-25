@@ -78,7 +78,7 @@ class _LoginState extends State<Login> {
         child: CustomAppBarBuilder(
           screenHeight: screenHeight,
           screenWidth: screenWidth,
-          showBackButton: true,
+          showBackButton: false,
         )
             .setRightWidget(
               Container(
