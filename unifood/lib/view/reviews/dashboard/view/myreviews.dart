@@ -264,27 +264,63 @@ class _MyReviewsState extends State<MyReviews> {
                       return Container(
                         width: double.infinity,
                         child: Center(
-                          child: Dismissible(
-                            key: UniqueKey(),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              alignment: Alignment.centerRight,
-                              padding: EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Icon(Icons.delete, color: Colors.white),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                color: Colors.red,
+                          child: GestureDetector(
+                            onHorizontalDragEnd: _isConnected
+                                ? (details) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Delete Review'),
+                                          content: Text(
+                                              'Are you sure you want to delete this review?'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text('Delete'),
+                                              onPressed: () {
+                                                _reviewController.deleteReview(
+                                                    filteredReviews[index]!.id);
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                : null,
+                            child: Dismissible(
+                              key: UniqueKey(),
+                              direction: _isConnected
+                                  ? DismissDirection.endToStart
+                                  : DismissDirection.none,
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Icon(Icons.delete, color: Colors.white),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  color: Colors.red,
+                                ),
                               ),
-                            ),
-                            onDismissed: (direction) {
-                              _reviewController
-                                  .deleteReview(filteredReviews[index]!.id);
-                            },
-                            child: ReviewCard(
-                              userImage: filteredReviews[index]!.userImage,
-                              name: filteredReviews[index]!.name,
-                              rating: filteredReviews[index]!.rating,
-                              comment: filteredReviews[index]!.comment,
+                              onDismissed: (direction) {
+                                if (_isConnected) {
+                                  _reviewController
+                                      .deleteReview(filteredReviews[index]!.id);
+                                }
+                              },
+                              child: ReviewCard(
+                                userImage: filteredReviews[index]!.userImage,
+                                name: filteredReviews[index]!.name,
+                                rating: filteredReviews[index]!.rating,
+                                comment: filteredReviews[index]!.comment,
+                              ),
                             ),
                           ),
                         ),
