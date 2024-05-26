@@ -6,19 +6,21 @@ import 'package:unifood/data/firebase_service_adapter.dart';
 
 class PreferencesRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
+  final UserRepository _userRepository;
+  final AnalyticsRepository _analyticsRepository;
 
   PreferencesRepository()
-      : _firestoreServiceAdapter = FirestoreServiceAdapter();
+      : _firestoreServiceAdapter = FirestoreServiceAdapter(),
+        _userRepository = UserRepository(),
+        _analyticsRepository = AnalyticsRepository();
 
   Future<PreferencesEntity?> getCommonPreferences() async {
     try {
-      // Assuming 'common_preferences' is the ID of the document
       DocumentSnapshot<Map<String, dynamic>> docSnapshot =
           await _firestoreServiceAdapter.getDocumentById(
               'preferences', 'oqwTeOFRkxL6VPPrO9vH');
 
       if (docSnapshot.exists && docSnapshot.data() != null) {
-        // Directly parse the document's data into a PreferencesEntity
         return PreferencesEntity.fromMap(docSnapshot.data()!);
       } else {
         print("Document 'common_preferences' not found or is empty.");
@@ -32,7 +34,7 @@ class PreferencesRepository {
 
   Future<PreferencesEntity?> getUserPreferences() async {
     try {
-      final user = await UserRepository().getUserSession();
+      final user = await _userRepository.getUserSession();
       if (user != null) {
         final querySnapshot = await _firestoreServiceAdapter
             .getCollectionDocuments('users/${user.uid}/preferences', limit: 1);
@@ -62,7 +64,7 @@ class PreferencesRepository {
 
   Future<void> updateUserPreferences(PreferencesEntity preferences) async {
     try {
-      final user = await UserRepository().getUserSession();
+      final user = await _userRepository.getUserSession();
       if (user != null) {
         await _firestoreServiceAdapter.setOrUpdateDocument(
             'users/${user.uid}/preferences',
@@ -92,7 +94,7 @@ class PreferencesRepository {
       'function': functionContext,
     };
 
-    AnalyticsRepository().saveError(errorInfo);
+    _analyticsRepository.saveError(errorInfo);
     print('Error in PreferencesRepository - $functionContext: $e');
   }
 }
