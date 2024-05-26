@@ -173,28 +173,17 @@ class _LoginState extends State<Login> {
                     CustomAuthButton(
                       onPressed: () async {
                         if (_isConnected) {
-                          setState(() {
-                            emailError = false;
-                            passwordError = false;
-                          });
-
                           bool isValid = true;
-                          if (emailController.text.isEmpty) {
-                            setState(() {
-                              emailError = true;
-                              emailErrorMessage = 'Please enter your email';
-                            });
-                            isValid = false;
-                          }
-
-                          if (passwordController.text.isEmpty) {
-                            setState(() {
-                              passwordError = true;
-                              passwordErrorMessage =
-                                  'Please enter your password';
-                            });
-                            isValid = false;
-                          }
+                          setState(() {
+                            emailError = emailController.text.isEmpty;
+                            passwordError = passwordController.text.isEmpty;
+                            emailErrorMessage =
+                                emailError ? 'Please enter your email' : null;
+                            passwordErrorMessage = passwordError
+                                ? 'Please enter your password'
+                                : null;
+                            isValid = !emailError && !passwordError;
+                          });
 
                           if (!isValid) return;
 
@@ -226,7 +215,6 @@ class _LoginState extends State<Login> {
                             );
                           }
                         } else {
-                          // No hay conexión a Internet, mostrar un diálogo
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
