@@ -33,9 +33,7 @@ class _FavoritesState extends State<Favorites> {
   void initState() {
     super.initState();
     userData = fetchUser();
-
     _restaurantController.fetchRestaurants();
-
     _restaurantSubscription =
         _restaurantController.restaurants.listen((restaurant) {
       setState(() {});
@@ -67,41 +65,17 @@ class _FavoritesState extends State<Favorites> {
             ),
           );
         } else if (snapshot.hasError) {
-          return Padding(
-            padding: EdgeInsets.all(screenWidth * 0.03),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Oops! Something went wrong.\nPlease try again later.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
-                      fontWeight: FontWeight.bold, // Letra en negrita
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  IconButton(
-                    icon: Icon(
-                      Icons.refresh,
-                      size: MediaQuery.of(context).size.width * 0.08,
-                    ),
-                    onPressed: () {
-                      setState(() {});
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
+          return _buildErrorWidget(screenWidth, screenHeight);
         } else if (snapshot.hasData) {
           final Users? currentUser = userSession;
           final List<Restaurant> favoriteRestaurants = snapshot.data!;
 
           return _FavoritesWidget(
-              currentUser!, favoriteRestaurants, screenHeight, screenWidth);
+            currentUser!,
+            favoriteRestaurants,
+            screenHeight,
+            screenWidth,
+          );
         } else {
           return const Scaffold(
             body: Center(
@@ -112,6 +86,38 @@ class _FavoritesState extends State<Favorites> {
       },
     );
   }
+
+  Widget _buildErrorWidget(double screenWidth, double screenHeight) {
+    return Padding(
+      padding: EdgeInsets.all(screenWidth * 0.03),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Oops! Something went wrong.\nPlease try again later.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            IconButton(
+              icon: Icon(
+                Icons.refresh,
+                size: MediaQuery.of(context).size.width * 0.08,
+              ),
+              onPressed: () {
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _FavoritesWidget extends StatefulWidget {
@@ -120,8 +126,12 @@ class _FavoritesWidget extends StatefulWidget {
   final double screenHeight;
   final double screenWidth;
 
-  const _FavoritesWidget(this.currentUser, this.favoriteRestaurants,
-      this.screenHeight, this.screenWidth);
+  const _FavoritesWidget(
+    this.currentUser,
+    this.favoriteRestaurants,
+    this.screenHeight,
+    this.screenWidth,
+  );
 
   @override
   _FavoritesWidgetState createState() => _FavoritesWidgetState();
@@ -129,7 +139,6 @@ class _FavoritesWidget extends StatefulWidget {
 
 class _FavoritesWidgetState extends State<_FavoritesWidget> {
   late bool _isConnected;
-  // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
   final Stopwatch _stopwatch = Stopwatch();
   final PlateController _plateController = PlateController();
@@ -176,7 +185,6 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -212,41 +220,42 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
       ),
       body: Padding(
         padding: EdgeInsets.only(
-            top: screenHeight * 0.015,
-            left: screenWidth * 0.04,
-            right: screenWidth * 0.04),
+          top: screenHeight * 0.015,
+          left: screenWidth * 0.04,
+          right: screenWidth * 0.04,
+        ),
         child: Column(
           children: [
-            _isConnected
-                ? Container()
-                : Container(
-                    padding: EdgeInsets.only(bottom: screenHeight * 0.01),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.warning,
-                          color: Colors.grey,
-                          size: screenWidth * 0.05,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'No Connection. Data might not be updated',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
+            if (!_isConnected)
+              Container(
+                padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.warning,
+                      color: Colors.grey,
+                      size: screenWidth * 0.05,
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'No Connection. Data might not be updated',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             NotificationListener<ScrollUpdateNotification>(
-                onNotification: (notification) {
-                  _onUserInteraction("Suggested Restaurants", "Scroll");
-                  return true;
-                },
-                child: SuggestedRestaurantsSection(
-                    userId: widget.currentUser.uid)),
+              onNotification: (notification) {
+                _onUserInteraction("Suggested Restaurants", "Scroll");
+                return true;
+              },
+              child:
+                  SuggestedRestaurantsSection(userId: widget.currentUser.uid),
+            ),
             SizedBox(height: screenHeight * 0.025),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -256,153 +265,132 @@ class _FavoritesWidgetState extends State<_FavoritesWidget> {
                   child: Text(
                     'Suggested plates',
                     style: TextStyle(
-                        fontFamily: 'KeaniaOne', fontSize: screenWidth * 0.06),
+                      fontFamily: 'KeaniaOne',
+                      fontSize: screenWidth * 0.06,
+                    ),
                   ),
                 ),
               ],
             ),
             Container(
               padding: EdgeInsets.only(
-                  left: screenWidth * 0.1, right: screenWidth * 0.025),
+                left: screenWidth * 0.1,
+                right: screenWidth * 0.025,
+              ),
               height: screenHeight * 0.005,
               color: const Color(0xFF965E4E),
             ),
             GestureDetector(
-                onTap: () {
-                  _onUserInteraction("Most liked restaurants", "Tap");
+              onTap: () {
+                _onUserInteraction("Most liked restaurants", "Tap");
+              },
+              child: NotificationListener<ScrollUpdateNotification>(
+                onNotification: (notification) {
+                  _onUserInteraction("Most liked restaurants", "Scroll");
+                  return true;
                 },
-                child: NotificationListener<ScrollUpdateNotification>(
-                    onNotification: (notification) {
-                      _onUserInteraction("Most liked restaurants", "Scroll");
-                      return true;
+                child: SizedBox(
+                  height: screenHeight * 0.425,
+                  child: LazyLoadingListView(
+                    fetchFunction: () =>
+                        _plateController.fetchPlatesByPriceRange(),
+                    itemBuilder: (context, plate) {
+                      return PlateCard(
+                        id: plate.id,
+                        restaurantId: plate.restaurantId,
+                        imagePath: plate.imagePath,
+                        name: plate.name,
+                        description: plate.description,
+                        price: plate.price,
+                      );
                     },
-                    child: SizedBox(
-                      height: screenHeight * 0.425,
-                      child: FutureBuilder<List<Plate>>(
-                        future: _plateController.fetchPlatesByPriceRange(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: SpinKitThreeBounce(
-                                color: Colors.black,
-                                size: 30.0,
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            if (snapshot.error
-                                .toString()
-                                .contains('Connection failed')) {
-                              return _buildNoInternetWidget(
-                                  screenWidth, screenHeight);
-                            } else {
-                              return Padding(
-                                padding: EdgeInsets.all(screenWidth * 0.03),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Oops! Something went wrong.\nPlease try again later.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: screenWidth * 0.04,
-                                          fontWeight: FontWeight
-                                              .bold, // Letra en negrita
-                                        ),
-                                      ),
-                                      SizedBox(height: screenHeight * 0.02),
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.refresh,
-                                          size: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.08,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {});
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-                          } else if (snapshot.hasData &&
-                              snapshot.data!.isNotEmpty) {
-                            List<Plate> favorites = snapshot.data!;
-                            return Container(
-                              color: const Color(0xFF965E4E).withOpacity(0.15),
-                              height: screenHeight * 0.338,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: favorites.map((plate) {
-                                    return PlateCard(
-                                      id: plate.id,
-                                      restaurantId: plate.restaurantId,
-                                      imagePath: plate.imagePath,
-                                      name: plate.name,
-                                      description: plate.description,
-                                      price: plate.price,
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const Center(
-                                child: Text('No data available.'));
-                          }
-                        },
-                      ),
-                    ))),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildNoInternetWidget(double screenWidth, double screenHeight) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 65,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 10.0),
-          Text(
-            'Oops! No Internet Connection',
-            style: TextStyle(
-              fontSize: 10.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 2.0),
-          ElevatedButton.icon(
-            onPressed: () {
-              setState(() {
-                _checkConnectivity();
-              });
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
-            ),
-            icon: Icon(Icons.refresh, color: Colors.grey[600], size: 10),
-            label: Text(
-              'Refresh',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 9.0,
-              ),
-            ),
-          ),
-        ],
+class LazyLoadingListView extends StatefulWidget {
+  final Future<List<Plate>> Function() fetchFunction;
+  final Widget Function(BuildContext context, Plate item) itemBuilder;
+
+  const LazyLoadingListView({
+    required this.fetchFunction,
+    required this.itemBuilder,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  _LazyLoadingListViewState createState() => _LazyLoadingListViewState();
+}
+
+class _LazyLoadingListViewState extends State<LazyLoadingListView> {
+  late ScrollController _scrollController;
+  List<Plate> _plates = [];
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    _fetchData();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      _fetchData();
+    }
+  }
+
+  Future<void> _fetchData() async {
+    if (!_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+      List<Plate> fetchedPlates = await widget.fetchFunction();
+      setState(() {
+        _plates.addAll(fetchedPlates);
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: _plates.length + 1,
+      itemBuilder: (context, index) {
+        if (index < _plates.length) {
+          return widget.itemBuilder(context, _plates[index]);
+        } else {
+          return _buildProgressIndicator();
+        }
+      },
+    );
+  }
+
+  Widget _buildProgressIndicator() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Center(
+        child: SpinKitThreeBounce(
+          color: Colors.black,
+          size: 30.0,
+        ),
       ),
     );
   }
