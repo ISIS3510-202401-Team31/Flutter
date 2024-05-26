@@ -20,11 +20,12 @@ class _SearchViewState extends State<SearchView> {
   final List<Restaurant> _searchResults = [];
   List<Restaurant> _restaurantList = [];
   late bool _isConnected;
-  // ignore: unused_field
   late StreamSubscription _connectivitySubscription;
   final Stopwatch _stopwatch = Stopwatch();
 
   final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  bool _isLoading = true;
 
   void _onUserInteraction(String feature, String action) {
     final event = {
@@ -46,13 +47,16 @@ class _SearchViewState extends State<SearchView> {
     super.initState();
     _checkConnectivity();
     _stopwatch.start();
-     _connectivitySubscription = Connectivity()
-       .onConnectivityChanged
-       .listen((ConnectivityResult result) {
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
       setState(() {
-        _isConnected = result!= ConnectivityResult.none;
+        _isConnected = result != ConnectivityResult.none;
       });
     });
+
+    // Fetch restaurants only once when the view is initialized
+    _fetchRestaurants();
   }
 
   @override
@@ -66,6 +70,26 @@ class _SearchViewState extends State<SearchView> {
     });
     _connectivitySubscription.cancel();
     super.dispose();
+  }
+
+  // Fetch restaurants and cache them
+  void _fetchRestaurants() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final List<Restaurant> restaurants =
+          await RestaurantController().getRestaurants();
+      setState(() {
+        _restaurantList = restaurants;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching restaurants: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -88,76 +112,40 @@ class _SearchViewState extends State<SearchView> {
       ),
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.04),
-        child: FutureBuilder<List<Restaurant>>(
-          future: RestaurantController().getRestaurants(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: SpinKitThreeBounce(
-                  color: Colors.black,
-                  size: 30.0,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Padding(
-                padding: EdgeInsets.all(screenWidth * 0.03),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Oops! Something went wrong.\nPlease try again later.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          fontWeight: FontWeight.bold, // Letra en negrita
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _isConnected
+                ? Container()
+                : Container(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.warning,
+                          color: Colors.grey,
+                          size: screenWidth * 0.05,
                         ),
-                      ),
-                      SizedBox(height: screenHeight * 0.02),
-                      IconButton(
-                        icon: Icon(
-                          Icons.refresh,
-                          size: MediaQuery.of(context).size.width * 0.08,
-                        ),
-                        onPressed: () {
-                          setState(() {});
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              final restaurants = snapshot.data!;
-              _restaurantList = restaurants;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _isConnected
-                      ? Container()
-                      : Container(
-                          padding: EdgeInsets.only(bottom: screenHeight * 0.01),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.warning,
-                                color: Colors.grey,
-                                size: screenWidth * 0.05,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'No Connection. Data might not be updated',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(width: 8),
+                        const Text(
+                          'No Connection. Data might not be updated',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
                           ),
                         ),
-                  SingleChildScrollView(
+                      ],
+                    ),
+                  ),
+            _isLoading
+                ? Center(
+                    child: SpinKitThreeBounce(
+                      color: Colors.black,
+                      size: 30.0,
+                    ),
+                  )
+                : SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: NotificationListener<ScrollUpdateNotification>(
                       onNotification: (notification) {
@@ -166,7 +154,7 @@ class _SearchViewState extends State<SearchView> {
                       },
                       child: Row(
                         children: [
-                          for (var restaurant in restaurants)
+                          for (var restaurant in _restaurantList)
                             Padding(
                               padding: EdgeInsets.all(screenWidth * 0.037),
                               child: RestaurantLogo(
@@ -178,33 +166,24 @@ class _SearchViewState extends State<SearchView> {
                       ),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.02),
-                  Container(
-                    height: 1,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  NotificationListener<ScrollUpdateNotification>(
-                    onNotification: (notification) {
-                      _onUserInteraction("Restaurants Search", "Scroll");
-                      return true;
-                    },
-                    child: Expanded(
-                      child: _buildRestaurantCards(restaurants),
-                    ),
-                  ),
-                ],
-              );
-            }
-          },
+            SizedBox(height: screenHeight * 0.02),
+            Container(
+              height: 1,
+              color: Colors.grey,
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            Expanded(
+              child: _buildRestaurantCards(),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildRestaurantCards(List<Restaurant> restaurants) {
+  Widget _buildRestaurantCards() {
     List<Restaurant> restaurantsToShow =
-        _searchResults.isNotEmpty ? _searchResults : restaurants;
+        _searchResults.isNotEmpty ? _searchResults : _restaurantList;
 
     if (restaurantsToShow.isEmpty && _searchController.text.isNotEmpty) {
       return Center(
@@ -233,13 +212,15 @@ class _SearchViewState extends State<SearchView> {
   }
 
   void _performSearch(String query) {
-    setState(() {
-      _searchResults.clear();
-
-      if (query.isNotEmpty) {
-        _searchResults.addAll(_restaurantList.where((restaurant) =>
-            restaurant.name.toLowerCase().contains(query.toLowerCase())));
-      }
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _searchResults.clear();
+        if (query.isNotEmpty) {
+          _searchResults.addAll(_restaurantList.where((restaurant) =>
+              restaurant.name.toLowerCase().contains(query.toLowerCase())));
+        }
+      });
     });
   }
 }

@@ -3,17 +3,15 @@ import 'dart:async';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:unifood/repository/analytics_repository.dart';
 import 'package:unifood/data/firebase_service_adapter.dart';
-import 'package:path/path.dart';
-import 'package:unifood/repository/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RestaurantRepository {
   final FirestoreServiceAdapter _firestoreServiceAdapter;
 
-  // RestaurantRepository() : _firestoreServiceAdapter = FirestoreServiceAdapter();
   static final Map<String, List<Map<String, dynamic>>> _cache = {};
 
   late Database _database;
@@ -25,15 +23,6 @@ class RestaurantRepository {
   }
 
   final int _maxDatabaseSizeInBytes = 50 * 1024 * 1024; // 50MB
-
-  // Verifica si el tamaño de la base de datos excede el límite
-  Future<bool> _isDatabaseSizeExceeded() async {
-    final databasePath =
-        join(await getDatabasesPath(), 'restaurant_database.db');
-    final file = File(databasePath);
-    final fileSize = await file.length();
-    return fileSize >= _maxDatabaseSizeInBytes;
-  }
 
   // Initialize the local database
   Future<void> _initDatabase() async {
@@ -48,20 +37,34 @@ class RestaurantRepository {
     );
   }
 
-  Future<void> insertRestaurant(Map<String, dynamic> restaurantData) async {
+  // Check if the size of the database exceeds the limit
+  Future<bool> _isDatabaseSizeExceeded() async {
+    final databasePath =
+        join(await getDatabasesPath(), 'restaurant_database.db');
+    final file = File(databasePath);
+    final fileSize = await file.length();
+    return fileSize >= _maxDatabaseSizeInBytes;
+  }
+
+  // Batch insert restaurants into the database
+  Future<void> _insertRestaurants(List<Map<String, dynamic>> restaurants) async {
     if (await _isDatabaseSizeExceeded()) {
       throw Exception(
           'No se puede agregar más datos. La base de datos ha alcanzado su límite de tamaño.');
     } else {
-      await _database.insert(
-        'restaurants',
-        {'docId': restaurantData['docId'], 'data': jsonEncode(restaurantData)},
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      Batch batch = _database.batch();
+      for (var restaurant in restaurants) {
+        batch.insert(
+          'restaurants',
+          {'docId': restaurant['docId'], 'data': jsonEncode(restaurant)},
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      await batch.commit();
     }
   }
 
-  Future<List<Map<String, dynamic>>> getLocalRestaurants() async {
+  Future<List<Map<String, dynamic>>> _getLocalRestaurants() async {
     final List<Map<String, dynamic>> maps =
         await _database.query('restaurants');
 
@@ -82,7 +85,7 @@ class RestaurantRepository {
 
       if (!isConnected) {
         List<Map<String, dynamic>> localRestaurants =
-            await getLocalRestaurants();
+            await _getLocalRestaurants();
         if (localRestaurants.isNotEmpty) {
           return localRestaurants;
         } else {
@@ -90,6 +93,7 @@ class RestaurantRepository {
         }
       }
 
+      // Always update data from Firestore if it has not been updated within the last 24 hours
       if (DateTime.now().difference(lastUpdate) >= Duration(days: 1)) {
         final querySnapshot = await _firestoreServiceAdapter
             .getCollectionDocuments('restaurants');
@@ -100,16 +104,15 @@ class RestaurantRepository {
           return restaurantData;
         }).toList();
 
-        for (var restaurant in restaurants) {
-          insertRestaurant(restaurant);
-        }
+        await deleteAllLocalRestaurants(); // Clear local database
+        await _insertRestaurants(restaurants); // Insert new data
 
         await _updateLastUpdateTimestamp();
 
         return restaurants;
       } else {
         List<Map<String, dynamic>> localRestaurants =
-            await getLocalRestaurants();
+            await _getLocalRestaurants();
         if (localRestaurants.isNotEmpty) {
           return localRestaurants;
         } else {
@@ -121,7 +124,7 @@ class RestaurantRepository {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
         'timestamp': DateTime.now(),
-        'function': 'getRestaurantById',
+        'function': 'getRestaurants',
       };
       AnalyticsRepository().saveError(errorInfo);
       rethrow;
@@ -149,7 +152,7 @@ class RestaurantRepository {
 
   Future<Map<String, dynamic>?> getRestaurantById(String restaurantId) async {
     try {
-      List<Map<String, dynamic>> localRestaurants = await getLocalRestaurants();
+      List<Map<String, dynamic>> localRestaurants = await _getLocalRestaurants();
       final restaurant = localRestaurants.firstWhere(
           (restaurant) => restaurant['docId'] == restaurantId,
           orElse: () => {});
@@ -165,7 +168,7 @@ class RestaurantRepository {
         Map<String, dynamic> restaurantData = docSnapshot.data()!;
         restaurantData['docId'] = docSnapshot.id;
 
-        insertRestaurant(restaurantData);
+        await _insertRestaurants([restaurantData]); // Batch insert with a single item
         print(
             'Obtenido restaurante por ID de Firestore y almacenado en la base de datos local');
         return docSnapshot.data();
@@ -193,7 +196,7 @@ class RestaurantRepository {
       // Try fetching data from the network
       final response = await http
           .get(Uri.parse(
-              'http://3.22.0.19:5000//recommend/$userId/$categoryFilter'))
+              'http://3.22.0.19:5000/recommend/$userId/$categoryFilter'))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -254,7 +257,7 @@ class RestaurantRepository {
     try {
       final response = await http
           .get(
-              Uri.parse('http://3.22.0.19:5000//most_liked/$userLat/$userLong'))
+              Uri.parse('http://3.22.0.19:5000/most_liked/$userLat/$userLong'))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -266,6 +269,7 @@ class RestaurantRepository {
           restaurantData['id'] = restaurantData['docId'];
         }
 
+       
         _cache[cacheKey] = restaurantsData;
 
         return restaurantsData;
@@ -285,7 +289,7 @@ class RestaurantRepository {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
         'timestamp': DateTime.now(),
-        'function': 'mostLikedRestaurants',
+        'function': 'fetchLikedRestaurants',
       };
       AnalyticsRepository().saveError(errorInfo);
       throw ('Timeout while fetching liked restaurants: $e');
@@ -294,7 +298,7 @@ class RestaurantRepository {
         'error': e.toString(),
         'stacktrace': stackTrace.toString(),
         'timestamp': DateTime.now(),
-        'function': 'mostLikedRestaurants',
+        'function': 'fetchLikedRestaurants',
       };
       AnalyticsRepository().saveError(errorInfo);
       print('Error when fetching liked restaurants in repository: $e');
