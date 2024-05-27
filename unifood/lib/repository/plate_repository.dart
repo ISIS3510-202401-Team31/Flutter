@@ -83,7 +83,7 @@ class PlateRepository {
             List<Map<String, dynamic>>.from(responseData);
 
         for (Map<String, dynamic> plateData in platesData) {
-          plateData['id'] = plateData['docId'];
+          plateData['id'] = plateData['id'];
         }
 
         _cache[cacheKey] = platesData;
